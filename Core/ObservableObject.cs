@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChipsManager.Core
+namespace PBManager.Core
 {
     internal class ObservableObject: INotifyPropertyChanged
     {

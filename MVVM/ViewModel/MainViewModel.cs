@@ -1,11 +1,11 @@
-﻿using ChipsManager.Core;
+﻿using PBManager.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChipsManager.MVVM.ViewModel
+namespace PBManager.MVVM.ViewModel
 {
     internal class MainViewModel : ObservableObject
     {

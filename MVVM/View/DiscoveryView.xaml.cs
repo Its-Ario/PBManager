@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChipsManager.MVVM.View
+namespace PBManager.MVVM.View
 {
     /// <summary>
     /// Interaction logic for DiscoveryView.xaml

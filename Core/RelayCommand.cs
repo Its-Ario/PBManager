@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace ChipsManager.Core
+namespace PBManager.Core
 {
     internal class RelayCommand : ICommand
     {

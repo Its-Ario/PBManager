@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChipsManager.MVVM.ViewModel
+namespace PBManager.MVVM.ViewModel
 {
     internal class DiscoveryViewModel
     {

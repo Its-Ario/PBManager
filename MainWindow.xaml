@@ -1,10 +1,10 @@
-﻿<Window x:Class="ChipsManager.MainWindow"
+﻿<Window x:Class="PBManager.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ChipsManager"
-        xmlns:viewModel="clr-namespace:ChipsManager.MVVM.ViewModel"
+        xmlns:local="clr-namespace:PBManager"
+        xmlns:viewModel="clr-namespace:PBManager.MVVM.ViewModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="920"
         WindowStyle="None"
@@ -12,9 +12,9 @@
         Background="Transparent"
         AllowsTransparency="True">
     <Window.DataContext>
-        <viewModel:MainViewModel/>  
+        <viewModel:MainViewModel/>
     </Window.DataContext>
-    
+
     <Border Background="#272537" CornerRadius="20">
         <Grid>
             <Grid.RowDefinitions>
@@ -26,42 +26,69 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Chipsy"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Left"
-                   Foreground="White"
-                   FontSize="22"
-                   Margin="20 0 0 0"
-                   FontFamily="/Fonts/#Poppins"></TextBlock>
+            <TextBlock Text="محافظ شخصی"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Foreground="White"
+                       FontSize="22"
+                       FontFamily="/Fonts/#Shabnam" />
 
             <StackPanel Grid.Row="1">
-                <RadioButton Content="Home"
+                <RadioButton Content="خانه"
                              Height="50"
+                             Tag="&#xE10F;"
                              Foreground="White"
                              FontSize="14"
                              Style="{StaticResource MenuButtonTheme}"
                              IsChecked="True"
                              Command="{Binding HomeViewCommand}"/>
-                <RadioButton Content="Discovery"
+                <RadioButton Content="مدیریت"
                              Height="50"
+                             Tag="&#xE77B;"
                              Foreground="White"
                              FontSize="14"
                              Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding DiscoveryViewCommand}"/>
-                <RadioButton Content="Feature"
+                <RadioButton Content="تاریخچه"
                              Height="50"
+                             Tag="&#xE81C;"
+                             Foreground="White"
+                             FontSize="14"
+                             Style="{StaticResource MenuButtonTheme}"/>
+                <RadioButton Content="تنظیمات"
+                             Height="50"
+                             Tag="&#xE713;"
                              Foreground="White"
                              FontSize="14"
                              Style="{StaticResource MenuButtonTheme}"/>
             </StackPanel>
 
-            <TextBox Width="400"
-                     Height="40"
-                     VerticalContentAlignment="Center"
-                     HorizontalAlignment="Left"
-                     Margin="5"
-                     Grid.Column="1"
-                     Style="{StaticResource ModernTextBox}"/>
+            <Grid Grid.Column="1"
+                  x:Name="TitleBar"
+                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
+                  Background="Transparent">
+
+                <TextBox Width="400"
+                         Height="40"
+                         VerticalContentAlignment="Center"
+                         HorizontalAlignment="Center"
+                         Margin="10,0,0,0"
+                         Style="{StaticResource ModernTextBox}"/>
+
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Margin="0,5,5,0">
+                    <Button x:Name="MinimizeButton" 
+                            Click="MinimizeButton_Click" 
+                            Content="—" 
+                            Style="{StaticResource WindowButtonStyle}"/>
+                    <Button x:Name="CloseButton" 
+                            Click="CloseButton_Click" 
+                            Content="✕" 
+                            Style="{StaticResource WindowButtonStyle}"/>
+                </StackPanel>
+            </Grid>
 
             <ContentControl Grid.Row="1"
                             Grid.Column="1"

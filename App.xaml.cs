@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace ChipsManager
+namespace PBManager
 {
     /// <summary>
     /// Interaction logic for App.xaml

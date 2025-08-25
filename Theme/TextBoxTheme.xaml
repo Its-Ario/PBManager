@@ -20,13 +20,12 @@
                                      x:Name="SearchBox"/>
 
                             <TextBlock IsHitTestVisible="False"
-                                       Text="Search"
+                                       Text="جستجو"
                                        VerticalAlignment="Center"
-                                       HorizontalAlignment="Left"
-                                       Margin="10 0 0 0"
+                                       HorizontalAlignment="Right"
+                                       Margin="0 0 10 0"
                                        FontSize="11"
-                                       Foreground="DarkGray"
-                                       Grid.Column="1">
+                                       Foreground="DarkGray">
                                 <TextBlock.Style>
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Style.Triggers>
