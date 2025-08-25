@@ -11,20 +11,30 @@
                 <ResourceDictionary Source="Theme/MenuButtonTheme.xaml"/>
                 <ResourceDictionary Source="Theme/TextBoxTheme.xaml"/>
                 <ResourceDictionary Source="Theme/WindowButtonTheme.xaml"/>
+                <ResourceDictionary Source="Theme/ModernButtonTheme.xaml"/>
+                <ResourceDictionary Source="Theme/ListViewTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
                 <view:HomeView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type viewModel:DiscoveryViewModel}">
-                <view:DiscoveryView/>
+            <DataTemplate DataType="{x:Type viewModel:StudyManagementViewModel}">
+                <view:StudyManagementView/>
             </DataTemplate>
 
             <FontFamily x:Key="AppFont">/Fonts/#Shabnam</FontFamily>
 
             <Style TargetType="Control">
-                <Setter Property="FontFamily" Value="{StaticResource AppFont}"/>
+                <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+            </Style>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+            </Style>
+
+            <Style TargetType="Window">
+                <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

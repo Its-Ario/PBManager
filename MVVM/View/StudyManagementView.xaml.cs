@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PBManager.MVVM.Model;
+using PBManager.MVVM.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,13 +18,14 @@ using System.Windows.Shapes;
 namespace PBManager.MVVM.View
 {
     /// <summary>
-    /// Interaction logic for DiscoveryView.xaml
+    /// Interaction logic for StudyManagementView.xaml
     /// </summary>
-    public partial class DiscoveryView : UserControl
+    public partial class StudyManagementView : UserControl
     {
-        public DiscoveryView()
+        public StudyManagementView()
         {
             InitializeComponent();
+            this.DataContext = new StudyManagementViewModel();
         }
     }
 }

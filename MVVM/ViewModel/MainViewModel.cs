@@ -10,10 +10,10 @@ namespace PBManager.MVVM.ViewModel
     internal class MainViewModel : ObservableObject
     {
         public RelayCommand HomeViewCommand { get; set; }
-        public RelayCommand DiscoveryViewCommand { get; set; }
+        public RelayCommand StudyManagementViewCommand { get; set; }
 
         public HomeViewModel HomeVM { get; set; }
-        public DiscoveryViewModel DiscoveryVM {  get; set; }
+        public StudyManagementViewModel DiscoveryVM {  get; set; }
 
         private object _currentView;
         
@@ -28,7 +28,7 @@ namespace PBManager.MVVM.ViewModel
         }
         public MainViewModel() {
             HomeVM = new HomeViewModel();
-            DiscoveryVM = new DiscoveryViewModel();
+            DiscoveryVM = new StudyManagementViewModel();
 
             CurrentView = HomeVM;
 
@@ -37,7 +37,7 @@ namespace PBManager.MVVM.ViewModel
                 CurrentView = HomeVM;
             });
 
-            DiscoveryViewCommand = new RelayCommand(o =>
+            StudyManagementViewCommand = new RelayCommand(o =>
             {
                 CurrentView = DiscoveryVM;
             });

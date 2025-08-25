@@ -12,18 +12,18 @@ namespace PBManager.MVVM.ViewModel
 
     internal class HomeViewModel : ObservableObject
     {
-        private int _avgGrade;
-        public int AvgGrade
+        private int _avgStudyTime;
+        public int AvgStudyTime
         {
-            get => _avgGrade;
-            set { _avgGrade = value; OnPropertyChanged(nameof(AvgGrade)); }
+            get => _avgStudyTime;
+            set { _avgStudyTime = value; OnPropertyChanged(nameof(AvgStudyTime)); }
         }
 
-        private int _totalStudents;
-        public int TotalStudents
+        private string _mostStudiedSubject;
+        public string MostStudiedSubject
         {
-            get => _totalStudents;
-            set { _totalStudents = value; OnPropertyChanged(nameof(TotalStudents)); }
+            get => _mostStudiedSubject;
+            set { _mostStudiedSubject = value; OnPropertyChanged(nameof(MostStudiedSubject)); }
         }
 
         private int _classesCount;
@@ -35,8 +35,8 @@ namespace PBManager.MVVM.ViewModel
 
         public HomeViewModel()
         {
-            AvgGrade = -5;
-            TotalStudents = 30;
+            AvgStudyTime = -5;
+            MostStudiedSubject = "ادبیات";
             ClassesCount = 5;
         }
     }
