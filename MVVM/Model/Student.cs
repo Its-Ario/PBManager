@@ -13,7 +13,8 @@ namespace PBManager.MVVM.Model
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Class Class { get; set; }
-        public string ClassName => Class?.Name ?? "Unassigned";
+        public string ClassName => Class?.Name ?? "---";
+        public string FullName => $"{FirstName} {LastName}";
 
         public ICollection<StudyRecord> StudyRecords { get; set; }
         public ICollection<GradeRecord> GradeRecords { get; set; }

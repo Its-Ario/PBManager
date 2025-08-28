@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="PBManager.MVVM.View.StudentDetailView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="390">
+
+    <Grid Margin="10" FlowDirection="RightToLeft">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="{Binding FullName}" 
+               Grid.Row="0"
+               HorizontalAlignment="Center"
+               FontWeight="Bold"
+               FontSize="20"
+               Foreground="White"/>
+
+        <Grid Grid.Row="1" Margin="0 15 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="کلاس:" 
+                   FontWeight="Bold"
+                   Foreground="White"
+                   Grid.Row="0" Grid.Column="0"/>
+            <TextBlock Text="{Binding ClassName}" 
+                   Foreground="LightGray"
+                   Grid.Row="0" Grid.Column="1"/>
+
+            <TextBlock Text="کد ملی:" 
+                   FontWeight="Bold"
+                   Foreground="White"
+                   Grid.Row="1" Grid.Column="0"/>
+            <TextBlock Text="{Binding NationalCode}" 
+                   Foreground="LightGray"
+                   Grid.Row="1" Grid.Column="1"/>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="0 20 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="میانگین مطالعه هفتگی:" 
+                       FontWeight="Bold"
+                       FontSize="11"
+                       Foreground="White"
+                       Grid.Row="0" Grid.Column="0"/>
+            <TextBlock Text="۱۱ ساعت" 
+                       Foreground="LightGray"
+                       Grid.Row="0" Grid.Column="1"/>
+
+            <TextBlock Text="بیشترین درس مطالعه شده:" 
+                       FontWeight="Bold"
+                       FontSize="11"
+                       Foreground="White"
+                       Grid.Row="1" Grid.Column="0"/>
+            <TextBlock Text="ادبیات" 
+                       Foreground="LightGray"
+                       Grid.Row="1" Grid.Column="1"/>
+        </Grid>
+        <StackPanel Grid.Row="3"
+                    Margin="0 20 0 0"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Top">
+            <Button Content="ثبت اطلاعات مطالعه"
+                            Margin="5"
+                            Width="110" Height="50"
+                            Style="{StaticResource ModernButtonStyle}"/>
+            <Button Content="تاریخچه مطالعه"
+                Margin="5"
+                Width="110" Height="50"
+                Style="{StaticResource ModernButtonStyle}"/>
+            <Button Content=""
+                    Margin="5"
+                    Width="110" Height="50"
+                    Style="{StaticResource ModernButtonStyle}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

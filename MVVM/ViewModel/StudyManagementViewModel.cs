@@ -64,6 +64,20 @@ namespace PBManager.MVVM.ViewModel
                 FilteredStudents?.Refresh();
             }
         }
+
+        private Student _selectedStudent;
+        public Student SelectedStudent
+        {
+            get => _selectedStudent;
+            set
+            {
+                _selectedStudent = value;
+                OnPropertyChanged(nameof(SelectedStudent));
+            }
+        }
+
+        public bool HasSelection => SelectedStudent != null;
+
         public ICommand SaveCommand { get; }
 
         public StudyManagementViewModel()
