@@ -12,10 +12,11 @@ namespace PBManager.MVVM.Model
         public string NationalCode { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public Class Class { get; set; }
-        public string ClassName => Class?.Name ?? "---";
         public string FullName => $"{FirstName} {LastName}";
 
+        public int ClassId { get; set; }
+        public Class Class { get; set; }
+        
         public ICollection<StudyRecord> StudyRecords { get; set; }
         public ICollection<GradeRecord> GradeRecords { get; set; }
     }

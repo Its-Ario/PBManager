@@ -9,11 +9,13 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
+using PBManager.Services;
 
 namespace PBManager.MVVM.ViewModel
 {
     public class AddStudyRecordViewModel : ObservableObject
     {
+        private StudyRecordService _studyRecordService;
         public ObservableCollection<SubjectEntry> SubjectEntries { get; set; }
         public IRelayCommand SubmitCommand { get; set; }
         private Student _student;
@@ -21,6 +23,7 @@ namespace PBManager.MVVM.ViewModel
         public AddStudyRecordViewModel(Student student)
         {
             _student = student;
+            _studyRecordService = new StudyRecordService();
             SubjectEntries = new ObservableCollection<SubjectEntry>();
             LoadSubjects();
 
@@ -62,8 +65,7 @@ namespace PBManager.MVVM.ViewModel
                 })
                 .ToList();
 
-            App.Db.StudyRecords.AddRange(records);
-            await App.Db.SaveChangesAsync();
+            await _studyRecordService.AddStudyRecordsAsync(records);
 
             MessageBox.Show("!اطلاعات مطالعه با موفقیت ثبت شد", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 

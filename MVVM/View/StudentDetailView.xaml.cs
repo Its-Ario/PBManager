@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using PBManager.MVVM.View;
 using PBManager.MVVM.ViewModel;
+using PBManager.Services;
 
 namespace PBManager.MVVM.View
 {
@@ -14,10 +15,10 @@ namespace PBManager.MVVM.View
     public partial class StudentDetailView : UserControl
     {
         public StudentDetailViewModel? ViewModel => this.DataContext as StudentDetailViewModel;
+
         public StudentDetailView()
         {
             InitializeComponent();
-
             var studyOverTimeSeries = new SeriesCollection
             {
                 new LineSeries
