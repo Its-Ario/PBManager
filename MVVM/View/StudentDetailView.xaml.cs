@@ -1,21 +1,10 @@
 ﻿using LiveCharts.Wpf;
 using LiveCharts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using PBManager.MVVM.View;
 using PBManager.MVVM.ViewModel;
-using PBManager.MVVM.Model;
 
 namespace PBManager.MVVM.View
 {
@@ -24,6 +13,7 @@ namespace PBManager.MVVM.View
     /// </summary>
     public partial class StudentDetailView : UserControl
     {
+        public StudentDetailViewModel? ViewModel => this.DataContext as StudentDetailViewModel;
         public StudentDetailView()
         {
             InitializeComponent();
@@ -56,6 +46,12 @@ namespace PBManager.MVVM.View
                 Title = "نمره",
                 LabelFormatter = value => value.ToString()
             });
+        }
+
+        private void submitNewRecord_Click(object sender, RoutedEventArgs e)
+        {
+            AddStudyRecordView win = new(ViewModel?.Student);
+            win.Show();
         }
     }
 }

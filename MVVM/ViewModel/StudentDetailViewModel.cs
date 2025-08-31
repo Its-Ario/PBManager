@@ -1,5 +1,4 @@
-﻿using PBManager.Core;
-using PBManager.MVVM.Model;
+﻿using PBManager.MVVM.Model;
 using PBManager.Services;
 using PBManager.Messages;
 using CommunityToolkit.Mvvm.Messaging;

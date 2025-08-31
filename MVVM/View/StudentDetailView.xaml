@@ -94,10 +94,11 @@
                     VerticalAlignment="Top"
                     HorizontalAlignment="Center">
             <Button Content="ثبت اطلاعات مطالعه"
+                    x:Name="submitNewRecord"
                     Margin="5"
                     Width="110" Height="50"
                     Command="{Binding SubmitDataCommand}"
-                    Style="{StaticResource ModernButtonStyle}"/>
+                    Style="{StaticResource ModernButtonStyle}" Click="submitNewRecord_Click"/>
             <Button Content="تاریخچه مطالعه"
                     Margin="5"
                     Width="110" Height="50"

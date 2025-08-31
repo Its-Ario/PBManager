@@ -24,21 +24,21 @@
                         SnapsToDevicePixels="True">
                     <Grid>
                         <TextBox x:Name="SearchBox"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     Background="Transparent"
-                     BorderThickness="0"
-                     Foreground="#CFCFCF"
-                     Padding="5"
-                     VerticalContentAlignment="Center"
-                     FlowDirection="RightToLeft"/>
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Foreground="#CFCFCF"
+                                 Padding="5"
+                                 VerticalContentAlignment="Center"
+                                 FlowDirection="RightToLeft"/>
 
                         <TextBlock Text="جستجو"
-                       Margin="0,0,10,0"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Foreground="DarkGray"
-                       FontSize="11"
-                       IsHitTestVisible="False">
+                                   Margin="0,0,10,0"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
+                                   Foreground="DarkGray"
+                                   FontSize="11"
+                                   IsHitTestVisible="False">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Visibility" Value="Collapsed"/>
