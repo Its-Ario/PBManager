@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:PBManager.MVVM.View"
              xmlns:view="clr-namespace:PBManager.MVVM.View"
              xmlns:model="clr-namespace:PBManager.MVVM.Model"
+             xmlns:vm="clr-namespace:PBManager.MVVM.ViewModel"
              mc:Ignorable="d"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -114,13 +115,7 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <ContentControl Content="{Binding SelectedStudent}">
-                <ContentControl.Resources>
-                    <DataTemplate DataType="{x:Type model:Student}">
-                        <view:StudentDetailView />
-                    </DataTemplate>
-                </ContentControl.Resources>
-            </ContentControl>
+            <ContentControl Content="{Binding DetailVM}" />
         </Border>
     </Grid>
 </UserControl>

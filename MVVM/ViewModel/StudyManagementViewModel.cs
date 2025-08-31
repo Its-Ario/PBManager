@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PBManager.Core;
 using PBManager.MVVM.Model;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,10 +7,15 @@ using System.Windows;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System;
+using CommunityToolkit.Mvvm.Messaging;
+using PBManager.Messages;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Diagnostics;
+using CommunityToolkit.Mvvm.Input;
 
 namespace PBManager.MVVM.ViewModel
 {
-    internal class StudyManagementViewModel : ObservableObject
+    public class StudyManagementViewModel : ObservableObject
     {
         private ObservableCollection<Student> _students;
         public ObservableCollection<Student> Students
@@ -20,32 +24,34 @@ namespace PBManager.MVVM.ViewModel
             set
             {
                 _students = value;
-                OnPropertyChanged(nameof(Students));
+                OnPropertyChanged();
                 FilteredStudents = CollectionViewSource.GetDefaultView(_students);
                 FilteredStudents.Filter = FilterStudents;
-                OnPropertyChanged(nameof(FilteredStudents));
+                OnPropertyChanged();
             }
         }
+
+        public StudentDetailViewModel DetailVM { get; }
 
         private ObservableCollection<Subject> _subjects;
         public ObservableCollection<Subject> Subjects
         {
             get => _subjects;
-            set { _subjects = value; OnPropertyChanged(nameof(Subjects)); }
+            set { _subjects = value; OnPropertyChanged(); }
         }
 
         private ObservableCollection<StudyRecord> _studyRecords;
         public ObservableCollection<StudyRecord> StudyRecords
         {
             get => _studyRecords;
-            set { _studyRecords = value; OnPropertyChanged(nameof(StudyRecords)); }
+            set { _studyRecords = value; OnPropertyChanged(); }
         }
 
         private StudyRecord _selectedRecord;
         public StudyRecord SelectedRecord
         {
             get => _selectedRecord;
-            set { _selectedRecord = value; OnPropertyChanged(nameof(SelectedRecord)); }
+            set { _selectedRecord = value; OnPropertyChanged(); }
         }
 
         public ICollectionView FilteredStudents { get; private set; }
@@ -60,30 +66,31 @@ namespace PBManager.MVVM.ViewModel
             set
             {
                 _searchText = value;
-                OnPropertyChanged(nameof(SearchText));
+                OnPropertyChanged();
                 FilteredStudents?.Refresh();
             }
         }
 
-        private Student _selectedStudent;
-        public Student SelectedStudent
+        private Student? _selectedStudent;
+        public Student? SelectedStudent
         {
             get => _selectedStudent;
             set
             {
-                _selectedStudent = value;
-                OnPropertyChanged(nameof(SelectedStudent));
+                if (SetProperty(ref _selectedStudent, value))
+                {
+                    WeakReferenceMessenger.Default.Send(new StudentSelectedMessage(value));
+                }
             }
         }
-
         public bool HasSelection => SelectedStudent != null;
 
-        public ICommand SaveCommand { get; }
+        public RelayCommand SaveCommand { get; }
 
         public StudyManagementViewModel()
         {
             Students = new ObservableCollection<Student>();
-            SaveCommand = new RelayCommand(async o => await SaveRecord());
+            DetailVM = new StudentDetailViewModel();
 
             if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
@@ -126,13 +133,6 @@ namespace PBManager.MVVM.ViewModel
             {
                 MessageBox.Show($"Error loading data: {ex.Message}");
             }
-        }
-
-        private async Task SaveRecord()
-        {
-            if (SelectedRecord == null) return;
-            App.Db.StudyRecords.Update(SelectedRecord);
-            await App.Db.SaveChangesAsync();
         }
     }
 }

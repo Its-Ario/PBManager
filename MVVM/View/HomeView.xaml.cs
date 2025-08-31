@@ -54,7 +54,7 @@ namespace PBManager.MVVM.View
                 LabelFormatter = value => value.ToString()
             });
 
-            var studyOvverTimeSeries = new SeriesCollection
+            var studyOverTimeSeries = new SeriesCollection
             {
                 new LineSeries
                 {
@@ -68,7 +68,7 @@ namespace PBManager.MVVM.View
 
             string[] weeks = { "هفته 1", "هفته 2", "هفته 3", "هفته 4", "هفته 5", "هفته 6", "هفته 7", "هفته 8" };
 
-            StudyOverTimeChart.Series = studyOvverTimeSeries;
+            StudyOverTimeChart.Series = studyOverTimeSeries;
 
             StudyOverTimeChart.AxisX.Add(new Axis
             {

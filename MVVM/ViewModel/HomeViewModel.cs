@@ -4,33 +4,31 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace PBManager.MVVM.ViewModel
 {
-    using System.ComponentModel;
-    using PBManager.Core;
-
     internal class HomeViewModel : ObservableObject
     {
         private int _avgStudyTime;
         public int AvgStudyTime
         {
             get => _avgStudyTime;
-            set { _avgStudyTime = value; OnPropertyChanged(nameof(AvgStudyTime)); }
+            set { _avgStudyTime = value; OnPropertyChanged(); }
         }
 
         private string _mostStudiedSubject;
         public string MostStudiedSubject
         {
             get => _mostStudiedSubject;
-            set { _mostStudiedSubject = value; OnPropertyChanged(nameof(MostStudiedSubject)); }
+            set { _mostStudiedSubject = value; OnPropertyChanged(); }
         }
 
         private int _classesCount;
         public int ClassesCount
         {
             get => _classesCount;
-            set { _classesCount = value; OnPropertyChanged(nameof(ClassesCount)); }
+            set { _classesCount = value; OnPropertyChanged(); }
         }
 
         public HomeViewModel()

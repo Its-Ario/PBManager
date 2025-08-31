@@ -3,18 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="390">
+             d:DesignHeight="450" d:DesignWidth="360">
 
     <Grid Margin="10" FlowDirection="RightToLeft">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding FullName}" 
+        <TextBlock Text="{Binding Student.FullName}" 
                Grid.Row="0"
                HorizontalAlignment="Center"
                FontWeight="Bold"
@@ -35,7 +37,7 @@
                    FontWeight="Bold"
                    Foreground="White"
                    Grid.Row="0" Grid.Column="0"/>
-            <TextBlock Text="{Binding ClassName}" 
+            <TextBlock Text="{Binding Student.ClassName}" 
                    Foreground="LightGray"
                    Grid.Row="0" Grid.Column="1"/>
 
@@ -43,13 +45,14 @@
                    FontWeight="Bold"
                    Foreground="White"
                    Grid.Row="1" Grid.Column="0"/>
-            <TextBlock Text="{Binding NationalCode}" 
+            <TextBlock Text="{Binding Student.NationalCode}" 
                    Foreground="LightGray"
                    Grid.Row="1" Grid.Column="1"/>
         </Grid>
 
         <Grid Grid.Row="2" Margin="0 20 0 0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -67,31 +70,44 @@
                        Foreground="LightGray"
                        Grid.Row="0" Grid.Column="1"/>
 
-            <TextBlock Text="بیشترین درس مطالعه شده:" 
+            <TextBlock Text="رتبه در کلاس:" 
                        FontWeight="Bold"
                        FontSize="11"
                        Foreground="White"
                        Grid.Row="1" Grid.Column="0"/>
-            <TextBlock Text="ادبیات" 
+            <TextBlock Text="1" 
                        Foreground="LightGray"
                        Grid.Row="1" Grid.Column="1"/>
+
+            <TextBlock Text="رتبه در پایه:" 
+                       FontWeight="Bold"
+                       FontSize="11"
+                       Foreground="White"
+                       Grid.Row="2" Grid.Column="0"/>
+            <TextBlock Text="1" 
+                       Foreground="LightGray"
+                       Grid.Row="2" Grid.Column="1"/>
         </Grid>
         <StackPanel Grid.Row="3"
                     Margin="0 20 0 0"
                     Orientation="Horizontal"
-                    VerticalAlignment="Top">
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center">
             <Button Content="ثبت اطلاعات مطالعه"
-                            Margin="5"
-                            Width="110" Height="50"
-                            Style="{StaticResource ModernButtonStyle}"/>
-            <Button Content="تاریخچه مطالعه"
-                Margin="5"
-                Width="110" Height="50"
-                Style="{StaticResource ModernButtonStyle}"/>
-            <Button Content=""
                     Margin="5"
                     Width="110" Height="50"
+                    Command="{Binding SubmitDataCommand}"
                     Style="{StaticResource ModernButtonStyle}"/>
+            <Button Content="تاریخچه مطالعه"
+                    Margin="5"
+                    Width="110" Height="50"
+                    Command="{Binding ViewHistoryCommand}"
+                    Style="{StaticResource ModernButtonStyle}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4">
+            <TextBlock Text="پیشرفت مطالعه" Foreground="White" Margin="0,0,0,5"/>
+            <lvc:CartesianChart Name="StudyOverTimeChart" Height="190"/>
         </StackPanel>
     </Grid>
 </UserControl>
