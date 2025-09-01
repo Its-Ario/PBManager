@@ -11,4 +11,18 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FlowDirection" Value="RightToLeft"/>
     </Style>
+
+    <Style x:Key="StudyInputTextBox" TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+        <Setter Property="Width" Value="70"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#444"/>
+        <Setter Property="Background" Value="#3a3848"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+        <Setter Property="Margin" Value="2"/>
+    </Style>
+
 </ResourceDictionary>

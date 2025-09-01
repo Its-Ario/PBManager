@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PBManager.MVVM.View"
         mc:Ignorable="d"
-        Title="AddStudyRecordView" Height="450" Width="350"
+        Title="AddStudyRecordView" Height="450" Width="800"
         WindowStyle="None"
         ResizeMode="NoResize"
         Background="Transparent"
@@ -14,12 +14,15 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+
+            <!-- Title Bar -->
             <Grid x:Name="TitleBar"
+                  Grid.Row="0"
                   MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
                   Background="Transparent">
-
                 <TextBlock Text="ثبت اطلاعات مطالعه"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
@@ -38,101 +41,266 @@
                             Content="✕" 
                             Style="{StaticResource WindowButtonStyle}"/>
                 </StackPanel>
+
+                <!-- Info Button moved to title bar -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0">
+                    <Button x:Name="InfoButton" Content="ℹ"
+                            Width="25" Height="25"
+                            FontWeight="Bold"
+                            Background="#353340"
+                            Foreground="White"
+                            BorderBrush="#272537"
+                            Click="InfoButton_Click"/>
+                    <Popup x:Name="InfoPopup" AllowsTransparency="True"
+                           PlacementTarget="{Binding ElementName=InfoButton}"
+                           Placement="Bottom"
+                           StaysOpen="False">
+                        <Border Background="#353340" 
+                                Padding="10" 
+                                CornerRadius="10"
+                                BorderBrush="#272537"
+                                BorderThickness="1">
+                            <TextBlock FlowDirection="RightToLeft" 
+                                       Text="ورودی به دقیقه وارد شود، برای رفتن به درس بعدی از دکمه Tab استفاده کنید."
+                                       Foreground="White"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       Width="200"/>
+                        </Border>
+                    </Popup>
+                </StackPanel>
             </Grid>
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <ItemsControl ItemsSource="{Binding SubjectEntries}" FlowDirection="RightToLeft">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="130"/>
-                                        <ColumnDefinition Width="70"/>
-                                    </Grid.ColumnDefinitions>
+            <!-- Main Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                                    <Label Content="{Binding Subject.Name}"
-                                           Margin="5"
-                                           FontSize="14"
-                                           Foreground="White"/>
+                    <!-- Header Row -->
+                    <Border Grid.Row="0" Background="#353340" CornerRadius="8,8,0,0" Padding="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                                    <Border x:Name="TextBoxBorder"
-                                            CornerRadius="10"
-                                            Background="#353340"
-                                            Width="70"
-                                            Height="30"
-                                            Grid.Column="1"
-                                            BorderThickness="1">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding (Validation.HasError), ElementName=MinutesTextBox}" Value="True">
-                                                        <Setter Property="BorderBrush" Value="Red"/>
-                                                    </DataTrigger>
+                            <TextBlock Text="درس" Grid.Column="0" Foreground="White" FontWeight="Bold" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="شنبه" Grid.Column="1" Foreground="White" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="یکشنبه" Grid.Column="2" Foreground="White" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="دوشنبه" Grid.Column="3" Foreground="White" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="سه‌شنبه" Grid.Column="4" Foreground="White" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="چهارشنبه" Grid.Column="5" Foreground="White" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="پنج‌شنبه" Grid.Column="6" Foreground="White" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="جمعه" Grid.Column="7" Foreground="White" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
 
-                                                    <DataTrigger Binding="{Binding (Validation.HasError), ElementName=MinutesTextBox}" Value="False">
-                                                        <Setter Property="BorderBrush" Value="Green"/>
-                                                    </DataTrigger>
+                    <!-- Subject Rows -->
+                    <Border Grid.Row="1" Background="#2a2836" CornerRadius="0,0,8,8" Padding="5">
+                        <ItemsControl ItemsSource="{Binding WeeklySubjectEntries}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,2" Padding="5" Background="#323040" CornerRadius="5">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
 
-                                                    <DataTrigger Binding="{Binding Text.Length, ElementName=MinutesTextBox}" Value="0">
-                                                        <Setter Property="BorderBrush" Value="#272537"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
+                                            <TextBlock Grid.Column="0" Text="{Binding Subject.Name}" 
+                                                       Foreground="White" 
+                                                       VerticalAlignment="Center" 
+                                                       HorizontalAlignment="Center"
+                                                       FontWeight="Medium"/>
 
-                                        <TextBox x:Name="MinutesTextBox"
-                                                 Text="{Binding MinutesStudied, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
-                                                 Style="{StaticResource ModernTextBox}"
-                                                 BorderThickness="0"
-                                                    Validation.ErrorTemplate="{x:Null}"
-                                                 BorderBrush="Transparent"
-                                                 Width="50"
-                                                 Background="Transparent"/>
+                                            <Border Grid.Column="1" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=SatTextBox}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=SatTextBox}" Value="False">
+                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Text.Length, ElementName=SatTextBox}" Value="0">
+                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBox x:Name="SatTextBox" Text="{Binding MinutesSat, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                         Style="{StaticResource StudyInputTextBox}" BorderThickness="0" Validation.ErrorTemplate="{x:Null}"
+                                                         BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"
+                                                         Width="50"/>
+                                            </Border>
+
+                                            <Border Grid.Column="2" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=SunTextBox}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=SunTextBox}" Value="False">
+                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Text.Length, ElementName=SunTextBox}" Value="0">
+                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBox x:Name="SunTextBox" Text="{Binding MinutesSun, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                         Style="{StaticResource StudyInputTextBox}" BorderThickness="0" Validation.ErrorTemplate="{x:Null}"
+                                                         BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
+                                            </Border>
+
+                                            <Border Grid.Column="3" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=MonTextBox}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=MonTextBox}" Value="False">
+                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Text.Length, ElementName=MonTextBox}" Value="0">
+                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBox x:Name="MonTextBox" Text="{Binding MinutesMon, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                         Style="{StaticResource StudyInputTextBox}" BorderThickness="0" Validation.ErrorTemplate="{x:Null}"
+                                                         BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
+                                            </Border>
+
+                                            <Border Grid.Column="4" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=TueTextBox}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=TueTextBox}" Value="False">
+                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Text.Length, ElementName=TueTextBox}" Value="0">
+                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBox x:Name="TueTextBox" Text="{Binding MinutesTue, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                         Style="{StaticResource StudyInputTextBox}" BorderThickness="0" Validation.ErrorTemplate="{x:Null}"
+                                                         BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
+                                            </Border>
+
+                                            <Border Grid.Column="5" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=WedTextBox}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=WedTextBox}" Value="False">
+                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Text.Length, ElementName=WedTextBox}" Value="0">
+                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBox x:Name="WedTextBox" Text="{Binding MinutesWed, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                         Style="{StaticResource StudyInputTextBox}" BorderThickness="0" Validation.ErrorTemplate="{x:Null}"
+                                                         BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
+                                            </Border>
+
+                                            <Border Grid.Column="6" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=ThuTextBox}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=ThuTextBox}" Value="False">
+                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Text.Length, ElementName=ThuTextBox}" Value="0">
+                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBox x:Name="ThuTextBox" Text="{Binding MinutesThu, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                         Style="{StaticResource StudyInputTextBox}" BorderThickness="0" Validation.ErrorTemplate="{x:Null}"
+                                                         BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
+                                            </Border>
+
+                                            <Border Grid.Column="7" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=FriTextBox}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding (Validation.HasError), ElementName=FriTextBox}" Value="False">
+                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Text.Length, ElementName=FriTextBox}" Value="0">
+                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBox x:Name="FriTextBox" Text="{Binding MinutesFri, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                         Style="{StaticResource StudyInputTextBox}" BorderThickness="0" Validation.ErrorTemplate="{x:Null}"
+                                                         BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
                                     </Border>
-
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
-                    <Button x:Name="submitBtn"
-                            Content="ثبت"
-                            Style="{StaticResource ModernButtonStyle}"
-                            Margin="10"
-                            Height="30"
-                            Width="110"
-                            Command="{Binding SubmitCommand}"/>
-                </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+                </Grid>
             </ScrollViewer>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,5,5,0">
-                <Button Content="ℹ"
-                        Width="25" Height="25"
-                        FontWeight="Bold"
-                        Background="#353340"
-                        Foreground="White"
-                        BorderBrush="#272537"
-                        Click="InfoButton_Click"/>
-
-
-                <Popup x:Name="InfoPopup" AllowsTransparency="True"
-                       PlacementTarget="{Binding ElementName=InfoButton}"
-                       Placement="Bottom"
-                       StaysOpen="False">
-                    <Border Background="#353340" 
-                            Padding="10" 
-                            CornerRadius="10"
-                            BorderBrush="#272537"
-                            BorderThickness="1">
-                        <TextBlock FlowDirection="RightToLeft" Text="ورودی به دقیقه وارد شود، برای رفتن به درس بعدی از دکمه Tab استفاده کنید."
-                       Foreground="White"
-                       FontSize="12"
-                       TextWrapping="Wrap"
-                       Width="200"/>
-                    </Border>
-                </Popup>
-            </StackPanel>
+            <Button x:Name="submitBtn"
+                    Grid.Row="2"
+                    Content="ثبت"
+                    Style="{StaticResource ModernButtonStyle}"
+                    Margin="10"
+                    Height="35"
+                    Width="120"
+                    HorizontalAlignment="Center"
+                    Command="{Binding SubmitCommand}"/>
         </Grid>
     </Border>
 </Window>

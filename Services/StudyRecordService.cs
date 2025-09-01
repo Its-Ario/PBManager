@@ -16,8 +16,25 @@ namespace PBManager.Services
 
         public async Task AddStudyRecordsAsync(List<StudyRecord> records)
         {
-            await App.Db.StudyRecords.AddRangeAsync(records);
-            await App.Db.SaveChangesAsync();
+            try
+            {
+                var startOfWeek = GetStartOfCurrentWeek();
+                var endOfWeek = startOfWeek.AddDays(6);
+
+                var existingRecords = App.Db.StudyRecords
+                    .Where(r => r.Student.Id == records.First().Student.Id &&
+                               r.Date >= startOfWeek && r.Date <= endOfWeek)
+                    .ToList();
+
+                App.Db.StudyRecords.RemoveRange(existingRecords);
+
+                App.Db.StudyRecords.AddRange(records);
+                await App.Db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error saving study records: {ex.Message}", ex);
+            }
         }
 
         public async Task<List<StudyRecord>> GetStudyRecordsForStudentAsync(int studentId)
@@ -136,43 +153,19 @@ namespace PBManager.Services
             return higherRankedCount + 1;
         }
 
-        public async Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, int TotalMinutes)>>
-    GetWeeklyStudyDataAsync()
+        public async Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>> GetWeeklyStudyDataAsync(int weeks = 8)
         {
-            var lastSubmission = await App.Db.StudyRecords
-                .OrderByDescending(r => r.Date)
-                .Select(r => r.Date)
-                .FirstOrDefaultAsync();
-
-            if (lastSubmission == default)
-                return new List<(DateTime, DateTime, int)>();
-
-            var startDate = lastSubmission.AddDays((-7 * 8) + 1);
-            var endDate = lastSubmission.AddDays(1);
-
-            var records = await App.Db.StudyRecords
-                .Where(r => r.Date >= startDate && r.Date <= endDate)
-                .OrderBy(r => r.Date)
-                .ToListAsync();
-
-            var results = new List<(DateTime, DateTime, int)>();
-
-            DateTime cursor = endDate;
-            while (cursor > startDate)
-            {
-                DateTime weekEnd = cursor.Date;
-                DateTime weekStart = cursor.AddDays(-6).Date;
-
-                int totalMinutes = records
-                    .Where(r => r.Date >= weekStart && r.Date <= weekEnd)
-                    .Sum(r => r.MinutesStudied);
-
-                results.Insert(0, (weekStart, weekEnd, totalMinutes));
-                cursor = weekStart.AddDays(-1);
-            }
-
-            return results;
+            var records = await GetRecordsForLastWeeksAsync(weeks: weeks);
+            Debug.WriteLine(records.Count);
+            return CalculateWeeklyAverages(records, weeks: weeks);
         }
+
+        public async Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>> GetWeeklyStudyDataAsync(int studentId, int weeks = 8)
+        {
+            var records = await GetRecordsForLastWeeksAsync(studentId, weeks);
+            return CalculateWeeklyAverages(records, singleStudent: true, weeks);
+        }
+
         public async Task<Subject?> GetMostStudiedWeeklySubjectAsync(int studentId)
         {
             var (startDate, endDate) = await GetCurrentWeekRangeForStudentAsync(studentId);
@@ -200,6 +193,77 @@ namespace PBManager.Services
                 .OrderByDescending(g => g.Sum(r => r.MinutesStudied))
                 .Select(g => g.Key)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> GetWeeklyAbsencesAsync()
+        {
+            var lastRecord = await App.Db.StudyRecords
+                .OrderByDescending(r => r.Date)
+                .FirstOrDefaultAsync();
+
+            if (lastRecord == null)
+            {
+                return await App.Db.Students.CountAsync();
+            }
+
+            DateTime endOfWeek = lastRecord.Date.Date;
+            DateTime startOfWeek = endOfWeek.AddDays(-7);
+
+            var studentsWithData = await App.Db.StudyRecords
+                .Where(r => r.Date >= startOfWeek && r.Date <= endOfWeek)
+                .Select(r => r.StudentId)
+                .Distinct()
+                .ToListAsync();
+
+            var studentsWithoutDataCount = await App.Db.Students
+                .CountAsync(s => !studentsWithData.Contains(s.Id));
+
+            return studentsWithoutDataCount;
+        }
+
+        public async Task<int> GetStudentAbsencesAsync(int studentId)
+        {
+            var lastRecord = await App.Db.StudyRecords
+                .OrderByDescending(r => r.Date)
+                .FirstOrDefaultAsync();
+
+            if (lastRecord == null)
+            {
+                return 0;
+            }
+
+            DateTime lastDate = lastRecord.Date.Date;
+
+            var firstStudentRecord = await App.Db.StudyRecords
+                .Where(r => r.StudentId == studentId)
+                .OrderBy(r => r.Date)
+                .FirstOrDefaultAsync();
+
+            if (firstStudentRecord == null)
+            {
+                int totalWeeks = (int)Math.Ceiling((lastDate - App.Db.StudyRecords.Min(r => r.Date)).TotalDays / 7.0);
+                return totalWeeks;
+            }
+
+            DateTime startDate = firstStudentRecord.Date.Date;
+
+            int absences = 0;
+
+            DateTime weekStart = startDate;
+            while (weekStart <= lastDate)
+            {
+                DateTime weekEnd = weekStart.AddDays(7);
+
+                bool hasRecord = await App.Db.StudyRecords
+                    .AnyAsync(r => r.StudentId == studentId && r.Date >= weekStart && r.Date < weekEnd);
+
+                if (!hasRecord)
+                    absences++;
+
+                weekStart = weekEnd;
+            }
+
+            return absences;
         }
 
         private async Task<(DateTime? startDate, DateTime? endDate)> GetCurrentWeekRangeAsync()
@@ -250,6 +314,72 @@ namespace PBManager.Services
             var startDate = lastRecord.AddDays(-6);
 
             return (startDate, endDate);
+        }
+
+        private DateTime GetStartOfCurrentWeek()
+        {
+            var today = DateTime.Today;
+            var daysFromSaturday = ((int)today.DayOfWeek + 1) % 7;
+            return today.AddDays(-daysFromSaturday);
+        }
+
+        private async Task<List<StudyRecord>> GetRecordsForLastWeeksAsync(int? studentId = null, int weeks = 8)
+        {
+            var lastSubmission = await App.Db.StudyRecords
+                .OrderByDescending(r => r.Date)
+                .Select(r => r.Date)
+                .FirstOrDefaultAsync();
+
+            if (lastSubmission == default)
+                return new List<StudyRecord>();
+
+            var startDate = lastSubmission.AddDays((-7 * weeks) + 1);
+            var endDate = lastSubmission.AddDays(1);
+
+            var query = App.Db.StudyRecords
+                .Where(r => r.Date >= startDate && r.Date <= endDate);
+
+            if (studentId.HasValue)
+                query = query.Where(r => r.StudentId == studentId.Value);
+
+            return await query.OrderBy(r => r.Date).ToListAsync();
+        }
+
+        private List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>
+    CalculateWeeklyAverages(List<StudyRecord> records, bool singleStudent = false, int weeks = 8)
+        {
+            var results = new List<(DateTime, DateTime, double)>();
+
+            if (records.Count == 0)
+                return results;
+
+            DateTime lastSubmission = records.Max(r => r.Date);
+            DateTime startDate = lastSubmission.AddDays((-7 * weeks) + 1);
+            DateTime endDate = lastSubmission.AddDays(1);
+
+            DateTime cursor = endDate;
+            while (cursor > startDate)
+            {
+                DateTime weekEnd = cursor.Date;
+                DateTime weekStart = cursor.AddDays(-6).Date;
+
+                var weekRecords = records
+                    .Where(r => r.Date >= weekStart && r.Date <= weekEnd)
+                    .ToList();
+
+                int totalMinutes = weekRecords.Sum(r => r.MinutesStudied);
+
+                double averageMinutes = singleStudent
+                    ? totalMinutes
+                    : weekRecords.Select(r => r.StudentId).Distinct().Count() > 0
+                        ? (double)totalMinutes / weekRecords.Select(r => r.StudentId).Distinct().Count()
+                        : 0;
+
+                results.Insert(0, (weekStart, weekEnd, averageMinutes));
+                cursor = weekStart.AddDays(-1);
+            }
+
+            return results;
         }
     }
 }

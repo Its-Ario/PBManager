@@ -3,12 +3,31 @@ using PBManager.Services;
 using PBManager.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LiveCharts.Wpf;
+using LiveCharts;
+using System.Windows.Media;
+using System.Diagnostics;
 
 namespace PBManager.MVVM.ViewModel
 {
     public class StudentDetailViewModel : ObservableObject, IRecipient<StudentSelectedMessage>
     {
-        private StudyRecordService _studyRecordService;
+        private readonly StudyRecordService _studyRecordService;
+
+        private SeriesCollection _studyOverTimeSeries;
+        public SeriesCollection StudyOverTimeSeries
+        {
+            get => _studyOverTimeSeries;
+            set => SetProperty(ref _studyOverTimeSeries, value);
+        }
+
+        private List<string> _studyOverTimeLabels;
+        public List<string> StudyOverTimeLabels
+        {
+            get => _studyOverTimeLabels;
+            set => SetProperty(ref _studyOverTimeLabels, value);
+        }
+
 
         private Student? _student;
         public Student? Student
@@ -63,6 +82,8 @@ namespace PBManager.MVVM.ViewModel
                 AvgWeeklyStudy = await avgStudyTask;
                 ClassRank = await classRankTask;
                 GlobalRank = await globalRankTask;
+
+                await LoadStudyOverTimeChartAsync(Student.Id);
             }
             catch (OperationCanceledException)
             {
@@ -72,6 +93,41 @@ namespace PBManager.MVVM.ViewModel
             {
                 Console.WriteLine($"Failed to load student data: {ex.Message}");
             }
+        }
+
+        public async Task LoadStudyOverTimeChartAsync(int studentId)
+        {
+            var weeklyData = await _studyRecordService.GetWeeklyStudyDataAsync(studentId, 4);
+
+            Debug.WriteLine(weeklyData);
+
+            var values = new ChartValues<double>();
+            var labels = new List<string>();
+
+            int i = 1;
+            foreach (var (start, end, minutes) in weeklyData)
+            {
+                values.Add(minutes);
+                Debug.WriteLine(minutes);
+                labels.Add($"هفته {i++}");
+            }
+
+            StudyOverTimeSeries = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "(زمان مطالعه (دقیقه",
+                    Values = values,
+                    Stroke = new BrushConverter().ConvertFrom("#5C6BC0") as SolidColorBrush,
+                    Fill = Brushes.Transparent,
+                    PointGeometrySize = 10
+                }
+            };
+
+            StudyOverTimeLabels = labels;
+
+            Debug.WriteLine(StudyOverTimeLabels);
+            Debug.WriteLine(StudyOverTimeSeries.ToList());
         }
     }
 }

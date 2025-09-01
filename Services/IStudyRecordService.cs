@@ -1,4 +1,5 @@
 ﻿using PBManager.MVVM.Model;
+using System.Threading.Tasks;
 
 namespace PBManager.Services
 {
@@ -14,6 +15,9 @@ namespace PBManager.Services
         Task<int> GetClassWeeklyRankAsync(int studentId);
         Task<Subject?> GetMostStudiedWeeklySubjectAsync(int studentId);
         Task<Subject?> GetMostStudiedWeeklySubjectAsync();
-        Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, int TotalMinutes)>> GetWeeklyStudyDataAsync();
+        Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>> GetWeeklyStudyDataAsync(int weeks = 8);
+        Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>> GetWeeklyStudyDataAsync(int studentId, int weeks = 8);
+        Task<int> GetWeeklyAbsencesAsync();
+        Task<int> GetStudentAbsencesAsync(int studentId);
     }
 }

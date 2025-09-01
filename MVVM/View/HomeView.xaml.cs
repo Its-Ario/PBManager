@@ -30,29 +30,6 @@ namespace PBManager.MVVM.View
         {
             InitializeComponent();
             this.DataContext = new HomeViewModel();
-
-            SubjectBarChart.Series = new SeriesCollection
-            {
-                new ColumnSeries
-                {
-                    Title = "میانگین",
-                    Values = new ChartValues<double> { 85, 78, 92, 70, 95 },
-                    Fill = new BrushConverter().ConvertFrom("#5C6BC0") as SolidColorBrush,
-
-                }
-            };
-
-            SubjectBarChart.AxisX.Add(new Axis
-            {
-                Labels = new[] { "ریاضی", "زیست", "فیزیک", "شیمی", "ادبیات" },
-                Separator = new LiveCharts.Wpf.Separator { Step = 1, IsEnabled = false }
-            });
-
-            SubjectBarChart.AxisY.Add(new Axis
-            {
-                Title = "نمره",
-                LabelFormatter = value => value.ToString()
-            });
         }
     }
 }

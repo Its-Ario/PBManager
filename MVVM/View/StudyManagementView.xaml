@@ -76,7 +76,7 @@
                             <GridViewColumn Header="کلاس" Width="100" HeaderContainerStyle="{StaticResource ModernColumnHeader}">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding ClassName}" Style="{StaticResource DataTextBlock}"/>
+                                        <TextBlock Text="{Binding Class.Name}" Style="{StaticResource DataTextBlock}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
