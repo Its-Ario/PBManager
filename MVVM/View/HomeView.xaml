@@ -19,9 +19,11 @@
 
         <Border Background="#22202F" CornerRadius="8" Padding="15" Margin="0,0,10,0" Grid.Column="0">
             <StackPanel FlowDirection="RightToLeft">
-                <TextBlock Text="{Binding AvgStudyTime, StringFormat=میانگین ساعت مطالعه: {0}}" 
+                <TextBlock Text="اطلاعات هفتگی" Foreground="White" FontSize="14" Margin="0,0,0,10"/>
+                <TextBlock Text="{Binding AvgStudyTime, StringFormat=میانگین دقیقه مطالعه: {0}}" 
                                Foreground="White" FontSize="14" Margin="0,0,0,5"/>
-                <TextBlock Text="{Binding MostStudiedSubject, StringFormat=بیشترین درس مطالعه شده: {0}}" 
+                <TextBlock Text="{Binding MostStudiedSubject, StringFormat=بیشترین درس مطالعه شده: {0}}"
+                               TextWrapping="Wrap"
                                Foreground="White" FontSize="14" Margin="0,0,0,5"/>
                 <TextBlock Text="{Binding ClassesCount, StringFormat=تعداد کلاس‌ها: {0}}" 
                                Foreground="White" FontSize="14"/>
@@ -31,7 +33,15 @@
         <Border Background="#22202F" CornerRadius="8" Padding="10" Grid.Column="1">
             <StackPanel>
                 <TextBlock Text="پیشرفت تحصیلی" Foreground="White" FontSize="14" Margin="0,0,0,5" HorizontalAlignment="Right"/>
-                <lvc:CartesianChart Name="StudyOverTimeChart" Height="190"/>
+                <lvc:CartesianChart Series="{Binding StudyOverTimeSeries}" Height="190">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="هفته‌ها" Labels="{Binding StudyOverTimeLabels}" />
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="(زمان مطالعه (دقیقه"
+                                  MinValue="0"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
             </StackPanel>
         </Border>
 

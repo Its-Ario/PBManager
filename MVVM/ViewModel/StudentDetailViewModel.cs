@@ -3,7 +3,6 @@ using PBManager.Services;
 using PBManager.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Diagnostics;
 
 namespace PBManager.MVVM.ViewModel
 {
@@ -47,14 +46,32 @@ namespace PBManager.MVVM.ViewModel
         public void Receive(StudentSelectedMessage message)
         {
             Student = message.Value;
+
             _ = LoadAsync(Student.Id);
         }
 
         public async Task LoadAsync(int studentId)
         {
-            AvgWeeklyStudy = await _studyRecordService.GetWeeklyAverageAsync(studentId);
-            ClassRank = await _studyRecordService.GetClassRankAsync(studentId);
-            GlobalRank = await _studyRecordService.GetGlobalRankAsync(studentId);
+            try
+            {
+                Task<double> avgStudyTask = _studyRecordService.GetStudentWeeklyAverageAsync(studentId);
+                Task<int> classRankTask = _studyRecordService.GetClassWeeklyRankAsync(studentId);
+                Task<int> globalRankTask = _studyRecordService.GetGlobalWeeklyRankAsync(studentId);
+
+                await Task.WhenAll(avgStudyTask, classRankTask, globalRankTask);
+
+                AvgWeeklyStudy = await avgStudyTask;
+                ClassRank = await classRankTask;
+                GlobalRank = await globalRankTask;
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("Data loading was cancelled.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to load student data: {ex.Message}");
+            }
         }
     }
 }

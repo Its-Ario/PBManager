@@ -53,35 +53,6 @@ namespace PBManager.MVVM.View
                 Title = "نمره",
                 LabelFormatter = value => value.ToString()
             });
-
-            var studyOverTimeSeries = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Title = "نمره",
-                    Values = new ChartValues<double> { 85, 88, 82, 90, 87, 91, 84, 89 },
-                    Stroke = new BrushConverter().ConvertFrom("#5C6BC0") as SolidColorBrush,
-                    Fill = Brushes.Transparent,
-                    PointGeometrySize = 10
-                }
-            };
-
-            string[] weeks = { "هفته 1", "هفته 2", "هفته 3", "هفته 4", "هفته 5", "هفته 6", "هفته 7", "هفته 8" };
-
-            StudyOverTimeChart.Series = studyOverTimeSeries;
-
-            StudyOverTimeChart.AxisX.Add(new Axis
-            {
-                Title = "هفته‌ها",
-                Labels = weeks,
-                Separator = new LiveCharts.Wpf.Separator { Step = 1, IsEnabled = true }
-            });
-
-            StudyOverTimeChart.AxisY.Add(new Axis
-            {
-                Title = "نمره",
-                LabelFormatter = value => value.ToString()
-            });
         }
     }
 }
