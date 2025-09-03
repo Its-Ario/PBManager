@@ -41,11 +41,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget-
 
-    - name: Restore NuGet packages
-      run: dotnet restore "${{ env.Solution_Path }}"
+    - name: Restore NuGet packages with MSBuild
+      run: msbuild "${{ env.Solution_Path }}" /t:Restore /p:Configuration=${{ matrix.configuration }}
 
-    - name: Build Solution
-      run: dotnet build "${{ env.Solution_Path }}" -c ${{ matrix.configuration }}
+    - name: Build Solution with MSBuild
+      run: msbuild "${{ env.Solution_Path }}" /p:Configuration=${{ matrix.configuration }}
 
     - name: Decode the PFX certificate
       run: |
@@ -55,14 +55,7 @@ jobs:
       shell: pwsh
 
     - name: Create MSIX App Package
-      run: msbuild "${{ env.Wap_Project_Path }}" `
-            /p:Configuration=${{ matrix.configuration }} `
-            /p:UapAppxPackageBuildMode=StoreUpload `
-            /p:AppxBundle=Always `
-            /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateKeyFile="${{ env.Wap_Project_Directory }}\GitHubActionsWorkflow.pfx" `
-            /p:PackageCertificatePassword="${{ secrets.Pfx_Key }}" `
-            /p:PackageCertificateThumbprint=""
+      run: msbuild "${{ env.Wap_Project_Path }}" /p:Configuration=${{ matrix.configuration }} /p:UapAppxPackageBuildMode=StoreUpload /p:AppxBundle=Always /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword="${{ secrets.Pfx_Key }}" /p:PackageCertificateThumbprint=""
       env:
         Appx_Bundle_Platforms: x86|x64
 
