@@ -55,7 +55,7 @@ jobs:
       shell: pwsh
 
     - name: Create MSIX App Package
-      run: msbuild "${{ env.Wap_Project_Path }}" /p:Configuration=${{ matrix.configuration }} /p:UapAppxPackageBuildMode=StoreUpload /p:AppxBundle=Always /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="${{ env.Wap_Project_Directory }}/GitHubActionsWorkflow.pfx" /p:PackageCertificatePassword="${{ secrets.Pfx_Key }}" /p:PackageCertificateThumbprint=""
+      run: msbuild "${{ env.Wap_Project_Path }}" /p:Configuration=${{ matrix.configuration }} /p:UapAppxPackageBuildMode=StoreUpload /p:AppxBundle=Always /p:AppxPackageSigningEnabled=true /p:PackageCertificateKeyFile="${{ github.workspace }}/${{ env.Wap_Project_Directory }}/GitHubActionsWorkflow.pfx" /p:PackageCertificatePassword="${{ secrets.Pfx_Key }}" /p:PackageCertificateThumbprint=""
       env:
         Appx_Bundle_Platforms: x86|x64
 
