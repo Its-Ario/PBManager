@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PBManager", "PBManager.csproj", "{F8E8F117-BF11-4617-A706-125859F924EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PBManager", ".\PBManager\PBManager.csproj", "{F8E8F117-BF11-4617-A706-125859F924EF}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "PBManager.Package", "..\PBManager.Package\PBManager.Package.wapproj", "{F275281E-6105-4956-983C-5EA1BD2D3A66}"
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "PBManager.Package", ".\PBManager.Package\PBManager.Package.wapproj", "{F275281E-6105-4956-983C-5EA1BD2D3A66}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
