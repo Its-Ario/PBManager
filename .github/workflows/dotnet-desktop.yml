@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Solution_Name: PBManager\PBManager.sln
+      Solution_Name: PBManager.sln
       Wap_Project_Directory: PBManager.Package
       Wap_Project_Path: PBManager.Package\PBManager.Package.wapproj
 
