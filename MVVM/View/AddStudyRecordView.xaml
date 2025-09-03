@@ -18,16 +18,27 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Title Bar -->
             <Grid x:Name="TitleBar"
                   Grid.Row="0"
                   MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
                   Background="Transparent">
-                <TextBlock Text="ثبت اطلاعات مطالعه"
-                           VerticalAlignment="Center"
+                <!-- Dynamic title based on edit mode -->
+                <TextBlock VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Foreground="White"
-                           FontSize="20"/>
+                           FontSize="20">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="ثبت اطلاعات مطالعه"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                    <Setter Property="Text" Value="ویرایش اطلاعات مطالعه"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
                 <StackPanel Orientation="Horizontal" 
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
@@ -42,7 +53,6 @@
                             Style="{StaticResource WindowButtonStyle}"/>
                 </StackPanel>
 
-                <!-- Info Button moved to title bar -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0">
                     <Button x:Name="InfoButton" Content="ℹ"
                             Width="25" Height="25"
@@ -61,17 +71,26 @@
                                 BorderBrush="#272537"
                                 BorderThickness="1">
                             <TextBlock FlowDirection="RightToLeft" 
-                                       Text="ورودی به دقیقه وارد شود، برای رفتن به درس بعدی از دکمه Tab استفاده کنید."
                                        Foreground="White"
                                        FontSize="12"
                                        TextWrapping="Wrap"
-                                       Width="200"/>
+                                       Width="200">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="ورودی به دقیقه وارد شود، برای رفتن به درس بعدی از دکمه Tab استفاده کنید."/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                                <Setter Property="Text" Value="در حال ویرایش اطلاعات موجود. تغییرات اعمال شده جایگزین داده‌های قبلی خواهد شد."/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Border>
                     </Popup>
                 </StackPanel>
             </Grid>
 
-            <!-- Main Content -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="10">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -79,7 +98,6 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Header Row -->
                     <Border Grid.Row="0" Background="#353340" CornerRadius="8,8,0,0" Padding="5">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -112,7 +130,6 @@
                         </Grid>
                     </Border>
 
-                    <!-- Subject Rows -->
                     <Border Grid.Row="1" Background="#2a2836" CornerRadius="0,0,8,8" Padding="5">
                         <ItemsControl ItemsSource="{Binding WeeklySubjectEntries}">
                             <ItemsControl.ItemTemplate>
@@ -136,6 +153,7 @@
                                                        HorizontalAlignment="Center"
                                                        FontWeight="Medium"/>
 
+                                            <!-- Saturday -->
                                             <Border Grid.Column="1" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
@@ -158,6 +176,7 @@
                                                          Width="50"/>
                                             </Border>
 
+                                            <!-- Sunday -->
                                             <Border Grid.Column="2" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
@@ -179,6 +198,7 @@
                                                          BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
                                             </Border>
 
+                                            <!-- Monday -->
                                             <Border Grid.Column="3" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
@@ -200,6 +220,7 @@
                                                          BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
                                             </Border>
 
+                                            <!-- Tuesday -->
                                             <Border Grid.Column="4" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
@@ -221,6 +242,7 @@
                                                          BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
                                             </Border>
 
+                                            <!-- Wednesday -->
                                             <Border Grid.Column="5" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
@@ -242,6 +264,7 @@
                                                          BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
                                             </Border>
 
+                                            <!-- Thursday -->
                                             <Border Grid.Column="6" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
@@ -263,6 +286,7 @@
                                                          BorderBrush="Transparent" Background="Transparent" HorizontalContentAlignment="Center"/>
                                             </Border>
 
+                                            <!-- Friday -->
                                             <Border Grid.Column="7" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
@@ -294,13 +318,22 @@
 
             <Button x:Name="submitBtn"
                     Grid.Row="2"
-                    Content="ثبت"
-                    Style="{StaticResource ModernButtonStyle}"
                     Margin="10"
                     Height="35"
                     Width="120"
                     HorizontalAlignment="Center"
-                    Command="{Binding SubmitCommand}"/>
+                    Command="{Binding SubmitCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+                        <Setter Property="Content" Value="ثبت"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                <Setter Property="Content" Value="بروزرسانی"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </Grid>
     </Border>
 </Window>

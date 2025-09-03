@@ -26,5 +26,11 @@ namespace PBManager.MVVM.View
             AddStudyRecordView win = new(ViewModel?.Student);
             win.Show();
         }
+
+        private void viewHistory_Click(object sender, RoutedEventArgs e)
+        {
+            StudyHistoryView win = new(ViewModel?.Student);
+            win.Show();
+        }
     }
 }

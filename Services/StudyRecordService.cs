@@ -14,19 +14,17 @@ namespace PBManager.Services
             await App.Db.SaveChangesAsync();
         }
 
-        public async Task AddStudyRecordsAsync(List<StudyRecord> records)
+        public async Task AddStudyRecordsAsync(List<StudyRecord> records, DateTime startOfWeek)
         {
             try
             {
-                var startOfWeek = GetStartOfCurrentWeek();
+                startOfWeek = startOfWeek.Date;
                 var endOfWeek = startOfWeek.AddDays(6);
 
                 var existingRecords = App.Db.StudyRecords
                     .Where(r => r.Student.Id == records.First().Student.Id &&
                                r.Date >= startOfWeek && r.Date <= endOfWeek)
                     .ToList();
-
-                App.Db.StudyRecords.RemoveRange(existingRecords);
 
                 App.Db.StudyRecords.AddRange(records);
                 await App.Db.SaveChangesAsync();
@@ -156,7 +154,6 @@ namespace PBManager.Services
         public async Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>> GetWeeklyStudyDataAsync(int weeks = 8)
         {
             var records = await GetRecordsForLastWeeksAsync(weeks: weeks);
-            Debug.WriteLine(records.Count);
             return CalculateWeeklyAverages(records, weeks: weeks);
         }
 
@@ -266,6 +263,76 @@ namespace PBManager.Services
             return absences;
         }
 
+        public async Task DeleteStudyRecordsForWeekAsync(Student student, DateTime startOfWeek)
+        {
+            var weekStart = startOfWeek.Date;
+            var weekEnd = weekStart.AddDays(6);
+
+            var recordsToDelete = await Task.Run(() =>
+                App.Db.StudyRecords
+                    .Where(r => r.Student.Id == student.Id &&
+                               r.Date.Date >= weekStart &&
+                               r.Date.Date <= weekEnd)
+                    .ToList());
+
+            if (recordsToDelete.Any())
+            {
+                App.Db.StudyRecords.RemoveRange(recordsToDelete);
+                await App.Db.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<StudyRecord>> GetStudyRecordsForWeekAsync(Student student, DateTime startOfWeek)
+        {
+            var weekStart = startOfWeek.Date;
+            var weekEnd = weekStart.AddDays(6);
+
+            var records = await Task.Run(() =>
+                App.Db.StudyRecords
+                    .Include(r => r.Subject)
+                    .Where(r => r.Student.Id == student.Id &&
+                               r.Date.Date >= weekStart &&
+                               r.Date.Date <= weekEnd)
+                    .ToList());
+
+            return records;
+        }
+        public static DateTime GetPersianStartOfWeek(DateTime date)
+        {
+            var dateOnly = date.Date;
+
+            int daysFromSaturday;
+            switch (dateOnly.DayOfWeek)
+            {
+                case DayOfWeek.Saturday:
+                    daysFromSaturday = 0;
+                    break;
+                case DayOfWeek.Sunday:
+                    daysFromSaturday = 1;
+                    break;
+                case DayOfWeek.Monday:
+                    daysFromSaturday = 2;
+                    break;
+                case DayOfWeek.Tuesday:
+                    daysFromSaturday = 3;
+                    break;
+                case DayOfWeek.Wednesday:
+                    daysFromSaturday = 4;
+                    break;
+                case DayOfWeek.Thursday:
+                    daysFromSaturday = 5;
+                    break;
+                case DayOfWeek.Friday:
+                    daysFromSaturday = 6;
+                    break;
+                default:
+                    daysFromSaturday = 0;
+                    break;
+            }
+
+            return dateOnly.AddDays(-daysFromSaturday);
+        }
+
         private async Task<(DateTime? startDate, DateTime? endDate)> GetCurrentWeekRangeAsync()
         {
             var lastRecord = await App.Db.StudyRecords
@@ -316,13 +383,6 @@ namespace PBManager.Services
             return (startDate, endDate);
         }
 
-        private DateTime GetStartOfCurrentWeek()
-        {
-            var today = DateTime.Today;
-            var daysFromSaturday = ((int)today.DayOfWeek + 1) % 7;
-            return today.AddDays(-daysFromSaturday);
-        }
-
         private async Task<List<StudyRecord>> GetRecordsForLastWeeksAsync(int? studentId = null, int weeks = 8)
         {
             var lastSubmission = await App.Db.StudyRecords
@@ -346,7 +406,7 @@ namespace PBManager.Services
         }
 
         private List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>
-    CalculateWeeklyAverages(List<StudyRecord> records, bool singleStudent = false, int weeks = 8)
+CalculateWeeklyAverages(List<StudyRecord> records, bool singleStudent = false, int weeks = 8)
         {
             var results = new List<(DateTime, DateTime, double)>();
 

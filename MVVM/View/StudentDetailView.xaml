@@ -4,8 +4,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:conv="clr-namespace:PBManager.Converters"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="360">
+
+    <UserControl.Resources>
+        <conv:MinuteToHourConverter x:Key="MinuteToHourConverter"/>
+    </UserControl.Resources>
 
     <Grid Margin="10" FlowDirection="RightToLeft">
         <Grid.RowDefinitions>
@@ -66,7 +71,7 @@
                        FontSize="11"
                        Foreground="White"
                        Grid.Row="0" Grid.Column="0"/>
-            <TextBlock Text="{Binding AvgWeeklyStudy}" 
+            <TextBlock Text="{Binding AvgWeeklyStudy, Converter={StaticResource MinuteToHourConverter}}" 
                        Foreground="LightGray"
                        Grid.Row="0" Grid.Column="1"/>
 
@@ -97,13 +102,12 @@
                     x:Name="submitNewRecord"
                     Margin="5"
                     Width="110" Height="50"
-                    Command="{Binding SubmitDataCommand}"
                     Style="{StaticResource ModernButtonStyle}" Click="submitNewRecord_Click"/>
             <Button Content="تاریخچه مطالعه"
+                    x:Name="viewHistory"
                     Margin="5"
                     Width="110" Height="50"
-                    Command="{Binding ViewHistoryCommand}"
-                    Style="{StaticResource ModernButtonStyle}"/>
+                    Style="{StaticResource ModernButtonStyle}" Click="viewHistory_Click"/>
         </StackPanel>
 
         <StackPanel Grid.Row="4">

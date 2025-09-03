@@ -99,8 +99,6 @@ namespace PBManager.MVVM.ViewModel
         {
             var weeklyData = await _studyRecordService.GetWeeklyStudyDataAsync(studentId, 4);
 
-            Debug.WriteLine(weeklyData);
-
             var values = new ChartValues<double>();
             var labels = new List<string>();
 
@@ -108,7 +106,6 @@ namespace PBManager.MVVM.ViewModel
             foreach (var (start, end, minutes) in weeklyData)
             {
                 values.Add(minutes);
-                Debug.WriteLine(minutes);
                 labels.Add($"هفته {i++}");
             }
 
@@ -125,9 +122,6 @@ namespace PBManager.MVVM.ViewModel
             };
 
             StudyOverTimeLabels = labels;
-
-            Debug.WriteLine(StudyOverTimeLabels);
-            Debug.WriteLine(StudyOverTimeSeries.ToList());
         }
     }
 }

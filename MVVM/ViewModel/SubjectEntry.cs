@@ -76,21 +76,45 @@ namespace PBManager.MVVM.ViewModel
 
         public Dictionary<DayOfWeek, int> GetWeeklyMinutes()
         {
-            return new Dictionary<DayOfWeek, int>
-        {
-            { DayOfWeek.Saturday, GetMinutesForDay(MinutesSat) },
-            { DayOfWeek.Sunday, GetMinutesForDay(MinutesSun) },
-            { DayOfWeek.Monday, GetMinutesForDay(MinutesMon) },
-            { DayOfWeek.Tuesday, GetMinutesForDay(MinutesTue) },
-            { DayOfWeek.Wednesday, GetMinutesForDay(MinutesWed) },
-            { DayOfWeek.Thursday, GetMinutesForDay(MinutesThu) },
-            { DayOfWeek.Friday, GetMinutesForDay(MinutesFri) }
-        };
-        }
+            var weeklyMinutes = new Dictionary<DayOfWeek, int>();
 
-        private int GetMinutesForDay(string minutesString)
-        {
-            return int.TryParse(minutesString, out var minutes) ? minutes : 0;
+            // Parse and validate each day's input
+            if (int.TryParse(MinutesSat, out int satMinutes) && satMinutes >= 0)
+                weeklyMinutes[DayOfWeek.Saturday] = satMinutes;
+            else
+                weeklyMinutes[DayOfWeek.Saturday] = 0;
+
+            if (int.TryParse(MinutesSun, out int sunMinutes) && sunMinutes >= 0)
+                weeklyMinutes[DayOfWeek.Sunday] = sunMinutes;
+            else
+                weeklyMinutes[DayOfWeek.Sunday] = 0;
+
+            if (int.TryParse(MinutesMon, out int monMinutes) && monMinutes >= 0)
+                weeklyMinutes[DayOfWeek.Monday] = monMinutes;
+            else
+                weeklyMinutes[DayOfWeek.Monday] = 0;
+
+            if (int.TryParse(MinutesTue, out int tueMinutes) && tueMinutes >= 0)
+                weeklyMinutes[DayOfWeek.Tuesday] = tueMinutes;
+            else
+                weeklyMinutes[DayOfWeek.Tuesday] = 0;
+
+            if (int.TryParse(MinutesWed, out int wedMinutes) && wedMinutes >= 0)
+                weeklyMinutes[DayOfWeek.Wednesday] = wedMinutes;
+            else
+                weeklyMinutes[DayOfWeek.Wednesday] = 0;
+
+            if (int.TryParse(MinutesThu, out int thuMinutes) && thuMinutes >= 0)
+                weeklyMinutes[DayOfWeek.Thursday] = thuMinutes;
+            else
+                weeklyMinutes[DayOfWeek.Thursday] = 0;
+
+            if (int.TryParse(MinutesFri, out int friMinutes) && friMinutes >= 0)
+                weeklyMinutes[DayOfWeek.Friday] = friMinutes;
+            else
+                weeklyMinutes[DayOfWeek.Friday] = 0;
+
+            return weeklyMinutes;
         }
 
         public void ClearAllEntries()

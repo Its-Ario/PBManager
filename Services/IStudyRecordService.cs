@@ -6,7 +6,7 @@ namespace PBManager.Services
     public interface IStudyRecordService
     {
         Task AddStudyRecordAsync(StudyRecord record);
-        Task AddStudyRecordsAsync(List<StudyRecord> records);
+        Task AddStudyRecordsAsync(List<StudyRecord> records, DateTime startOfWeek);
         Task<List<StudyRecord>> GetStudyRecordsForStudentAsync(int studentId);
         Task<double> GetStudentWeeklyAverageAsync(int studentId);
         Task<double> GetWeeklyAverageAsync();

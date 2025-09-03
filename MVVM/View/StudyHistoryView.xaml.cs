@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using PBManager.MVVM.Model;
+﻿using PBManager.MVVM.Model;
 using PBManager.MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -18,24 +17,15 @@ using System.Windows.Shapes;
 namespace PBManager.MVVM.View
 {
     /// <summary>
-    /// Interaction logic for AddStudyRecordView.xaml
+    /// Interaction logic for StudyHistoryView.xaml
     /// </summary>
-    public partial class AddStudyRecordView : Window
+    public partial class StudyHistoryView : Window
     {
-        public AddStudyRecordView(Student student)
+        public StudyHistoryView(Student student)
         {
             InitializeComponent();
-            this.DataContext = new AddStudyRecordViewModel(student);
-            this.Title = "ثبت اطلاعات مطالعه";
+            this.DataContext = new StudyHistoryViewModel(student);
         }
-
-        public AddStudyRecordView(Student student, IEnumerable<StudyRecord> existingRecords)
-        {
-            InitializeComponent();
-            this.DataContext = new AddStudyRecordViewModel(student, existingRecords);
-            this.Title = "ویرایش اطلاعات مطالعه";
-        }
-
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
@@ -52,11 +42,6 @@ namespace PBManager.MVVM.View
             {
                 this.DragMove();
             }
-        }
-
-        private void InfoButton_Click(object sender, RoutedEventArgs e)
-        {
-            InfoPopup.IsOpen = !InfoPopup.IsOpen;
         }
     }
 }
