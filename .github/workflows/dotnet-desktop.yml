@@ -42,10 +42,10 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Restore NuGet packages
-      run: dotnet restore "${{ env.Solution_Path }}"
+      run: dotnet restore "${{ env.Solution_Path }}" -r win-x86
 
-    - name: Build Solution with MSBuild
-      run: msbuild "${{ env.Solution_Path }}" /p:Configuration=${{ matrix.configuration }}
+    - name: Build Solution
+      run: dotnet build "${{ env.Solution_Path }}" -c ${{ matrix.configuration }} -r win-x86
 
     - name: Decode the PFX certificate
       run: |

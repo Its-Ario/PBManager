@@ -184,10 +184,6 @@
           "warn": true,
           "downloadDependencies": [
             {
-              "name": "Microsoft.AspNetCore.App.Runtime.win-arm64",
-              "version": "[8.0.11, 8.0.11]"
-            },
-            {
               "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
               "version": "[8.0.11, 8.0.11]"
             },
@@ -196,19 +192,11 @@
               "version": "[8.0.11, 8.0.11]"
             },
             {
-              "name": "Microsoft.NETCore.App.Runtime.win-arm64",
-              "version": "[8.0.11, 8.0.11]"
-            },
-            {
               "name": "Microsoft.NETCore.App.Runtime.win-x64",
               "version": "[8.0.11, 8.0.11]"
             },
             {
               "name": "Microsoft.NETCore.App.Runtime.win-x86",
-              "version": "[8.0.11, 8.0.11]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Runtime.win-arm64",
               "version": "[8.0.11, 8.0.11]"
             },
             {
@@ -232,9 +220,6 @@
         }
       },
       "runtimes": {
-        "win-arm64": {
-          "#import": []
-        },
         "win-x64": {
           "#import": []
         },
