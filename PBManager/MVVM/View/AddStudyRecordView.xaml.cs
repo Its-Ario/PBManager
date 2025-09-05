@@ -46,5 +46,13 @@ namespace PBManager.MVVM.View
         {
             InfoPopup.IsOpen = !InfoPopup.IsOpen;
         }
+
+        private void WeekStartDatePicker_SelectedDateChanged(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is AddStudyRecordViewModel viewModel && WeekStartDatePicker.SelectedDate != null)
+            {
+                viewModel.SelectedWeekStart = WeekStartDatePicker.SelectedDate;
+            }
+        }
     }
 }

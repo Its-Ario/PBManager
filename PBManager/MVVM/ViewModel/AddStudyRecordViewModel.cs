@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
 using PBManager.Services;
+using System.Globalization;
+using Mohsen;
 
 namespace PBManager.MVVM.ViewModel
 {
@@ -12,8 +14,10 @@ namespace PBManager.MVVM.ViewModel
         private readonly StudyRecordService _studyRecordService;
         public ObservableCollection<SubjectEntry> WeeklySubjectEntries { get; set; }
         public IRelayCommand SubmitCommand { get; set; }
+        public IRelayCommand LoadWeekCommand { get; set; }
         private readonly Student _student;
-        private readonly IEnumerable<StudyRecord> _existingRecords;
+        private PersianDate _selectedWeekStart;
+        private string _weekRangeText;
         private bool _isEditMode;
 
         public bool IsEditMode
@@ -22,29 +26,89 @@ namespace PBManager.MVVM.ViewModel
             set => SetProperty(ref _isEditMode, value);
         }
 
+        public PersianDate SelectedWeekStart
+        {
+            get => _selectedWeekStart;
+            set
+            {
+                var adjustedDate = new PersianDate(GetPersianStartOfWeek(value.ToDateTime()));
+                SetProperty(ref _selectedWeekStart, adjustedDate);
+                UpdateWeekRangeText();
+            }
+        }
+
+        public string WeekRangeText
+        {
+            get => _weekRangeText;
+            set => SetProperty(ref _weekRangeText, value);
+        }
+
         public AddStudyRecordViewModel(Student student)
         {
             _student = student;
             _studyRecordService = new StudyRecordService();
             WeeklySubjectEntries = [];
             IsEditMode = false;
+
+            SelectedWeekStart = new PersianDate(GetPersianStartOfCurrentWeek());
+
+            LoadWeekAsync();
+
             LoadSubjects();
             SubmitCommand = new RelayCommand(async () => await SubmitAsync());
+            LoadWeekCommand = new RelayCommand(async () => await LoadWeekAsync());
         }
 
         public AddStudyRecordViewModel(Student student, IEnumerable<StudyRecord> existingRecords)
         {
             _student = student;
-            _existingRecords = existingRecords;
             _studyRecordService = new StudyRecordService();
             WeeklySubjectEntries = [];
             IsEditMode = true;
-            LoadSubjectsWithExistingData();
+
+            var recordsList = existingRecords.ToList();
+            SelectedWeekStart = new PersianDate(GetPersianStartOfWeekForRecords(recordsList));
+
+            LoadSubjectsWithExistingData(recordsList);
             SubmitCommand = new RelayCommand(async () => await SubmitAsync());
+            LoadWeekCommand = new RelayCommand(async () => await LoadWeekAsync());
+        }
+
+        private void UpdateWeekRangeText()
+        {
+            var endDate = _selectedWeekStart.AddDays(6);
+            var culture = new CultureInfo("fa-IR");
+
+            WeekRangeText = $"{_selectedWeekStart.ToDateTime().ToString("yyyy/MM/dd", culture)} تا {endDate.ToDateTime().ToString("yyyy/MM/dd", culture)}";
+        }
+
+        private async Task LoadWeekAsync()
+        {
+            try
+            {
+                var existingRecords = await _studyRecordService.GetStudyRecordsForWeekAsync(_student, _selectedWeekStart.ToDateTime());
+
+                if (existingRecords.Any())
+                {
+                    IsEditMode = true;
+                    LoadSubjectsWithExistingData(existingRecords.ToList());
+                }
+                else
+                {
+                    IsEditMode = false;
+                    LoadSubjects();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطا در بارگذاری داده‌ها: {ex.Message}",
+                               "خطا", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void LoadSubjects()
         {
+            WeeklySubjectEntries.Clear();
             var subjectsFromDb = App.Db.Subjects.ToList();
             foreach (var subject in subjectsFromDb)
             {
@@ -52,10 +116,11 @@ namespace PBManager.MVVM.ViewModel
             }
         }
 
-        private void LoadSubjectsWithExistingData()
+        private void LoadSubjectsWithExistingData(List<StudyRecord> existingRecords)
         {
+            WeeklySubjectEntries.Clear();
             var subjectsFromDb = App.Db.Subjects.ToList();
-            var recordsBySubject = _existingRecords.GroupBy(r => r.Subject.Id).ToDictionary(g => g.Key, g => g.ToList());
+            var recordsBySubject = existingRecords.GroupBy(r => r.Subject.Id).ToDictionary(g => g.Key, g => g.ToList());
 
             foreach (var subject in subjectsFromDb)
             {
@@ -72,7 +137,7 @@ namespace PBManager.MVVM.ViewModel
 
         private void PopulateSubjectEntry(SubjectEntry entry, List<StudyRecord> records)
         {
-            var startOfWeek = GetPersianStartOfWeekForRecords(records);
+            var startOfWeek = _selectedWeekStart.ToDateTime();
 
             foreach (var record in records)
             {
@@ -131,9 +196,7 @@ namespace PBManager.MVVM.ViewModel
             }
 
             var allRecords = new List<StudyRecord>();
-            var startOfWeek = IsEditMode
-                ? GetPersianStartOfWeekForRecords(_existingRecords.ToList())
-                : GetPersianStartOfCurrentWeek();
+            var startOfWeek = _selectedWeekStart;
 
             foreach (var entry in WeeklySubjectEntries)
             {
@@ -143,7 +206,7 @@ namespace PBManager.MVVM.ViewModel
                 {
                     if (dayMinutes.Value > 0)
                     {
-                        var recordDate = CalculateDateForPersianWeekDay(startOfWeek, dayMinutes.Key);
+                        var recordDate = CalculateDateForPersianWeekDay(startOfWeek.ToDateTime(), dayMinutes.Key);
                         allRecords.Add(new StudyRecord
                         {
                             Student = _student,
@@ -166,10 +229,10 @@ namespace PBManager.MVVM.ViewModel
             {
                 if (IsEditMode)
                 {
-                    await _studyRecordService.DeleteStudyRecordsForWeekAsync(_student, startOfWeek);
+                    await _studyRecordService.DeleteStudyRecordsForWeekAsync(_student, startOfWeek.ToDateTime());
                 }
 
-                await _studyRecordService.AddStudyRecordsAsync(allRecords, startOfWeek);
+                await _studyRecordService.AddStudyRecordsAsync(allRecords, startOfWeek.ToDateTime());
 
                 var message = IsEditMode
                     ? $"اطلاعات مطالعه با موفقیت بروزرسانی شد! ({allRecords.Count} رکورد)"
