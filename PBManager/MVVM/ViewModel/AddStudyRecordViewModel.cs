@@ -9,11 +9,11 @@ namespace PBManager.MVVM.ViewModel
 {
     public class AddStudyRecordViewModel : ObservableObject
     {
-        private StudyRecordService _studyRecordService;
+        private readonly StudyRecordService _studyRecordService;
         public ObservableCollection<SubjectEntry> WeeklySubjectEntries { get; set; }
         public IRelayCommand SubmitCommand { get; set; }
-        private Student _student;
-        private IEnumerable<StudyRecord> _existingRecords;
+        private readonly Student _student;
+        private readonly IEnumerable<StudyRecord> _existingRecords;
         private bool _isEditMode;
 
         public bool IsEditMode
@@ -26,7 +26,7 @@ namespace PBManager.MVVM.ViewModel
         {
             _student = student;
             _studyRecordService = new StudyRecordService();
-            WeeklySubjectEntries = new ObservableCollection<SubjectEntry>();
+            WeeklySubjectEntries = [];
             IsEditMode = false;
             LoadSubjects();
             SubmitCommand = new RelayCommand(async () => await SubmitAsync());
@@ -37,7 +37,7 @@ namespace PBManager.MVVM.ViewModel
             _student = student;
             _existingRecords = existingRecords;
             _studyRecordService = new StudyRecordService();
-            WeeklySubjectEntries = new ObservableCollection<SubjectEntry>();
+            WeeklySubjectEntries = [];
             IsEditMode = true;
             LoadSubjectsWithExistingData();
             SubmitCommand = new RelayCommand(async () => await SubmitAsync());
@@ -61,9 +61,8 @@ namespace PBManager.MVVM.ViewModel
             {
                 var subjectEntry = new SubjectEntry { Subject = subject };
 
-                if (recordsBySubject.ContainsKey(subject.Id))
+                if (recordsBySubject.TryGetValue(subject.Id, out List<StudyRecord>? subjectRecords))
                 {
-                    var subjectRecords = recordsBySubject[subject.Id];
                     PopulateSubjectEntry(subjectEntry, subjectRecords);
                 }
 
@@ -108,7 +107,7 @@ namespace PBManager.MVVM.ViewModel
 
         private DateTime GetPersianStartOfWeekForRecords(List<StudyRecord> records)
         {
-            if (!records.Any()) return GetPersianStartOfCurrentWeek();
+            if (records.Count == 0) return GetPersianStartOfCurrentWeek();
 
             var earliestDate = records.Min(r => r.Date);
             return GetPersianStartOfWeek(earliestDate);
@@ -156,7 +155,7 @@ namespace PBManager.MVVM.ViewModel
                 }
             }
 
-            if (!allRecords.Any())
+            if (allRecords.Count == 0)
             {
                 MessageBox.Show("هیچ داده‌ای برای ثبت وجود ندارد.", "اطلاعات",
                                MessageBoxButton.OK, MessageBoxImage.Information);
@@ -198,35 +197,17 @@ namespace PBManager.MVVM.ViewModel
 
         private DateTime GetPersianStartOfWeek(DateTime date)
         {
-            int daysFromSaturday;
-            switch (date.DayOfWeek)
+            var daysFromSaturday = date.DayOfWeek switch
             {
-                case DayOfWeek.Saturday:
-                    daysFromSaturday = 0;
-                    break;
-                case DayOfWeek.Sunday:
-                    daysFromSaturday = 1;
-                    break;
-                case DayOfWeek.Monday:
-                    daysFromSaturday = 2;
-                    break;
-                case DayOfWeek.Tuesday:
-                    daysFromSaturday = 3;
-                    break;
-                case DayOfWeek.Wednesday:
-                    daysFromSaturday = 4;
-                    break;
-                case DayOfWeek.Thursday:
-                    daysFromSaturday = 5;
-                    break;
-                case DayOfWeek.Friday:
-                    daysFromSaturday = 6;
-                    break;
-                default:
-                    daysFromSaturday = 0;
-                    break;
-            }
-
+                DayOfWeek.Saturday => 0,
+                DayOfWeek.Sunday => 1,
+                DayOfWeek.Monday => 2,
+                DayOfWeek.Tuesday => 3,
+                DayOfWeek.Wednesday => 4,
+                DayOfWeek.Thursday => 5,
+                DayOfWeek.Friday => 6,
+                _ => 0,
+            };
             return date.Date.AddDays(-daysFromSaturday);
         }
 
@@ -237,35 +218,17 @@ namespace PBManager.MVVM.ViewModel
 
         private DateTime CalculateDateForPersianWeekDay(DateTime startOfWeek, DayOfWeek dayOfWeek)
         {
-            int daysToAdd;
-            switch (dayOfWeek)
+            var daysToAdd = dayOfWeek switch
             {
-                case DayOfWeek.Saturday:
-                    daysToAdd = 0;
-                    break;
-                case DayOfWeek.Sunday:
-                    daysToAdd = 1;
-                    break;
-                case DayOfWeek.Monday:
-                    daysToAdd = 2;
-                    break;
-                case DayOfWeek.Tuesday:
-                    daysToAdd = 3;
-                    break;
-                case DayOfWeek.Wednesday:
-                    daysToAdd = 4;
-                    break;
-                case DayOfWeek.Thursday:
-                    daysToAdd = 5;
-                    break;
-                case DayOfWeek.Friday:
-                    daysToAdd = 6;
-                    break;
-                default:
-                    daysToAdd = 0;
-                    break;
-            }
-
+                DayOfWeek.Saturday => 0,
+                DayOfWeek.Sunday => 1,
+                DayOfWeek.Monday => 2,
+                DayOfWeek.Tuesday => 3,
+                DayOfWeek.Wednesday => 4,
+                DayOfWeek.Thursday => 5,
+                DayOfWeek.Friday => 6,
+                _ => 0,
+            };
             return startOfWeek.AddDays(daysToAdd);
         }
     }

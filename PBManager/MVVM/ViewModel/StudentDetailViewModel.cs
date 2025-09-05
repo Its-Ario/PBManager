@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LiveCharts.Wpf;
 using LiveCharts;
 using System.Windows.Media;
-using System.Diagnostics;
 
 namespace PBManager.MVVM.ViewModel
 {
@@ -109,8 +108,8 @@ namespace PBManager.MVVM.ViewModel
                 labels.Add($"هفته {i++}");
             }
 
-            StudyOverTimeSeries = new SeriesCollection
-            {
+            StudyOverTimeSeries =
+            [
                 new LineSeries
                 {
                     Title = "(زمان مطالعه (دقیقه",
@@ -119,7 +118,7 @@ namespace PBManager.MVVM.ViewModel
                     Fill = Brushes.Transparent,
                     PointGeometrySize = 10
                 }
-            };
+            ];
 
             StudyOverTimeLabels = labels;
         }

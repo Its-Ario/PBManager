@@ -3,13 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using PBManager.MVVM.Model;
 using PBManager.MVVM.View;
 using PBManager.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace PBManager.MVVM.ViewModel
@@ -89,7 +83,7 @@ namespace PBManager.MVVM.ViewModel
             {
                 var studyRecords = await _studyRecordService.GetStudyRecordsForWeekAsync(Student, weeklyRecord.StartOfWeek);
 
-                if (!studyRecords.Any())
+                if (studyRecords.Count == 0)
                 {
                     MessageBox.Show("هیچ رکورد مطالعه‌ای برای این هفته یافت نشد.", "اطلاعات",
                                    MessageBoxButton.OK, MessageBoxImage.Information);

@@ -4,13 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
 using System.Windows;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System;
 using CommunityToolkit.Mvvm.Messaging;
 using PBManager.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 
 namespace PBManager.MVVM.ViewModel
@@ -103,8 +99,7 @@ namespace PBManager.MVVM.ViewModel
             if (string.IsNullOrEmpty(SearchText))
                 return true;
 
-            var student = item as Student;
-            if (student == null) return false;
+            if (item is not Student student) return false;
 
             return (student.FirstName?.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0) ||
                    (student.Class?.Name?.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0);

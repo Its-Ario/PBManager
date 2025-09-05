@@ -38,7 +38,8 @@ namespace PBManager.Services
 
         public async Task<Student> GetStudentByIdAsync(int id)
         {
-            return await App.Db.Students.FindAsync(id);
+            Student? student = await App.Db.Students.FindAsync(id);
+            return student;
         }
 
         public async Task SubmitGradeRecordAsync(GradeRecord record)

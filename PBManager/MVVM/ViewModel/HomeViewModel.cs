@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveCharts.Wpf;
 using LiveCharts;
 using PBManager.MVVM.Model;
 using PBManager.Services;
-using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace PBManager.MVVM.ViewModel
@@ -76,8 +69,8 @@ namespace PBManager.MVVM.ViewModel
                 labels.Add($"هفته {i++}");
             }
 
-            StudyOverTimeSeries = new SeriesCollection
-            {
+            StudyOverTimeSeries =
+            [
                 new LineSeries
                 {
                     Title = "(زمان مطالعه (دقیقه",
@@ -86,7 +79,7 @@ namespace PBManager.MVVM.ViewModel
                     Fill = Brushes.Transparent,
                     PointGeometrySize = 10
                 }
-            };
+            ];
 
             StudyOverTimeLabels = labels;
         }
@@ -94,15 +87,15 @@ namespace PBManager.MVVM.ViewModel
         public async Task LoadStudyPerSubjectChartAsync()
         {
             List<Subject> subjects = await App.Db.Subjects.ToListAsync();
-            ChartValues<double> values = new(); 
+            ChartValues<double> values = [];
 
             foreach (var subject in subjects)
             {
                 values.Add(await _studyRecordService.GetSubjectWeeklyAverageAsync(subject.Id));
             }
 
-            StudyPerSubjectSeries = new SeriesCollection
-            {
+            StudyPerSubjectSeries =
+            [
                 new ColumnSeries
                 {
                     Title = "میانگین",
@@ -110,7 +103,7 @@ namespace PBManager.MVVM.ViewModel
                     Fill = new BrushConverter().ConvertFrom("#5C6BC0") as SolidColorBrush,
 
                 }
-            };
+            ];
 
             StudyPerSubjectLabels = subjects.Select(s => s.Name).ToList();
         }

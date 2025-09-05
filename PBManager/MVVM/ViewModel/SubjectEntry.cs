@@ -1,19 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PBManager.MVVM.Model;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace PBManager.MVVM.ViewModel
 {
     public class SubjectEntry : ObservableValidator
     {
-        public Subject Subject { get; set; }
+        public required Subject Subject { get; set; }
 
         private string _minutesSat = "";
         private string _minutesSun = "";

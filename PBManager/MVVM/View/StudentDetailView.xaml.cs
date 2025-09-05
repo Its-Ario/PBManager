@@ -1,11 +1,6 @@
-﻿using LiveCharts.Wpf;
-using LiveCharts;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using PBManager.MVVM.View;
 using PBManager.MVVM.ViewModel;
-using PBManager.Services;
 
 namespace PBManager.MVVM.View
 {

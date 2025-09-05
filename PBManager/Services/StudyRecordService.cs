@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PBManager.MVVM.Model;
-using System;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace PBManager.Services
@@ -54,14 +52,14 @@ namespace PBManager.Services
             var weeklyTotals = records
                 .GroupBy(r => new
                 {
-                    Year = r.Date.Year,
+                    r.Date.Year,
                     Week = CultureInfo.InvariantCulture.Calendar
                         .GetWeekOfYear(r.Date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)
                 })
                 .Select(g => g.Sum(r => r.MinutesStudied))
                 .ToList();
 
-            return weeklyTotals.Any() ? weeklyTotals.Average() : 0;
+            return weeklyTotals.Count != 0 ? weeklyTotals.Average() : 0;
         }
 
         public async Task<double> GetWeeklyAverageAsync()
@@ -73,14 +71,14 @@ namespace PBManager.Services
             var weeklyTotals = records
                 .GroupBy(r => new
                 {
-                    Year = r.Date.Year,
+                    r.Date.Year,
                     Week = CultureInfo.InvariantCulture.Calendar
                         .GetWeekOfYear(r.Date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)
                 })
                 .Select(g => g.Sum(r => r.MinutesStudied))
                 .ToList();
 
-            return weeklyTotals.Any() ? weeklyTotals.Average() : 0;
+            return weeklyTotals.Count != 0 ? weeklyTotals.Average() : 0;
         }
 
         public async Task<double> GetSubjectWeeklyAverageAsync(int subjectId)
@@ -93,14 +91,14 @@ namespace PBManager.Services
             var weeklyTotals = records
                 .GroupBy(r => new
                 {
-                    Year = r.Date.Year,
+                    r.Date.Year,
                     Week = CultureInfo.InvariantCulture.Calendar
                         .GetWeekOfYear(r.Date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)
                 })
                 .Select(g => g.Sum(r => r.MinutesStudied))
                 .ToList();
 
-            return weeklyTotals.Any() ? weeklyTotals.Average() : 0;
+            return weeklyTotals.Count != 0 ? weeklyTotals.Average() : 0;
         }
 
         public async Task<int> GetGlobalWeeklyRankAsync(int studentId)
@@ -124,7 +122,7 @@ namespace PBManager.Services
 
         public async Task<int> GetClassWeeklyRankAsync(int studentId)
         {
-            var studentClassId = await App.Db.Students
+            int? studentClassId = await App.Db.Students
                 .Where(s => s.Id == studentId)
                 .Select(s => s.ClassId)
                 .FirstOrDefaultAsync();
@@ -275,7 +273,7 @@ namespace PBManager.Services
                                r.Date.Date <= weekEnd)
                     .ToList());
 
-            if (recordsToDelete.Any())
+            if (recordsToDelete.Count != 0)
             {
                 App.Db.StudyRecords.RemoveRange(recordsToDelete);
                 await App.Db.SaveChangesAsync();
@@ -300,36 +298,17 @@ namespace PBManager.Services
         public static DateTime GetPersianStartOfWeek(DateTime date)
         {
             var dateOnly = date.Date;
-
-            int daysFromSaturday;
-            switch (dateOnly.DayOfWeek)
+            var daysFromSaturday = dateOnly.DayOfWeek switch
             {
-                case DayOfWeek.Saturday:
-                    daysFromSaturday = 0;
-                    break;
-                case DayOfWeek.Sunday:
-                    daysFromSaturday = 1;
-                    break;
-                case DayOfWeek.Monday:
-                    daysFromSaturday = 2;
-                    break;
-                case DayOfWeek.Tuesday:
-                    daysFromSaturday = 3;
-                    break;
-                case DayOfWeek.Wednesday:
-                    daysFromSaturday = 4;
-                    break;
-                case DayOfWeek.Thursday:
-                    daysFromSaturday = 5;
-                    break;
-                case DayOfWeek.Friday:
-                    daysFromSaturday = 6;
-                    break;
-                default:
-                    daysFromSaturday = 0;
-                    break;
-            }
-
+                DayOfWeek.Saturday => 0,
+                DayOfWeek.Sunday => 1,
+                DayOfWeek.Monday => 2,
+                DayOfWeek.Tuesday => 3,
+                DayOfWeek.Wednesday => 4,
+                DayOfWeek.Thursday => 5,
+                DayOfWeek.Friday => 6,
+                _ => 0,
+            };
             return dateOnly.AddDays(-daysFromSaturday);
         }
 
@@ -391,7 +370,7 @@ namespace PBManager.Services
                 .FirstOrDefaultAsync();
 
             if (lastSubmission == default)
-                return new List<StudyRecord>();
+                return [];
 
             var startDate = lastSubmission.AddDays((-7 * weeks) + 1);
             var endDate = lastSubmission.AddDays(1);
@@ -431,7 +410,7 @@ CalculateWeeklyAverages(List<StudyRecord> records, bool singleStudent = false, i
 
                 double averageMinutes = singleStudent
                     ? totalMinutes
-                    : weekRecords.Select(r => r.StudentId).Distinct().Count() > 0
+                    : weekRecords.Select(r => r.StudentId).Distinct().Any()
                         ? (double)totalMinutes / weekRecords.Select(r => r.StudentId).Distinct().Count()
                         : 0;
 

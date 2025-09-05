@@ -1,5 +1,4 @@
 ﻿using PBManager.MVVM.Model;
-using System.Threading.Tasks;
 
 namespace PBManager.Services
 {

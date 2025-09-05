@@ -11,6 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\Shabnam-Bold.ttf" />
+    <None Remove="Fonts\Shabnam-FD.ttf" />
     <None Remove="Fonts\Shabnam.ttf" />
   </ItemGroup>
 
@@ -26,6 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Fonts\Shabnam-Bold.ttf" />
+    <Resource Include="Fonts\Shabnam-FD.ttf" />
     <Resource Include="Fonts\Shabnam.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
