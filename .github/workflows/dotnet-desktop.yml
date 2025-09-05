@@ -51,26 +51,49 @@ jobs:
       id: decode_cert
       shell: pwsh
       run: |
-        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
-        # Use a temporary path for the certificate file
-        $pfxPath = Join-Path -Path $env:TEMP -ChildPath "signing_cert.pfx"
-        [System.IO.File]::WriteAllBytes($pfxPath, $pfx_cert_byte)
-        # Output the path for the next step to use
-        echo "pfx_path=$pfxPath" >> $env:GITHUB_OUTPUT
+        if (-not ([string]::IsNullOrWhiteSpace("${{ secrets.BASE64_ENCODED_PFX }}"))) {
+          $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
+          $pfxPath = Join-Path -Path $env:TEMP -ChildPath "signing_cert.pfx"
+          [System.IO.File]::WriteAllBytes($pfxPath, $pfx_cert_byte)
+          echo "pfx_path=$pfxPath" >> $env:GITHUB_OUTPUT
+        } else {
+          echo "::error::BASE64_ENCODED_PFX secret is empty or not found."
+          exit 1
+        }
         
+    - name: DIAGNOSTICS - Verify Secrets and Certificate
+      shell: pwsh
+      run: |
+        echo "Verifying that the PFX_KEY secret is loaded..."
+        if ("${{ secrets.PFX_KEY }}".Length -gt 0) {
+          echo "PFX_KEY secret appears to be loaded (length is greater than 0)."
+        } else {
+          echo "::error::PFX_KEY secret is missing or empty!"
+        }
+        
+        echo "Verifying certificate file existence..."
+        $certPath = "${{ steps.decode_cert.outputs.pfx_path }}"
+        echo "Path passed from previous step is: '$certPath'"
+        if (Test-Path $certPath) {
+          echo "✅ SUCCESS: Certificate file was found at the specified path."
+          Get-ChildItem -Path $certPath | Format-List
+        } else {
+          echo "::error::🔥 FAILURE: Certificate file was NOT found at '$certPath'. This is the root of the problem."
+        }
+
     - name: Create MSIX App Package
       shell: pwsh
-      run: >
-        msbuild "${{ env.Wap_Project_Path }}"
-        /p:Configuration=${{ matrix.configuration }}
-        /p:Platform=x86
-        /p:AppxPackageSigningEnabled=true
-        /p:PackageCertificateKeyFile="${{ steps.decode_cert.outputs.pfx_path }}"
-        /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}"
-        /p:AppxPackageDir="${{ env.Wap_Project_Directory }}/AppPackages/"
-        /p:UapAppxPackageBuildMode=StoreUpload
-        /p:AppxBundle=Always
-        /p:AppxBundlePlatforms="x86|x64"
+      run: |
+        msbuild "${{ env.Wap_Project_Path }}" `
+          /p:Configuration=${{ matrix.configuration }} `
+          /p:Platform=x86 `
+          /p:AppxPackageSigningEnabled=true `
+          /p:PackageCertificateKeyFile="${{ steps.decode_cert.outputs.pfx_path }}" `
+          /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}" `
+          /p:AppxPackageDir="${{ env.Wap_Project_Directory }}/AppPackages/" `
+          /p:UapAppxPackageBuildMode=StoreUpload `
+          /p:AppxBundle=Always `
+          /p:AppxBundlePlatforms="x86|x64"
 
     - name: Upload MSIX Package Artifact
       uses: actions/upload-artifact@v4
