@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              xmlns:conv="clr-namespace:PBManager.Converters"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="360">
@@ -112,19 +112,11 @@
 
         <StackPanel Grid.Row="4">
             <TextBlock Text="پیشرفت مطالعه" Foreground="White" Margin="0,0,0,5"/>
-            <lvc:CartesianChart Series="{Binding StudyOverTimeSeries}" Height="190" FlowDirection="LeftToRight">
-                <lvc:CartesianChart.AxisX>
-                    <lvc:Axis Title="هفته‌ها" Labels="{Binding StudyOverTimeLabels}">
-                        <lvc:Axis.Separator>
-                            <lvc:Separator Step="1" IsEnabled="False"/>
-                        </lvc:Axis.Separator>
-                    </lvc:Axis>
-                </lvc:CartesianChart.AxisX>
-                <lvc:CartesianChart.AxisY>
-                    <lvc:Axis Title="(زمان مطالعه (دقیقه"
-                  MinValue="0"/>
-                </lvc:CartesianChart.AxisY>
-            </lvc:CartesianChart>
+            <lvc:CartesianChart Height="190" FlowDirection="LeftToRight"
+                    DrawMargin="{Binding DrawMargin}"
+                    XAxes="{Binding StudyOverTimeXAxes}"
+                    Series="{Binding StudyOverTimeSeries}"
+                    ZoomMode="X"/>
         </StackPanel>
     </Grid>
 </UserControl>

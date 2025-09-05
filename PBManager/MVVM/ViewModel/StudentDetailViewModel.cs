@@ -3,9 +3,14 @@ using PBManager.Services;
 using PBManager.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LiveCharts.Wpf;
-using LiveCharts;
+
 using System.Windows.Media;
+using LiveChartsCore.Kernel.Sketches;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
+using LiveChartsCore.Measure;
 
 namespace PBManager.MVVM.ViewModel
 {
@@ -13,20 +18,22 @@ namespace PBManager.MVVM.ViewModel
     {
         private readonly StudyRecordService _studyRecordService;
 
-        private SeriesCollection _studyOverTimeSeries;
-        public SeriesCollection StudyOverTimeSeries
+        
+        public Margin DrawMargin { get; set; } = new(50, 0, 50, 50);
+
+        private ICartesianAxis[] _studyOverTimeXAxes;
+        public ICartesianAxis[] StudyOverTimeXAxes
+        {
+            get => _studyOverTimeXAxes;
+            set => SetProperty(ref _studyOverTimeXAxes, value);
+        }
+
+        private ISeries[] _studyOverTimeSeries;
+        public ISeries[] StudyOverTimeSeries
         {
             get => _studyOverTimeSeries;
             set => SetProperty(ref _studyOverTimeSeries, value);
         }
-
-        private List<string> _studyOverTimeLabels;
-        public List<string> StudyOverTimeLabels
-        {
-            get => _studyOverTimeLabels;
-            set => SetProperty(ref _studyOverTimeLabels, value);
-        }
-
 
         private Student? _student;
         public Student? Student
@@ -98,7 +105,7 @@ namespace PBManager.MVVM.ViewModel
         {
             var weeklyData = await _studyRecordService.GetWeeklyStudyDataAsync(studentId, 4);
 
-            var values = new ChartValues<double>();
+            var values = new List<double>();
             var labels = new List<string>();
 
             int i = 1;
@@ -110,17 +117,24 @@ namespace PBManager.MVVM.ViewModel
 
             StudyOverTimeSeries =
             [
-                new LineSeries
+                new LineSeries<double>
                 {
-                    Title = "(زمان مطالعه (دقیقه",
                     Values = values,
-                    Stroke = new BrushConverter().ConvertFrom("#5C6BC0") as SolidColorBrush,
-                    Fill = Brushes.Transparent,
-                    PointGeometrySize = 10
+                    Stroke = new SolidColorPaint(new SKColor(92, 107, 192), 3),
+                    Fill = null,
+                    GeometrySize = 10
                 }
             ];
 
-            StudyOverTimeLabels = labels;
+            StudyOverTimeXAxes =
+               [
+               new Axis
+                {
+                    Labels = labels,
+                    LabelsRotation = 45,
+                    Padding = new LiveChartsCore.Drawing.Padding(0),
+                }
+           ];
         }
     }
 }

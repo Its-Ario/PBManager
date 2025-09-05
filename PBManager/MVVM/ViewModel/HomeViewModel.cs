@@ -1,20 +1,28 @@
 ﻿using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LiveCharts.Wpf;
-using LiveCharts;
+using LiveChartsCore;
 using PBManager.MVVM.Model;
 using PBManager.Services;
 using Microsoft.EntityFrameworkCore;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.Kernel.Sketches;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
+using LiveChartsCore.Measure;
 
 namespace PBManager.MVVM.ViewModel
 {
     internal class HomeViewModel : ObservableObject
     {
         private readonly StudyRecordService _studyRecordService;
-        public SeriesCollection StudyOverTimeSeries { get; set; }
-        public SeriesCollection StudyPerSubjectSeries { get; set; }
-        public List<string> StudyOverTimeLabels { get; set; }
-        public List<string> StudyPerSubjectLabels { get; set; }
+        public ISeries[] StudyOverTimeSeries { get; set; } = [];
+        public ICartesianAxis[] StudyOverTimeXAxes { get; set; } = [];
+        public ICartesianAxis[] StudyOverTimeYAxes { get; set; } = [];
+
+        public ISeries[] StudyPerSubjectSeries { get; set; } = [];
+        public ICartesianAxis[] StudyPerSubjectXAxes { get; set; } = [];
+        public ICartesianAxis[] StudyPerSubjectYAxes { get; set; } = [];
+        public Margin DrawMargin { get; set; } = new(50,0,50,50);
 
         private double _avgStudyTime;
         public double AvgStudyTime
@@ -59,7 +67,7 @@ namespace PBManager.MVVM.ViewModel
         {
             var weeklyData = await _studyRecordService.GetWeeklyStudyDataAsync(weeks: 8);
 
-            var values = new ChartValues<double>();
+            var values = new List<double>();
             var labels = new List<string>();
 
             int i = 1;
@@ -71,23 +79,40 @@ namespace PBManager.MVVM.ViewModel
 
             StudyOverTimeSeries =
             [
-                new LineSeries
+            new LineSeries<double>
+            {
+                Name = "(زمان مطالعه (دقیقه",
+                Values = values,
+                Stroke = new SolidColorPaint(new SKColor(92, 107, 192), 3),
+                Fill = null,
+                GeometrySize = 10
+                            }
+            ];
+
+            StudyOverTimeXAxes =
+                [
+                new Axis
                 {
-                    Title = "(زمان مطالعه (دقیقه",
-                    Values = values,
-                    Stroke = new BrushConverter().ConvertFrom("#5C6BC0") as SolidColorBrush,
-                    Fill = Brushes.Transparent,
-                    PointGeometrySize = 10
+                    Labels = labels,
+                    LabelsRotation = 45,
+                    Padding = new LiveChartsCore.Drawing.Padding(0),
                 }
             ];
 
-            StudyOverTimeLabels = labels;
+            StudyOverTimeYAxes =
+            [
+                new Axis
+                {
+                    TextSize = 20,
+                    LabelsDensity = 0,
+                }
+            ];
         }
 
         public async Task LoadStudyPerSubjectChartAsync()
         {
             List<Subject> subjects = await App.Db.Subjects.ToListAsync();
-            ChartValues<double> values = [];
+            List<double> values = [];
 
             foreach (var subject in subjects)
             {
@@ -96,16 +121,25 @@ namespace PBManager.MVVM.ViewModel
 
             StudyPerSubjectSeries =
             [
-                new ColumnSeries
+                new ColumnSeries<double>
                 {
-                    Title = "میانگین",
+                    Name = "میانگین",
                     Values = values,
-                    Fill = new BrushConverter().ConvertFrom("#5C6BC0") as SolidColorBrush,
-
+                    Fill = new SolidColorPaint(new SKColor(92, 107, 192)),
                 }
             ];
 
-            StudyPerSubjectLabels = subjects.Select(s => s.Name).ToList();
+            StudyPerSubjectXAxes =
+            [
+                new Axis
+                {
+                    Labels = subjects.Select(s => s.Name).ToList(),
+                    LabelsRotation = 45,
+                    CustomSeparators = Enumerable.Range(0, subjects.Count).Select(i => (double)i).ToList(),
+                    Padding = new LiveChartsCore.Drawing.Padding(0),
+
+                }
+            ];
         }
     }
 }

@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using Microsoft.EntityFrameworkCore;
 using PBManager.Data;
+using SkiaSharp;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -23,6 +26,14 @@ namespace PBManager
             Db = new DatabaseContext(options);
 
             Db.Database.EnsureCreated();
+
+            LiveCharts.Configure(config =>
+            config
+                .AddDarkTheme()  
+                .HasGlobalSKTypeface(SKFontManager.Default.MatchCharacter('پ'))
+                .UseRightToLeftSettings()
+
+            );
         }
     }
 }
