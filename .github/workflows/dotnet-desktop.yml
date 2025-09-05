@@ -48,30 +48,29 @@ jobs:
       run: msbuild "${{ env.Solution_Path }}" /p:Configuration=${{ matrix.configuration }} /p:Platform=x86
 
     - name: Decode the PFX certificate
+      id: decode_cert
+      shell: pwsh
       run: |
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
-        $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath "GitHubActionsWorkflow.pfx"
-        [IO.File]::WriteAllBytes($certificatePath, $pfx_cert_byte)
-      shell: pwsh
-
+        # Use a temporary path for the certificate file
+        $pfxPath = Join-Path -Path $env:TEMP -ChildPath "signing_cert.pfx"
+        [System.IO.File]::WriteAllBytes($pfxPath, $pfx_cert_byte)
+        # Output the path for the next step to use
+        echo "pfx_path=$pfxPath" >> $env:GITHUB_OUTPUT
+        
     - name: Create MSIX App Package
-      run: |
-        $pfxPath = Join-Path $env:GITHUB_WORKSPACE "PBManager.Package\GitHubActionsWorkflow.pfx"
-        msbuild "${{ env.Wap_Project_Path }}" `
-            /p:Configuration=${{ matrix.configuration }} `
-            /p:UapAppxPackageBuildMode=StoreUpload `
-            /p:AppxBundle=Always `
-            /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateKeyFile="$pfxPath" `
-            /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}"
       shell: pwsh
-      env:
-        Appx_Bundle_Platforms: x86|x64
-
-    - name: Remove the PFX certificate
-      if: always()
-      run: Remove-Item -Path (Join-Path $env:Wap_Project_Directory "GitHubActionsWorkflow.pfx") -ErrorAction SilentlyContinue
-      shell: pwsh
+      run: >
+        msbuild "${{ env.Wap_Project_Path }}"
+        /p:Configuration=${{ matrix.configuration }}
+        /p:Platform=x86
+        /p:AppxPackageSigningEnabled=true
+        /p:PackageCertificateKeyFile="${{ steps.decode_cert.outputs.pfx_path }}"
+        /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}"
+        /p:AppxPackageDir="${{ env.Wap_Project_Directory }}/AppPackages/"
+        /p:UapAppxPackageBuildMode=StoreUpload
+        /p:AppxBundle=Always
+        /p:AppxBundlePlatforms="x86|x64"
 
     - name: Upload MSIX Package Artifact
       uses: actions/upload-artifact@v4
