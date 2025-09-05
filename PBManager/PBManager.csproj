@@ -11,6 +11,8 @@
 	<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	<StartupObject>PBManager.App</StartupObject>
 	<ApplicationIcon>book.ico</ApplicationIcon>
+	<FileVersion>0.3</FileVersion>
+	<InformationalVersion>0.3-beta</InformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
