@@ -27,7 +27,7 @@
                 <view:StudentDetailView/>
             </DataTemplate>
 
-            <FontFamily x:Key="AppFont">/Fonts/#Shabnam</FontFamily>
+            <FontFamily x:Key="AppFont">/Fonts/#Shabnam FD</FontFamily>
 
             <Style TargetType="Control">
                 <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
