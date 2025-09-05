@@ -135,7 +135,7 @@
                             Command="{Binding LoadWeekCommand}"
                             Style="{StaticResource ModernButtonStyle}"
                             Padding="12,6"
-                            Height="35"/>
+                            Height="40" Width="90"/>
 
                 </Grid>
             </Border>

@@ -79,14 +79,14 @@ namespace PBManager.MVVM.ViewModel
 
             StudyOverTimeSeries =
             [
-            new LineSeries<double>
-            {
-                Name = "(زمان مطالعه (دقیقه",
-                Values = values,
-                Stroke = new SolidColorPaint(new SKColor(92, 107, 192), 3),
-                Fill = null,
-                GeometrySize = 10
-                            }
+                new LineSeries<double>
+                {
+                    Name = "زمان مطالعه",
+                    Values = values,
+                    Stroke = new SolidColorPaint(new SKColor(92, 107, 192), 3),
+                    Fill = null,
+                    GeometrySize = 10
+                }
             ];
 
             StudyOverTimeXAxes =

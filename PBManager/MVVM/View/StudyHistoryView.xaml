@@ -4,25 +4,74 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PBManager.MVVM.View"
-        xmlns:conv="clr-namespace:PBManager.Converters"
+        xmlns:converter="clr-namespace:PBManager.Converters"
+        xmlns:conv="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
         mc:Ignorable="d"
         Title="سامانه مدیریت آموزش | تاریخچه مطالعه"
-        Height="450" Width="400"
+        Height="500" Width="450"
         ResizeMode="NoResize"
         Background="Transparent"
         WindowStyle="None"
         AllowsTransparency="True">
     <Window.Resources>
-        <conv:DateConverter x:Key="PersianDateConverter"/>
-        <conv:MinuteToHourConverter x:Key="MinuteToHourConverter"/>
+        <converter:DateConverter x:Key="PersianDateConverter"/>
+        <converter:MinuteToHourConverter x:Key="MinuteToHourConverter"/>
+        <converter:AbsentBackgroundConverter x:Key="AbsentBackgroundConverter"/>
+        <converter:AbsentBorderConverter x:Key="AbsentBorderConverter"/>
+        <converter:StatusIconConverter x:Key="StatusIconConverter"/>
+        <converter:StatusIconBackgroundConverter x:Key="StatusIconBackgroundConverter"/>
+        <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converter:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+        <converter:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+
+
+        <Style x:Key="FilterButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="#3a3a4a"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#555"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="15"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4a4a5a"/>
+                    <Setter Property="BorderBrush" Value="#666"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="#5C6BC0"/>
+                    <Setter Property="BorderBrush" Value="#3949AB"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
+
     <Border Background="#272537" CornerRadius="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+
             <Grid x:Name="TitleBar"
                   Grid.Row="0"
                   MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
@@ -47,138 +96,268 @@
                 </StackPanel>
             </Grid>
 
-            <ItemsControl ItemsSource="{Binding Records}" Grid.Row="1" Margin="10">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="0,5" Padding="15" Background="#323040" CornerRadius="8" BorderThickness="1" BorderBrush="#444"
-                    Cursor="Hand">
-                            <Border.InputBindings>
-                                <MouseBinding MouseAction="LeftClick" 
-                                  Command="{Binding DataContext.EditRecordCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                  CommandParameter="{Binding}"/>
-                            </Border.InputBindings>
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#3a3848"/>
-                                            <Setter Property="BorderBrush" Value="#555"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+            <Border Grid.Row="1" 
+                    Background="#323040" 
+                    CornerRadius="12" 
+                    Margin="15,10,15,0" 
+                    Padding="20,15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" FlowDirection="RightToLeft">
-                                    <TextBlock Text="شروع هفته"
-                       FontSize="11"
-                       Foreground="#999"
-                       FontWeight="Medium"/>
-                                    <TextBlock Text="{Binding StartOfWeek, Converter={StaticResource PersianDateConverter}}"
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Foreground="White"
-                                   Margin="0,2,0,0"/>
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right" FlowDirection="RightToLeft">
-                                    <TextBlock Text="پایان هفته"
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Center" FlowDirection="RightToLeft">
+                        <TextBlock Text="کل هفته‌ها"
                                    FontSize="11"
                                    Foreground="#999"
+                                   HorizontalAlignment="Center"
                                    FontWeight="Medium"/>
-                                    <TextBlock Text="{Binding EndOfWeek, Converter={StaticResource PersianDateConverter}}"
-                                   FontSize="14"
+                        <TextBlock Text="{Binding TotalWeeksCount}"
+                                   FontSize="18"
                                    FontWeight="Bold"
-                                   Foreground="White"
-                                   Margin="0,2,0,0"/>
-                                </StackPanel>
+                                   Foreground="#66aaff"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
 
-                                <Border Grid.Row="1" Grid.ColumnSpan="2" 
-                            Background="#2a2836" 
-                            CornerRadius="6" 
-                            Margin="0,10,0,0" 
-                            Padding="10">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center" FlowDirection="RightToLeft">
+                        <TextBlock Text="حضور"
+                                   FontSize="11"
+                                   Foreground="#999"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Medium"/>
+                        <TextBlock Text="{Binding PresentWeeksCount}"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#44aa44"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
 
-                                        <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" FlowDirection="RightToLeft">
-                                            <TextBlock Text="کل مطالعه"
-                               FontSize="11"
-                               Foreground="#999"
-                               HorizontalAlignment="Center"
-                               FontWeight="Medium"/>
-                                            <TextBlock Text="{Binding TotalMinutes, Converter={StaticResource MinuteToHourConverter}}"
-                               FontSize="18"
-                               FontWeight="Bold"
-                               Foreground="#44aa44"
-                               HorizontalAlignment="Center"
-                               Margin="0,4,0,0"/>
+                    <StackPanel Grid.Column="2" HorizontalAlignment="Center" FlowDirection="RightToLeft">
+                        <TextBlock Text="غیبت"
+                                   FontSize="11"
+                                   Foreground="#999"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Medium"/>
+                        <TextBlock Text="{Binding AbsentWeeksCount}"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#ff6666"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="2" 
+                    Background="#2a2836" 
+                    CornerRadius="10" 
+                    Margin="15,10,15,0" 
+                    Padding="15,10">
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Center"
+                            FlowDirection="RightToLeft">
+                    <TextBlock Text="نمایش:"
+                               Foreground="White"
+                               FontSize="12"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0"/>
+
+                    <ToggleButton Content="همه"
+                                  IsChecked="{Binding ShowAll}"
+                                  Style="{StaticResource FilterButtonStyle}"
+                                  Command="{Binding SetFilterCommand}"
+                                  CommandParameter="All"/>
+
+                    <ToggleButton Content="حضور"
+                                  IsChecked="{Binding ShowPresent}"
+                                  Style="{StaticResource FilterButtonStyle}"
+                                  Command="{Binding SetFilterCommand}"
+                                  CommandParameter="Present"/>
+
+                    <ToggleButton Content="غیبت"
+                                  IsChecked="{Binding ShowAbsent}"
+                                  Style="{StaticResource FilterButtonStyle}"
+                                  Command="{Binding SetFilterCommand}"
+                                  CommandParameter="Absent"/>
+                </StackPanel>
+            </Border>
+
+            <ScrollViewer Grid.Row="3" 
+                          Margin="10" 
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding FilteredRecords}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,5" 
+                                    Padding="15" 
+                                    Background="{Binding IsAbsent, Converter={StaticResource AbsentBackgroundConverter}}" 
+                                    CornerRadius="8" 
+                                    BorderThickness="1" 
+                                    BorderBrush="{Binding IsAbsent, Converter={StaticResource AbsentBorderConverter}}"
+                                    Cursor="Hand">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="LeftClick"
+                                                  Command="{Binding DataContext.EditRecordCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                  CommandParameter="{Binding}"/>
+                                </Border.InputBindings>
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsAbsent}" Value="False">
+                                                <Setter Property="Tag" Value="False"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsAbsent}" Value="True">
+                                                <Setter Property="Tag" Value="True"/>
+                                            </DataTrigger>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsMouseOver" Value="True"/>
+                                                    <Condition Property="Tag" Value="False"/>
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="Background" Value="#3a3848"/>
+                                                <Setter Property="BorderBrush" Value="#555"/>
+                                            </MultiTrigger>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsMouseOver" Value="True"/>
+                                                    <Condition Property="Tag" Value="True"/>
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="Background" Value="#4a3030"/>
+                                                <Setter Property="BorderBrush" Value="#775555"/>
+                                            </MultiTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" FlowDirection="RightToLeft">
+                                        <TextBlock Text="شروع هفته"
+                                                   FontSize="11"
+                                                   Foreground="#999"
+                                                   FontWeight="Medium"/>
+                                        <TextBlock Text="{Binding StartOfWeek, Converter={StaticResource PersianDateConverter}}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="White"
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right" FlowDirection="RightToLeft">
+                                        <TextBlock Text="پایان هفته"
+                                                   FontSize="11"
+                                                   Foreground="#999"
+                                                   FontWeight="Medium"/>
+                                        <TextBlock Text="{Binding EndOfWeek, Converter={StaticResource PersianDateConverter}}"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="White"
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+
+                                    <Border Grid.Row="1" Grid.ColumnSpan="2" 
+                                            Background="#2a2836" 
+                                            CornerRadius="6" 
+                                            Margin="0,10,0,0" 
+                                            Padding="10"
+                                            Visibility="{Binding IsAbsent, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" FlowDirection="RightToLeft">
+                                                <TextBlock Text="کل مطالعه"
+                                                           FontSize="11"
+                                                           Foreground="#999"
+                                                           HorizontalAlignment="Center"
+                                                           FontWeight="Medium"/>
+                                                <TextBlock Text="{Binding TotalMinutes, Converter={StaticResource MinuteToHourConverter}}"
+                                                           FontSize="18"
+                                                           FontWeight="Bold"
+                                                           Foreground="#44aa44"
+                                                           HorizontalAlignment="Center"
+                                                           Margin="0,4,0,0"/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" FlowDirection="RightToLeft">
+                                                <TextBlock Text="میانگین روزانه"
+                                                           FontSize="11"
+                                                           Foreground="#999"
+                                                           HorizontalAlignment="Center"
+                                                           FontWeight="Medium"/>
+                                                <TextBlock Text="{Binding AverageMinutes, StringFormat={}{0:#}, Converter={StaticResource MinuteToHourConverter}}"
+                                                           FontSize="18"
+                                                           FontWeight="Bold"
+                                                           Foreground="#ffaa44"
+                                                           HorizontalAlignment="Center"
+                                                           Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <Border Grid.Row="1" Grid.ColumnSpan="2" 
+                                            Background="#3a2828" 
+                                            CornerRadius="6" 
+                                            Margin="0,10,0,0" 
+                                            Padding="15"
+                                            Visibility="{Binding IsAbsent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <StackPanel Orientation="Horizontal" 
+                                                    HorizontalAlignment="Center" 
+                                                    FlowDirection="RightToLeft">
+                                            <TextBlock Text="🚫"
+                                                       FontSize="16"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                                            <TextBlock Text="داده ای برای این هفته ثبت نشده"
+                                                       FontSize="14"
+                                                       FontWeight="Medium"
+                                                       Foreground="#ff9999"
+                                                       VerticalAlignment="Center"/>
                                         </StackPanel>
+                                    </Border>
 
-                                        <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" FlowDirection="RightToLeft">
-                                            <TextBlock Text="میانگین روزانه"
-                               FontSize="11"
-                               Foreground="#999"
-                               HorizontalAlignment="Center"
-                               FontWeight="Medium"/>
-                                            <TextBlock Text="{Binding AverageMinutes, StringFormat={}{0:#}, Converter={StaticResource MinuteToHourConverter}}"
-                               FontSize="18"
-                               FontWeight="Bold"
-                               Foreground="#ffaa44"
-                               HorizontalAlignment="Center"
-                               Margin="0,4,0,0"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
+                                    <Border Grid.Row="0" Grid.ColumnSpan="2" 
+                                            HorizontalAlignment="Left" 
+                                            VerticalAlignment="Top"
+                                            Background="{Binding IsAbsent, Converter={StaticResource StatusIconBackgroundConverter}}"
+                                            CornerRadius="10"
+                                            Width="20" Height="20"
+                                            Margin="5">
+                                        <TextBlock Text="{Binding IsAbsent, Converter={StaticResource StatusIconConverter}}" 
+                                                   FontSize="10" 
+                                                   Foreground="White" 
+                                                   HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
 
-                                <Border Grid.Row="0" Grid.ColumnSpan="2" 
-                            HorizontalAlignment="Left" 
-                            VerticalAlignment="Top"
-                            Background="#44aa44"
-                            CornerRadius="10"
-                            Width="20" Height="20"
-                            Margin="5">
-                                    <TextBlock Text="✏" 
-                                   FontSize="10" 
-                                   Foreground="White" 
-                                   HorizontalAlignment="Center" 
-                                   VerticalAlignment="Center"/>
-                                </Border>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <TextBlock Text="هیچ مطالعه‌ای ثبت نشده است"
+            <TextBlock Text="{Binding EmptyStateMessage}"
                        Foreground="#999"
                        FontSize="16"
                        FontFamily="Shabnam"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
-                       Grid.Row="1">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Visibility" Value="Collapsed"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Records.Count}" Value="0">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                       Grid.Row="3"
+                       Visibility="{Binding IsEmptyState, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Grid>
     </Border>
 </Window>

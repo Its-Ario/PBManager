@@ -49,7 +49,7 @@ namespace PBManager.MVVM.View
 
         private void WeekStartDatePicker_SelectedDateChanged(object sender, RoutedEventArgs e)
         {
-            if (DataContext is AddStudyRecordViewModel viewModel && WeekStartDatePicker.SelectedDate != null)
+            if (DataContext is AddStudyRecordViewModel viewModel)
             {
                 viewModel.SelectedWeekStart = WeekStartDatePicker.SelectedDate;
             }

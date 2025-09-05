@@ -17,6 +17,6 @@ namespace PBManager.Services
         Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>> GetWeeklyStudyDataAsync(int weeks = 8);
         Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>> GetWeeklyStudyDataAsync(int studentId, int weeks = 8);
         Task<int> GetWeeklyAbsencesAsync();
-        Task<int> GetStudentAbsencesAsync(int studentId);
+        Task<List<DateTime>> GetStudentAbsentWeeksAsync(int studentId);
     }
 }

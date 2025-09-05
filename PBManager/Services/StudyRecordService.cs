@@ -54,7 +54,7 @@ namespace PBManager.Services
                 {
                     r.Date.Year,
                     Week = CultureInfo.InvariantCulture.Calendar
-                        .GetWeekOfYear(r.Date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)
+                        .GetWeekOfYear(r.Date, CalendarWeekRule.FirstDay, DayOfWeek.Saturday)
                 })
                 .Select(g => g.Sum(r => r.MinutesStudied))
                 .ToList();
@@ -216,49 +216,53 @@ namespace PBManager.Services
             return studentsWithoutDataCount;
         }
 
-        public async Task<int> GetStudentAbsencesAsync(int studentId)
+        public async Task<List<DateTime>> GetStudentAbsentWeeksAsync(int studentId)
         {
-            var lastRecord = await App.Db.StudyRecords
-                .OrderByDescending(r => r.Date)
-                .FirstOrDefaultAsync();
+            var absentWeeks = new List<DateTime>();
 
-            if (lastRecord == null)
+            var lastRecordDate = await App.Db.StudyRecords.MaxAsync(r => (DateTime?)r.Date);
+
+            if (lastRecordDate == null)
             {
-                return 0;
+                return absentWeeks;
             }
+            DateTime lastDate = lastRecordDate.Value.Date;
 
-            DateTime lastDate = lastRecord.Date.Date;
-
-            var firstStudentRecord = await App.Db.StudyRecords
+            var studentRecordDates = await App.Db.StudyRecords
                 .Where(r => r.StudentId == studentId)
-                .OrderBy(r => r.Date)
-                .FirstOrDefaultAsync();
+                .Select(r => r.Date.Date)
+                .ToListAsync();
 
-            if (firstStudentRecord == null)
+            DateTime startDate;
+
+            if (!studentRecordDates.Any())
             {
-                int totalWeeks = (int)Math.Ceiling((lastDate - App.Db.StudyRecords.Min(r => r.Date)).TotalDays / 7.0);
-                return totalWeeks;
+                var firstEverDate = await App.Db.StudyRecords.MinAsync(r => (DateTime?)r.Date);
+                startDate = firstEverDate.Value.Date;
+            }
+            else
+            {
+                startDate = studentRecordDates.Min();
             }
 
-            DateTime startDate = firstStudentRecord.Date.Date;
-
-            int absences = 0;
+            var dateSet = studentRecordDates.ToHashSet();
 
             DateTime weekStart = startDate;
             while (weekStart <= lastDate)
             {
                 DateTime weekEnd = weekStart.AddDays(7);
 
-                bool hasRecord = await App.Db.StudyRecords
-                    .AnyAsync(r => r.StudentId == studentId && r.Date >= weekStart && r.Date < weekEnd);
+                bool hasRecord = dateSet.Any(d => d >= weekStart && d < weekEnd);
 
                 if (!hasRecord)
-                    absences++;
+                {
+                    absentWeeks.Add(weekStart);
+                }
 
                 weekStart = weekEnd;
             }
 
-            return absences;
+            return absentWeeks;
         }
 
         public async Task DeleteStudyRecordsForWeekAsync(Student student, DateTime startOfWeek)
