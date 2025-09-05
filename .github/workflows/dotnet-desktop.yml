@@ -2,22 +2,30 @@ name: .NET Core Desktop
 
 on:
   push:
-    branches: [ "master" ]
+    tags: ['v*']
+    branches: ['master', 'main']
   pull_request:
-    branches: [ "master" ]
+    branches: ['master', 'main']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: read
 
 jobs:
-  build:
+  build-release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
     strategy:
       matrix:
-        configuration: [Debug, Release]
-
-    runs-on: windows-latest
+        runtime: [win-x64, win-arm64]
 
     env:
-      Solution_Path: PBManager.sln
-      Wap_Project_Path: PBManager.Package/PBManager.Package.wapproj
-      Wap_Project_Directory: PBManager.Package
+      PROJECT_PATH: PBManager/PBManager.csproj
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
     steps:
     - name: Checkout
@@ -25,62 +33,82 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core
+    - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+        dotnet-quality: ga
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Cache NuGet packages
+    - name: Cache dependencies
       uses: actions/cache@v4
       with:
         path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
 
-    - name: Restore NuGet packages with MSBuild
-      run: msbuild "${{ env.Solution_Path }}" /t:Restore /p:Configuration=${{ matrix.configuration }} /p:Platform=x86
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_PATH }} --locked-mode
 
-    - name: Build Solution with MSBuild
-      run: msbuild "${{ env.Solution_Path }}" /p:Configuration=${{ matrix.configuration }} /p:Platform=x86
+    - name: Build
+      run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore --verbosity minimal
 
-    - name: Decode the PFX certificate
-      id: decode_cert
+    - name: Test
+      run: dotnet test ${{ env.PROJECT_PATH }} -c Release --no-build --verbosity minimal --logger trx --results-directory TestResults
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.runtime }}
+        path: TestResults/*.trx
+
+    - name: Publish
+      run: |
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          -c Release `
+          -r ${{ matrix.runtime }} `
+          --self-contained true `
+          -p:PublishSingleFile=true `
+          -p:IncludeNativeLibrariesForSelfExtract=true `
+          -p:PublishTrimmed=true `
+          -p:TrimMode=partial `
+          -p:EnableCompressionInSingleFile=true `
+          -p:DebugType=none `
+          -p:DebugSymbols=false `
+          --no-restore `
+          -o publish/${{ matrix.runtime }}
+
+    - name: Create archive
       shell: pwsh
       run: |
-        if (-not ([string]::IsNullOrWhiteSpace("${{ secrets.BASE64_ENCODED_PFX }}"))) {
-          $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
-          # Write the certificate to the path expected by the .wapproj file
-          $pfxPath = Join-Path -Path "${{ env.Wap_Project_Directory }}" -ChildPath "MyCert.pfx"
-          [System.IO.File]::WriteAllBytes($pfxPath, $pfx_cert_byte)
+        $runtime = "${{ matrix.runtime }}"
+        $archiveName = "PBManager-${{ github.ref_name }}-$runtime"
+        
+        if ($runtime.StartsWith("win")) {
+          Compress-Archive -Path "publish/$runtime/*" -DestinationPath "$archiveName.zip"
+          echo "ASSET_PATH=$archiveName.zip" >> $env:GITHUB_ENV
+          echo "ASSET_NAME=$archiveName.zip" >> $env:GITHUB_ENV
         } else {
-          echo "::error::BASE64_ENCODED_PFX secret is empty or not found."
-          exit 1
+          tar -czf "$archiveName.tar.gz" -C "publish/$runtime" .
+          echo "ASSET_PATH=$archiveName.tar.gz" >> $env:GITHUB_ENV
+          echo "ASSET_NAME=$archiveName.tar.gz" >> $env:GITHUB_ENV
         }
 
-    - name: Create MSIX App Package
-      shell: pwsh
-      run: |
-        msbuild "${{ env.Wap_Project_Path }}" `
-          /p:Configuration=${{ matrix.configuration }} `
-          /p:Platform=x86 `
-          /p:AppxPackageSigningEnabled=true `
-          /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}" `
-          /p:AppxPackageDir="${{ env.Wap_Project_Directory }}/AppPackages/" `
-          /p:UapAppxPackageBuildMode=StoreUpload `
-          /p:AppxBundle=Always `
-          /p:AppxBundlePlatforms="x86|x64"
-
-    - name: Remove the PFX certificate
-      if: always()
-      shell: pwsh
-      run: Remove-Item -Path (Join-Path -Path "${{ env.Wap_Project_Directory }}" -ChildPath "MyCert.pfx") -ErrorAction SilentlyContinue
-
-    - name: Upload MSIX Package Artifact
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: MSIX-Package-${{ matrix.configuration }}
-        path: ${{ env.Wap_Project_Directory }}/AppPackages/
+        name: build-${{ matrix.runtime }}
+        path: ${{ env.ASSET_PATH }}
+        retention-days: 30
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: ${{ env.ASSET_PATH }}
+        generate_release_notes: true
+        draft: false
+        prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
