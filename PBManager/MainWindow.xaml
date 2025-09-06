@@ -70,13 +70,15 @@
                              Tag="&#xE81C;"
                              Foreground="White"
                              FontSize="14"
-                             Style="{StaticResource MenuButtonTheme}"/>
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding StudyManagementViewCommand}"/>
                 <RadioButton Content="تنظیمات"
                              Height="50"
                              Tag="&#xE713;"
                              Foreground="White"
                              FontSize="14"
-                             Style="{StaticResource MenuButtonTheme}"/>
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding SettingsViewCommand}"/>
             </StackPanel>
 
             <Grid

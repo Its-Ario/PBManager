@@ -27,6 +27,10 @@
                 <view:StudentDetailView/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type viewModel:SettingsViewModel}">
+                <view:SettingsView/>
+            </DataTemplate>
+
             <FontFamily x:Key="AppFont">/Fonts/#Shabnam FD</FontFamily>
 
             <Style TargetType="Control">
