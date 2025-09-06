@@ -85,6 +85,11 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
                             Margin="0,5,5,0">
+                    <Button x:Name="ReloadButton" 
+                            Click="ReloadButton_Click" 
+                            Content="🔄" 
+                            Style="{StaticResource WindowButtonStyle}"
+                            ToolTip="بارگذاری مجدد"/>
                     <Button x:Name="MinimizeButton" 
                             Click="MinimizeButton_Click" 
                             Content="—" 
