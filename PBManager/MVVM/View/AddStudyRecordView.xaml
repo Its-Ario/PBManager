@@ -371,7 +371,7 @@
                     Height="35"
                     Width="120"
                     HorizontalAlignment="Center"
-                    Command="{Binding SubmitCommand}">
+                    Command="{Binding SubmitCommand}" Click="submitBtn_Click">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
                         <Setter Property="Content" Value="ثبت"/>

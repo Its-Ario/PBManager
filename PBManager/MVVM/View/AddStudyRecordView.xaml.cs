@@ -17,6 +17,13 @@ namespace PBManager.MVVM.View
             this.Title = "ثبت اطلاعات مطالعه";
         }
 
+        public AddStudyRecordView(Student student, DateTime weekStartDate)
+        {
+            InitializeComponent();
+            this.DataContext = new AddStudyRecordViewModel(student, weekStartDate);
+            this.Title = "ثبت اطلاعات مطالعه";
+        }
+
         public AddStudyRecordView(Student student, IEnumerable<StudyRecord> existingRecords)
         {
             InitializeComponent();
@@ -53,6 +60,11 @@ namespace PBManager.MVVM.View
             {
                 viewModel.SelectedWeekStart = WeekStartDatePicker.SelectedDate;
             }
+        }
+
+        private void submitBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

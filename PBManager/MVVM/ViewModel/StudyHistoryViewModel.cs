@@ -99,12 +99,7 @@ namespace PBManager.MVVM.ViewModel
 
             _ = LoadData(Student.Id);
 
-            EditRecordCommand = new RelayCommand<WeeklyStudyData>(async (weeklyRecord) => await EditRecordAsync(weeklyRecord),
-                (parameter) =>
-                {
-                    var record = parameter as WeeklyStudyData;
-                    return record != null && !record.IsAbsent;
-                });
+            EditRecordCommand = new RelayCommand<WeeklyStudyData>(async (weeklyRecord) => await EditRecordAsync(weeklyRecord));
             SetFilterCommand = new RelayCommand<string>(SetFilter);
         }
 
@@ -273,21 +268,14 @@ namespace PBManager.MVVM.ViewModel
 
             if (weeklyRecord.IsAbsent)
             {
-                MessageBox.Show("امکان ویرایش هفته‌های غیبت وجود ندارد.", "اطلاعات",
-                               MessageBoxButton.OK, MessageBoxImage.Information);
+                var editView = new AddStudyRecordView(Student, weeklyRecord.StartOfWeek);
+                var result = editView.ShowDialog();
                 return;
             }
 
             try
             {
                 var studyRecords = await _studyRecordService.GetStudyRecordsForWeekAsync(Student, weeklyRecord.StartOfWeek);
-
-                if (studyRecords.Count == 0)
-                {
-                    MessageBox.Show("هیچ رکورد مطالعه‌ای برای این هفته یافت نشد.", "اطلاعات",
-                                   MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
 
                 var editView = new AddStudyRecordView(Student, studyRecords);
                 var result = editView.ShowDialog();

@@ -59,6 +59,22 @@ namespace PBManager.MVVM.ViewModel
             LoadWeekCommand = new RelayCommand(async () => await LoadWeekAsync());
         }
 
+        public AddStudyRecordViewModel(Student student, DateTime weekStartDate)
+        {
+            _student = student;
+            _studyRecordService = new StudyRecordService();
+            WeeklySubjectEntries = [];
+            IsEditMode = false;
+
+            SelectedWeekStart = new PersianDate(GetPersianStartOfWeek(weekStartDate));
+
+            LoadWeekAsync();
+
+            LoadSubjects();
+            SubmitCommand = new RelayCommand(async () => await SubmitAsync());
+            LoadWeekCommand = new RelayCommand(async () => await LoadWeekAsync());
+        }
+
         public AddStudyRecordViewModel(Student student, IEnumerable<StudyRecord> existingRecords)
         {
             _student = student;

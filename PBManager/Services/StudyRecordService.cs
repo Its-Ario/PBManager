@@ -289,13 +289,12 @@ namespace PBManager.Services
             var weekStart = startOfWeek.Date;
             var weekEnd = weekStart.AddDays(6);
 
-            var records = await Task.Run(() =>
-                App.Db.StudyRecords
+            var records = await App.Db.StudyRecords
                     .Include(r => r.Subject)
                     .Where(r => r.Student.Id == student.Id &&
                                r.Date.Date >= weekStart &&
                                r.Date.Date <= weekEnd)
-                    .ToList());
+                    .ToListAsync();
 
             return records;
         }
