@@ -1,9 +1,7 @@
-﻿using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore;
 using PBManager.MVVM.Model;
 using PBManager.Services;
-using Microsoft.EntityFrameworkCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -12,9 +10,10 @@ using LiveChartsCore.Measure;
 
 namespace PBManager.MVVM.ViewModel
 {
-    internal class HomeViewModel : ObservableObject
+    public class HomeViewModel : ObservableObject
     {
         private readonly StudyRecordService _studyRecordService;
+        private readonly SubjectService _subjectService;
         public ISeries[] StudyOverTimeSeries { get; set; } = [];
         public ICartesianAxis[] StudyOverTimeXAxes { get; set; } = [];
         public ICartesianAxis[] StudyOverTimeYAxes { get; set; } = [];
@@ -45,9 +44,10 @@ namespace PBManager.MVVM.ViewModel
             set { _absentees = value; OnPropertyChanged(); }
         }
 
-        public HomeViewModel()
+        public HomeViewModel(StudyRecordService studyRecordService, SubjectService subjectService)
         {
-            _studyRecordService = new();
+            _studyRecordService = studyRecordService;
+            _subjectService = subjectService;
 
             _ = LoadData();
         }
@@ -111,7 +111,7 @@ namespace PBManager.MVVM.ViewModel
 
         public async Task LoadStudyPerSubjectChartAsync()
         {
-            List<Subject> subjects = await App.Db.Subjects.ToListAsync();
+            List<Subject> subjects = await _subjectService.GetSubjectsAsync();
             List<double> values = [];
 
             foreach (var subject in subjects)

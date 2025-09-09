@@ -11,7 +11,6 @@ namespace PBManager.MVVM.View
         public StudyManagementView()
         {
             InitializeComponent();
-            this.DataContext = new StudyManagementViewModel();
         }
     }
 }

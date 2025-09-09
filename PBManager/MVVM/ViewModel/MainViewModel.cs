@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace PBManager.MVVM.ViewModel
 {
-    internal class MainViewModel : ObservableObject
+    public class MainViewModel : ObservableObject
     {
         public RelayCommand HomeViewCommand { get; set; }
         public RelayCommand StudyManagementViewCommand { get; set; }
@@ -24,27 +24,20 @@ namespace PBManager.MVVM.ViewModel
                 OnPropertyChanged();
             }
         }
-        public MainViewModel() {
-            HomeVM = new HomeViewModel();
-            ManagementVM = new StudyManagementViewModel();
-            SettingsVM = new SettingsViewModel();
+        public MainViewModel(
+        HomeViewModel homeVM,
+        StudyManagementViewModel managementVM,
+        SettingsViewModel settingsVM)
+        {
+            HomeVM = homeVM;
+            ManagementVM = managementVM;
+            SettingsVM = settingsVM;
 
             CurrentView = HomeVM;
 
-            HomeViewCommand = new RelayCommand(() =>
-            {
-                CurrentView = HomeVM;
-            });
-
-            StudyManagementViewCommand = new RelayCommand(() =>
-            {
-                CurrentView = ManagementVM;
-            });
-
-            SettingsViewCommand = new RelayCommand(() =>
-            {
-                CurrentView = SettingsVM;
-            });
+            HomeViewCommand = new RelayCommand(() => CurrentView = HomeVM);
+            StudyManagementViewCommand = new RelayCommand(() => CurrentView = ManagementVM);
+            SettingsViewCommand = new RelayCommand(() => CurrentView = SettingsVM);
         }
     }
 }

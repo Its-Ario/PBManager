@@ -11,7 +11,6 @@ namespace PBManager.MVVM.View
         public HomeView()
         {
             InitializeComponent();
-            this.DataContext = new HomeViewModel();
         }
     }
 }

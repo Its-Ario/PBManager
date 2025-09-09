@@ -17,7 +17,6 @@ namespace PBManager.MVVM.View
         public SettingsView()
         {
             InitializeComponent();
-            this.DataContext = new SettingsViewModel();
 
             versionLabel.Text = Assembly
                 .GetExecutingAssembly()
@@ -42,10 +41,10 @@ namespace PBManager.MVVM.View
                 switch (extension)
                 {
                     case ".csv":
-                        await ViewModel.ImportCsvStudents(filePath);
+                        await ViewModel.ImportStudentsCsv(filePath);
                         break;
                     case ".xlsx":
-                        MessageBox.Show("Excel Support Soon...");
+                        await ViewModel.ImportStudentsXlsx(filePath);
                         break;
                     default:
                         MessageBox.Show("Unsupported Format");

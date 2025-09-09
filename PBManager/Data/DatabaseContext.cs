@@ -13,6 +13,15 @@ namespace PBManager.Data
         public DbSet<Class> Classes { get; set; }
         public DbSet<GradeRecord> GradeRecords { get; set; }
         public DbSet<StudyRecord> StudyRecords { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Student>()
+                .HasIndex(s => s.NationalCode)
+                .IsUnique();
+        }
     }
 
 }

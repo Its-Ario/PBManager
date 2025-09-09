@@ -11,6 +11,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using LiveChartsCore.Measure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PBManager.MVVM.ViewModel
 {
@@ -64,7 +65,7 @@ namespace PBManager.MVVM.ViewModel
 
         public StudentDetailViewModel()
         {
-            _studyRecordService = new();
+            _studyRecordService = App.ServiceProvider.GetRequiredService<StudyRecordService>();
             WeakReferenceMessenger.Default.Register(this);
         }
 

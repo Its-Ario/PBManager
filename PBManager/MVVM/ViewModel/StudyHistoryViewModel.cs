@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using PBManager.MVVM.Model;
 using PBManager.MVVM.View;
 using PBManager.Services;
@@ -95,7 +96,7 @@ namespace PBManager.MVVM.ViewModel
         public StudyHistoryViewModel(Student student)
         {
             Student = student;
-            _studyRecordService = new StudyRecordService();
+            _studyRecordService = App.ServiceProvider.GetRequiredService<StudyRecordService>();
 
             _ = LoadData(Student.Id);
 

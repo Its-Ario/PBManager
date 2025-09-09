@@ -8,11 +8,14 @@ using CommunityToolkit.Mvvm.Messaging;
 using PBManager.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PBManager.Services;
 
 namespace PBManager.MVVM.ViewModel
 {
     public class StudyManagementViewModel : ObservableObject
     {
+        private readonly StudentService _studentService;
+
         private ObservableCollection<Student> _students;
         public ObservableCollection<Student> Students
         {
@@ -28,20 +31,6 @@ namespace PBManager.MVVM.ViewModel
         }
 
         public StudentDetailViewModel DetailVM { get; }
-
-        private ObservableCollection<Subject> _subjects;
-        public ObservableCollection<Subject> Subjects
-        {
-            get => _subjects;
-            set { _subjects = value; OnPropertyChanged(); }
-        }
-
-        private ObservableCollection<StudyRecord> _studyRecords;
-        public ObservableCollection<StudyRecord> StudyRecords
-        {
-            get => _studyRecords;
-            set { _studyRecords = value; OnPropertyChanged(); }
-        }
 
         private StudyRecord _selectedRecord;
         public StudyRecord SelectedRecord
@@ -83,9 +72,10 @@ namespace PBManager.MVVM.ViewModel
 
         public RelayCommand SaveCommand { get; }
 
-        public StudyManagementViewModel()
+        public StudyManagementViewModel(StudentService studentService)
         {
-            Students = new ObservableCollection<Student>();
+            _studentService = studentService;
+
             DetailVM = new StudentDetailViewModel();
 
             if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
@@ -109,20 +99,9 @@ namespace PBManager.MVVM.ViewModel
         {
             try
             {
-                var studentsFromDb = await App.Db.Students
-                    .Include(r => r.Class)
-                    .ToListAsync();
+                var studentsFromDb = await _studentService.GetAllStudentsAsync();
 
                 Students = new ObservableCollection<Student>(studentsFromDb);
-
-                Subjects = new ObservableCollection<Subject>(await App.Db.Subjects.ToListAsync());
-                StudyRecords = new ObservableCollection<StudyRecord>(
-                     await App.Db.StudyRecords
-                         .Include(r => r.Student)
-                         .Include(r => r.Subject)
-                         .OrderByDescending(r => r.Date)
-                         .ToListAsync()
-                );
             }
             catch (Exception ex)
             {

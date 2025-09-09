@@ -1,81 +1,100 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PBManager.Data;
 using PBManager.MVVM.Model;
 
 namespace PBManager.Services
 {
     public class StudentService : IStudentService
     {
+        private readonly DatabaseContext _db;
+
+        public StudentService(DatabaseContext db)
+        {
+            _db = db;
+        }
+
         public async Task<bool> AddStudentAsync(Student student)
         {
-            bool exists = await App.Db.Students.AnyAsync(s => s.NationalCode == student.NationalCode);
+            bool exists = await _db.Students.AnyAsync(s => s.NationalCode == student.NationalCode);
             if (exists)
             {
                 return false;
             }
 
-            App.Db.Students.Add(student);
-            await App.Db.SaveChangesAsync();
+            _db.Students.Add(student);
+            await _db.SaveChangesAsync();
             return true;
         }
 
 
         public async Task<bool> DeleteStudentAsync(int id)
         {
-            Student? student = await App.Db.Students.FindAsync(id);
+            Student? student = await _db.Students.FindAsync(id);
             if (student == null)
                 return false;
 
-            App.Db.Students.Remove(student);
-            await App.Db.SaveChangesAsync();
+            _db.Students.Remove(student);
+            await _db.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<List<Student>> GetAllStudentsAsync()
         {
-            return await App.Db.Students.ToListAsync();
+            return await _db.Students.Include(r => r.Class).ToListAsync();
         }
 
         public async Task<Student> GetStudentByIdAsync(int id)
         {
-            Student? student = await App.Db.Students.FindAsync(id);
+            Student? student = await _db.Students.FindAsync(id);
             return student;
         }
 
         public async Task SubmitGradeRecordAsync(GradeRecord record)
         {
-            await App.Db.GradeRecords.AddAsync(record);
-            await App.Db.SaveChangesAsync();
+            await _db.GradeRecords.AddAsync(record);
+            await _db.SaveChangesAsync();
         }
 
         public async Task SubmitStudyRecordAsync(StudyRecord record)
         {
-            await App.Db.StudyRecords.AddAsync(record);
-            await App.Db.SaveChangesAsync();
+            await _db.StudyRecords.AddAsync(record);
+            await _db.SaveChangesAsync();
         }
 
         public async Task UpdateStudentAsync(Student student)
         {
-            App.Db.Students.Update(student);
-            await App.Db.SaveChangesAsync();
+            _db.Students.Update(student);
+            await _db.SaveChangesAsync();
         }
 
         public async Task<int> AddStudentsAsync(IEnumerable<Student> students)
         {
-            var existingIds = await App.Db.Students
-                .Where(s => students.Select(ns => ns.Id).Contains(s.Id))
-                .Select(s => s.Id)
-                .ToListAsync();
+            if (students == null || !students.Any())
+                return 0;
 
-            var newStudents = students.Where(s => !existingIds.Contains(s.Id)).ToList();
+            using var transaction = await _db.Database.BeginTransactionAsync();
 
-            if (newStudents.Count != 0)
+            int inserted = 0;
+
+            foreach (var s in students)
             {
-                App.Db.Students.AddRange(newStudents);
-                await App.Db.SaveChangesAsync();
+                var rows = await _db.Database.ExecuteSqlRawAsync(
+                    @"INSERT OR IGNORE INTO Students 
+              (NationalCode, FirstName, LastName, ClassId) 
+              VALUES ({0}, {1}, {2}, {3})",
+                    s.NationalCode, s.FirstName, s.LastName, s.ClassId);
+
+                inserted += rows;
             }
 
-            return newStudents.Count;
+            await transaction.CommitAsync();
+            return inserted;
+        }
+
+        public async Task<int> GetStudentsCountAsync()
+        {
+            return await _db.Students.AsNoTracking().CountAsync();
         }
     }
 }

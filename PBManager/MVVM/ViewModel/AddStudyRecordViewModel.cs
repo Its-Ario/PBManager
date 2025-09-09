@@ -6,12 +6,15 @@ using System.Windows;
 using PBManager.Services;
 using System.Globalization;
 using Mohsen;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PBManager.MVVM.ViewModel
 {
     public class AddStudyRecordViewModel : ObservableObject
     {
         private readonly StudyRecordService _studyRecordService;
+        private readonly SubjectService _subjectService;
+
         public ObservableCollection<SubjectEntry> WeeklySubjectEntries { get; set; }
         public IRelayCommand SubmitCommand { get; set; }
         public IRelayCommand LoadWeekCommand { get; set; }
@@ -46,7 +49,8 @@ namespace PBManager.MVVM.ViewModel
         public AddStudyRecordViewModel(Student student)
         {
             _student = student;
-            _studyRecordService = new StudyRecordService();
+            _studyRecordService = App.ServiceProvider.GetRequiredService<StudyRecordService>();
+            _subjectService = App.ServiceProvider.GetRequiredService<SubjectService>();
             WeeklySubjectEntries = [];
             IsEditMode = false;
 
@@ -62,7 +66,8 @@ namespace PBManager.MVVM.ViewModel
         public AddStudyRecordViewModel(Student student, DateTime weekStartDate)
         {
             _student = student;
-            _studyRecordService = new StudyRecordService();
+            _studyRecordService = App.ServiceProvider.GetRequiredService<StudyRecordService>();
+            _subjectService = App.ServiceProvider.GetRequiredService<SubjectService>();
             WeeklySubjectEntries = [];
             IsEditMode = false;
 
@@ -78,7 +83,8 @@ namespace PBManager.MVVM.ViewModel
         public AddStudyRecordViewModel(Student student, IEnumerable<StudyRecord> existingRecords)
         {
             _student = student;
-            _studyRecordService = new StudyRecordService();
+            _studyRecordService = App.ServiceProvider.GetRequiredService<StudyRecordService>();
+            _subjectService = App.ServiceProvider.GetRequiredService<SubjectService>();
             WeeklySubjectEntries = [];
             IsEditMode = true;
 
@@ -107,12 +113,12 @@ namespace PBManager.MVVM.ViewModel
                 if (existingRecords.Any())
                 {
                     IsEditMode = true;
-                    LoadSubjectsWithExistingData(existingRecords.ToList());
+                    await LoadSubjectsWithExistingData(existingRecords.ToList());
                 }
                 else
                 {
                     IsEditMode = false;
-                    LoadSubjects();
+                    await LoadSubjects();
                 }
             }
             catch (Exception ex)
@@ -122,20 +128,20 @@ namespace PBManager.MVVM.ViewModel
             }
         }
 
-        private void LoadSubjects()
+        private async Task LoadSubjects()
         {
             WeeklySubjectEntries.Clear();
-            var subjectsFromDb = App.Db.Subjects.ToList();
+            var subjectsFromDb = await _subjectService.GetSubjectsAsync();
             foreach (var subject in subjectsFromDb)
             {
                 WeeklySubjectEntries.Add(new SubjectEntry { Subject = subject });
             }
         }
 
-        private void LoadSubjectsWithExistingData(List<StudyRecord> existingRecords)
+        private async Task LoadSubjectsWithExistingData(List<StudyRecord> existingRecords)
         {
             WeeklySubjectEntries.Clear();
-            var subjectsFromDb = App.Db.Subjects.ToList();
+            var subjectsFromDb = await _subjectService.GetSubjectsAsync();
             var recordsBySubject = existingRecords.GroupBy(r => r.Subject.Id).ToDictionary(g => g.Key, g => g.ToList());
 
             foreach (var subject in subjectsFromDb)

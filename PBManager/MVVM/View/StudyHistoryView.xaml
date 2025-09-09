@@ -22,8 +22,6 @@
         <converter:StatusIconBackgroundConverter x:Key="StatusIconBackgroundConverter"/>
         <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converter:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
-        <converter:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-
 
         <Style x:Key="FilterButtonStyle" TargetType="ToggleButton">
             <Setter Property="Background" Value="#3a3a4a"/>
