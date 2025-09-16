@@ -3,8 +3,6 @@ using PBManager.Core.Entities;
 using PBManager.Core.Interfaces;
 using PBManager.Core.Utils;
 using PBManager.Infrastructure.Data;
-using static System.Net.Mime.MediaTypeNames;
-
 namespace PBManager.Infrastructure.Repositories;
 
 public class StudyRecordRepository : IStudyRecordRepository
@@ -21,7 +19,7 @@ public class StudyRecordRepository : IStudyRecordRepository
     public Task<bool> DoesRecordExistForWeekAsync(int studentId, DateTime startOfWeek)
     {
         var weekEnd = startOfWeek.AddDays(6);
-        return _db.StudyRecords.AnyAsync(r => r.StudentId == studentId && r.Date >= startOfWeek && r.Date <= weekEnd);
+        return _db.StudyRecords.AsNoTracking().AnyAsync(r => r.StudentId == studentId && r.Date >= startOfWeek && r.Date <= weekEnd);
     }
 
     public Task<List<StudyRecord>> GetRecordsForWeekAsync(int studentId, DateTime startOfWeek)
@@ -101,7 +99,7 @@ public class StudyRecordRepository : IStudyRecordRepository
 
     public async Task<List<StudyRecord>> GetRecordsForLastWeeksAsync(int? studentId, int weeks)
     {
-        var lastSubmission = await _db.StudyRecords.OrderByDescending(r => r.Date).Select(r => (DateTime?)r.Date).FirstOrDefaultAsync();
+        var lastSubmission = await _db.StudyRecords.AsNoTracking().OrderByDescending(r => r.Date).Select(r => (DateTime?)r.Date).FirstOrDefaultAsync();
         if (lastSubmission == null) return [];
 
         var lastWeekStart = DateUtils.GetPersianStartOfWeek(lastSubmission.Value);

@@ -3,7 +3,6 @@ using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
 using PBManager.Core.Interfaces;
 using PBManager.Core.Utils;
-using System.Globalization;
 
 namespace PBManager.Application.Services;
 
@@ -12,7 +11,6 @@ public class StudyRecordService : IStudyRecordService
     private readonly IStudyRecordRepository _repository;
     private readonly IStudentRepository _studentRepository;
     private readonly IMemoryCache _cache;
-    private static readonly CultureInfo PersianCulture = new("fa-IR");
 
     public StudyRecordService(IStudyRecordRepository repository, IStudentRepository studentRepository, IMemoryCache cache)
     {

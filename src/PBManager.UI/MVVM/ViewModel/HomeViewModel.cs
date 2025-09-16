@@ -6,7 +6,6 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using LiveChartsCore.Measure;
 using PBManager.Core.Entities;
-using PBManager.Application.Services;
 using PBManager.Application.Interfaces;
 
 namespace PBManager.MVVM.ViewModel

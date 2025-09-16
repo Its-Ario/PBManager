@@ -11,9 +11,9 @@ public class StudentRepository : IStudentRepository
 
     public StudentRepository(DatabaseContext db) { _db = db; }
 
-    public Task<Student?> FindByIdAsync(int id) => _db.Students.FindAsync(id).AsTask();
-    public Task<List<Student>> GetAllWithClassAsync() => _db.Students.Include(r => r.Class).AsNoTracking().ToListAsync();
-    public Task<bool> ExistsByNationalCodeAsync(string code) => _db.Students.AnyAsync(s => s.NationalCode == code);
+    public Task<Student?> FindByIdAsync(int id) => _db.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+    public Task<List<Student>> GetAllWithClassAsync() => _db.Students.AsNoTracking().Include(r => r.Class).AsNoTracking().ToListAsync();
+    public Task<bool> ExistsByNationalCodeAsync(string code) => _db.Students.AsNoTracking().AnyAsync(s => s.NationalCode == code);
     public async Task AddAsync(Student s) => await _db.Students.AddAsync(s);
     public void Update(Student s) => _db.Students.Update(s);
     public void Delete(Student s) => _db.Students.Remove(s);
@@ -27,7 +27,7 @@ public class StudentRepository : IStudentRepository
         var nationalCodes = students.Select(s => s.NationalCode).ToList();
 
         // fetch existing students once
-        var existingCodes = await _db.Students
+        var existingCodes = await _db.Students.AsNoTracking()
             .Where(s => nationalCodes.Contains(s.NationalCode))
             .Select(s => s.NationalCode)
             .ToListAsync();

@@ -53,6 +53,9 @@ namespace PBManager.MVVM.ViewModel
         {
             _studyRecordService = studyRecordService;
             _subjectService = subjectService;
+
+            SubmitCommand = new RelayCommand(async () => await SubmitAsync());
+            LoadWeekCommand = new RelayCommand(async () => await LoadWeekAsync());
         }
         public async Task Initialize(Student student, DateTime? weekStartDate = null)
         {
@@ -168,14 +171,6 @@ namespace PBManager.MVVM.ViewModel
             }
         }
 
-        private DateTime GetPersianStartOfWeekForRecords(List<StudyRecord> records)
-        {
-            if (records.Count == 0) return GetPersianStartOfCurrentWeek();
-
-            var earliestDate = records.Min(r => r.Date);
-            return DateUtils.GetPersianStartOfWeek(earliestDate);
-        }
-
         private async Task SubmitAsync()
         {
             bool hasError = false;
@@ -207,8 +202,8 @@ namespace PBManager.MVVM.ViewModel
                         var recordDate = CalculateDateForPersianWeekDay(startOfWeek.ToDateTime(), dayMinutes.Key);
                         allRecords.Add(new StudyRecord
                         {
-                            Student = _student,
-                            Subject = entry.Subject,
+                            StudentId = _student.Id,
+                            SubjectId = entry.Subject.Id,
                             MinutesStudied = dayMinutes.Value,
                             Date = recordDate
                         });
@@ -254,11 +249,6 @@ namespace PBManager.MVVM.ViewModel
 
                 MessageBox.Show(errorMessage, "خطا", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private DateTime GetPersianStartOfCurrentWeek()
-        {
-            return DateUtils.GetPersianStartOfWeek(DateTime.Today);
         }
 
         private DateTime CalculateDateForPersianWeekDay(DateTime startOfWeek, DayOfWeek dayOfWeek)
