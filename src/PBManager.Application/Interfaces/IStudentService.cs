@@ -1,4 +1,6 @@
-﻿using PBManager.Core.Entities;
+﻿using PBManager.Application.DTOs;
+using PBManager.Core.Entities;
+using PBManager.Core.Interfaces;
 
 namespace PBManager.Application.Interfaces
 {
@@ -11,5 +13,6 @@ namespace PBManager.Application.Interfaces
         Task<bool> DeleteStudentAsync(int id);
         Task<int> AddStudentsAsync(IEnumerable<Student> students);
         Task<int> GetStudentsCountAsync();
+        Task<ImportResult> ImportStudentsAsync(Stream fileStream, IFileParser<Student> parser);
     }
 }

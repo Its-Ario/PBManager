@@ -22,4 +22,22 @@ public class ClassService : IClassService
     {
         return await _classRepository.GetCountAsync();
     }
+
+    public async Task<Class> GetClassByNameAsync(string name)
+    {
+        if (string.IsNullOrEmpty(name)) throw new Exception($"Empty Classname");
+
+        var classEntity = await _classRepository.GetByNameAsync(name);
+
+        if (classEntity == null) throw new Exception($"Class '{name}' not found in database.");
+        return classEntity;
+    }
+
+    public async Task<Class> GetClassByIdAsync(int id)
+    {
+        var classEntity = await _classRepository.GetByIdAsync(id);
+
+        if (classEntity == null) throw new Exception($"Class '{id}' not found in database.");
+        return classEntity;
+    }
 }

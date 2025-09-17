@@ -11,6 +11,7 @@ using PBManager.Application.Interfaces;
 using PBManager.Application.Services;
 using PBManager.Core.Interfaces;
 using PBManager.Infrastructure.Repositories;
+using PBManager.Infrastructure.Parsers;
 
 namespace PBManager
 {
@@ -65,6 +66,9 @@ namespace PBManager
             services.AddTransient<MainWindow>();
             services.AddTransient<AddStudyRecordView>();
             services.AddTransient<StudyHistoryView>();
+
+            services.AddTransient<XlsxStudentParser>();
+            services.AddTransient(typeof(CsvParser<>));
         }
     }
 }

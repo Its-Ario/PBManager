@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using PBManager.Application.Interfaces;
+using PBManager.Application.DTOs;
 using PBManager.Core.Entities;
 using PBManager.Core.Interfaces;
 
@@ -103,5 +104,38 @@ public class StudentService : IStudentService
             _cache.Set(cacheKey, count, TimeSpan.FromMinutes(30));
         }
         return count;
+    }
+
+    public async Task<ImportResult> ImportStudentsAsync(Stream fileStream, IFileParser<Student> parser)
+    {
+        if (fileStream == null) throw new ArgumentNullException(nameof(fileStream));
+        if (parser == null) throw new ArgumentNullException(nameof(parser));
+
+        var result = new ImportResult();
+
+        try
+        {
+            var students = new List<Student>();
+
+            await foreach (var student in parser.ParseAsync(fileStream))
+            {
+                students.Add(student);
+                _cache.Remove($"Student_{student.Id}");
+            }
+            result.SkippedCount = parser.SkippedCount;
+
+            if (students.Any())
+            {
+                result.ImportedCount = await _studentRepository.AddRangeAsync(students);
+
+                _cache.Remove("AllStudents");
+                _cache.Remove("StudentsCount");
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("The file could not be processed. Please check the format and content.", ex);
+        }
     }
 }

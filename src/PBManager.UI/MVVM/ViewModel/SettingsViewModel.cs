@@ -6,6 +6,10 @@ using System.Text;
 using ExcelDataReader;
 using PBManager.Core.Entities;
 using PBManager.Application.Interfaces;
+using System.Windows;
+using PBManager.Infrastructure.Parsers;
+using PBManager.Core.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PBManager.MVVM.ViewModel
 {
@@ -71,42 +75,26 @@ namespace PBManager.MVVM.ViewModel
 
         }
 
-        public async Task ImportStudentsCsv(string filePath)
+        public async Task ImportStudentsAsync(string? filePath)
         {
-            using var reader = new StreamReader(filePath);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-
-            var records = csv.GetRecords<Student>().ToList();
-
-            await _studentService.AddStudentsAsync(records);
-        }
-
-        public async Task ImportStudentsXlsx(string filePath)
-        {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-            using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
-            using var reader = ExcelReaderFactory.CreateReader(stream);
-            var result = reader.AsDataSet();
-
-            var table = result.Tables[0];
-
-            var students = new List<Student>(table.Rows.Count - 1);
-
-            for (int i = 1; i < table.Rows.Count; i++)
+            if (string.IsNullOrEmpty(filePath)) return;
+            IFileParser<Student> parser = Path.GetExtension(filePath).ToLowerInvariant() switch
             {
-                var row = table.Rows[i];
-                if (row[0] == null || row[1] == null) continue;
-
-                students.Add(new Student
-                {
-                    FirstName = row[0]?.ToString() ?? string.Empty,
-                    LastName = row[1]?.ToString() ?? string.Empty,
-                    NationalCode = row[2]?.ToString() ?? string.Empty,
-                });
+                ".xlsx" => App.ServiceProvider.GetRequiredService<XlsxStudentParser>(),
+                ".csv" => App.ServiceProvider.GetRequiredService<CsvParser<Student>>(),
+                _ => throw new NotSupportedException("File type not supported.")
+            };
+            try
+            {
+                await using var fileStream = File.OpenRead(filePath);
+                var result = await _studentService.ImportStudentsAsync(fileStream, parser);
+                await LoadData();
+                MessageBox.Show($"{result.ImportedCount} students imported.\n{result.SkippedCount} students skipped.");
             }
-
-            await _studentService.AddStudentsAsync(students);
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
         }
     }
 }

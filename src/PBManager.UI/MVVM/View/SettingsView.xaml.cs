@@ -30,7 +30,10 @@ namespace PBManager.MVVM.View
             var dialog = new OpenFileDialog
             {
                 Title = "Select a file",
-                Filter = "CSV files (*.csv)|*.csv|Excel files (*.xlsx)|*.xlsx"
+                Filter =
+                    "Supported files (*.csv;*.xlsx)|*.csv;*.xlsx|" +
+                    "CSV files (*.csv)|*.csv|" +
+                    "Excel files (*.xlsx)|*.xlsx"
             };
 
             if (dialog.ShowDialog() == true)
@@ -38,19 +41,15 @@ namespace PBManager.MVVM.View
                 string filePath = dialog.FileName;
                 string extension = Path.GetExtension(filePath).ToLowerInvariant();
 
-                switch (extension)
+                try
                 {
-                    case ".csv":
-                        await ViewModel.ImportStudentsCsv(filePath);
-                        break;
-                    case ".xlsx":
-                        await ViewModel.ImportStudentsXlsx(filePath);
-                        break;
-                    default:
-                        MessageBox.Show("Unsupported Format");
-                        break;
+                    await ViewModel.ImportStudentsAsync(filePath);
                 }
-             }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"خطا: {ex.Message}", "Import Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 }

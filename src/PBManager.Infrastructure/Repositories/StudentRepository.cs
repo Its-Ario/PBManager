@@ -26,7 +26,11 @@ public class StudentRepository : IStudentRepository
 
         var nationalCodes = students.Select(s => s.NationalCode).ToList();
 
-        // fetch existing students once
+        students = students
+            .GroupBy(s => s.NationalCode)
+            .Select(g => g.First())
+            .ToList();
+
         var existingCodes = await _db.Students.AsNoTracking()
             .Where(s => nationalCodes.Contains(s.NationalCode))
             .Select(s => s.NationalCode)

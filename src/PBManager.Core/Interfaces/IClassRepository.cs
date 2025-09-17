@@ -1,9 +1,4 @@
 ﻿using PBManager.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PBManager.Core.Interfaces
 {
@@ -11,6 +6,7 @@ namespace PBManager.Core.Interfaces
     {
         Task<List<Class>> GetAllAsync();
         Task<int> GetCountAsync();
+        Task<Class?> GetByNameAsync(string name);
+        Task<Class?> GetByIdAsync(int id);
     }
-
 }
