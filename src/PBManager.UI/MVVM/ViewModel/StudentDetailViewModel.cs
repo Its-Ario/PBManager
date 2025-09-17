@@ -13,52 +13,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace PBManager.MVVM.ViewModel
 {
-    public class StudentDetailViewModel : ObservableObject, IRecipient<StudentSelectedMessage>
+    public partial class StudentDetailViewModel : ObservableObject, IRecipient<StudentSelectedMessage>
     {
         private readonly IStudyRecordService _studyRecordService;
         
         public Margin DrawMargin { get; set; } = new(50, 0, 50, 50);
 
+        [ObservableProperty]
         private ICartesianAxis[] _studyOverTimeXAxes;
-        public ICartesianAxis[] StudyOverTimeXAxes
-        {
-            get => _studyOverTimeXAxes;
-            set => SetProperty(ref _studyOverTimeXAxes, value);
-        }
-
+        [ObservableProperty]
         private ISeries[] _studyOverTimeSeries;
-        public ISeries[] StudyOverTimeSeries
-        {
-            get => _studyOverTimeSeries;
-            set => SetProperty(ref _studyOverTimeSeries, value);
-        }
-
+        [ObservableProperty]
         private Student? _student;
-        public Student? Student
-        {
-            get => _student;
-            private set => SetProperty(ref _student, value);
-        }
-
+        [ObservableProperty]
         private double _avgWeeklyStudy;
-        public double AvgWeeklyStudy {
-            get => _avgWeeklyStudy;
-            set => SetProperty(ref _avgWeeklyStudy, value);
-        }
-
+        [ObservableProperty]
         private int _classRank;
-        public int ClassRank
-        {
-            get => _classRank;
-            set => SetProperty(ref _classRank, value);
-        }
-
+        [ObservableProperty]
         private int _globalRank;
-        public int GlobalRank
-        {
-            get => _globalRank;
-            set => SetProperty(ref _globalRank, value);
-        }
 
         public StudentDetailViewModel()
         {

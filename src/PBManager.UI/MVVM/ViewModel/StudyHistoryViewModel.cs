@@ -11,89 +11,32 @@ using System.Windows;
 
 namespace PBManager.MVVM.ViewModel
 {
-    class StudyHistoryViewModel : ObservableObject
+    public partial class StudyHistoryViewModel : ObservableObject
     {
         private readonly IStudyRecordService _studyRecordService;
 
+        [ObservableProperty]
         private Student _student;
-        public Student Student
-        {
-            get => _student;
-            set => SetProperty(ref _student, value);
-        }
-
+        [ObservableProperty]
         private ObservableCollection<WeeklyStudyData> _records;
-        public ObservableCollection<WeeklyStudyData> Records
-        {
-            get => _records;
-            set => SetProperty(ref _records, value);
-        }
-
+        [ObservableProperty]
         private ObservableCollection<WeeklyStudyData> _filteredRecords;
-        public ObservableCollection<WeeklyStudyData> FilteredRecords
-        {
-            get => _filteredRecords;
-            set => SetProperty(ref _filteredRecords, value);
-        }
-
+        [ObservableProperty]
         private int _totalWeeksCount;
-        public int TotalWeeksCount
-        {
-            get => _totalWeeksCount;
-            set => SetProperty(ref _totalWeeksCount, value);
-        }
-
+        [ObservableProperty]
         private int _presentWeeksCount;
-        public int PresentWeeksCount
-        {
-            get => _presentWeeksCount;
-            set => SetProperty(ref _presentWeeksCount, value);
-        }
-
+        [ObservableProperty]
         private int _absentWeeksCount;
-        public int AbsentWeeksCount
-        {
-            get => _absentWeeksCount;
-            set => SetProperty(ref _absentWeeksCount, value);
-        }
-
+        [ObservableProperty]
         private bool _showAll = true;
-        public bool ShowAll
-        {
-            get => _showAll;
-            set => SetProperty(ref _showAll, value);
-        }
-
+        [ObservableProperty]
         private bool _showPresent;
-        public bool ShowPresent
-        {
-            get => _showPresent;
-            set => SetProperty(ref _showPresent, value);
-        }
-
+        [ObservableProperty]
         private bool _showAbsent;
-        public bool ShowAbsent
-        {
-            get => _showAbsent;
-            set => SetProperty(ref _showAbsent, value);
-        }
-
+        [ObservableProperty]
         private string _emptyStateMessage;
-        public string EmptyStateMessage
-        {
-            get => _emptyStateMessage;
-            set => SetProperty(ref _emptyStateMessage, value);
-        }
-
+        [ObservableProperty]
         private bool _isEmptyState;
-        public bool IsEmptyState
-        {
-            get => _isEmptyState;
-            set => SetProperty(ref _isEmptyState, value);
-        }
-
-        public IRelayCommand<WeeklyStudyData> EditRecordCommand { get; }
-        public IRelayCommand<string> SetFilterCommand { get; }
 
         public StudyHistoryViewModel(Student student)
         {
@@ -101,9 +44,6 @@ namespace PBManager.MVVM.ViewModel
             _studyRecordService = App.ServiceProvider.GetRequiredService<IStudyRecordService>();
 
             _ = LoadData(Student.Id);
-
-            EditRecordCommand = new RelayCommand<WeeklyStudyData>(async (weeklyRecord) => await EditRecordAsync(weeklyRecord));
-            SetFilterCommand = new RelayCommand<string>(SetFilter);
         }
 
         public async Task LoadData(int studentId)
@@ -212,6 +152,7 @@ namespace PBManager.MVVM.ViewModel
             AbsentWeeksCount = Records.Count(r => r.IsAbsent);
         }
 
+        [RelayCommand]
         private void SetFilter(string filterType)
         {
             ShowAll = false;
@@ -265,6 +206,7 @@ namespace PBManager.MVVM.ViewModel
             IsEmptyState = FilteredRecords.Count == 0;
         }
 
+        [RelayCommand]
         private async Task EditRecordAsync(WeeklyStudyData weeklyRecord)
         {
             if (weeklyRecord == null) return;

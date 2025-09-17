@@ -10,7 +10,7 @@ using PBManager.Application.Interfaces;
 
 namespace PBManager.MVVM.ViewModel
 {
-    public class HomeViewModel : ObservableObject
+    public partial class HomeViewModel : ObservableObject
     {
         private readonly IStudyRecordService _studyRecordService;
         private readonly ISubjectService _subjectService;
@@ -23,26 +23,12 @@ namespace PBManager.MVVM.ViewModel
         public ICartesianAxis[] StudyPerSubjectYAxes { get; set; } = [];
         public Margin DrawMargin { get; set; } = new(50,0,50,50);
 
+        [ObservableProperty]
         private double _avgStudyTime;
-        public double AvgStudyTime
-        {
-            get => _avgStudyTime;
-            set { _avgStudyTime = value; OnPropertyChanged(); }
-        }
-
+        [ObservableProperty]
         private string _mostStudiedSubject;
-        public string MostStudiedSubject
-        {
-            get => _mostStudiedSubject;
-            set { _mostStudiedSubject = value; OnPropertyChanged(); }
-        }
-
+        [ObservableProperty]
         private int _absentees;
-        public int Absentees
-        {
-            get => _absentees;
-            set { _absentees = value; OnPropertyChanged(); }
-        }
 
         public HomeViewModel(IStudyRecordService studyRecordService, ISubjectService subjectService)
         {

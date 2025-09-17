@@ -13,25 +13,21 @@ using PBManager.Application.Interfaces;
 
 namespace PBManager.MVVM.ViewModel
 {
-    public class AddStudyRecordViewModel : ObservableObject
+    public partial class AddStudyRecordViewModel : ObservableObject
     {
         private readonly IStudyRecordService _studyRecordService;
         private readonly ISubjectService _subjectService;
 
         public ObservableCollection<SubjectEntry> WeeklySubjectEntries { get; set; } = [];
-        public IRelayCommand SubmitCommand { get; set; }
-        public IRelayCommand LoadWeekCommand { get; set; }
+
+        [ObservableProperty]
         private Student _student;
-        private PersianDate _selectedWeekStart;
+        [ObservableProperty]
         private string _weekRangeText;
+        [ObservableProperty]
         private bool _isEditMode;
 
-        public bool IsEditMode
-        {
-            get => _isEditMode;
-            set => SetProperty(ref _isEditMode, value);
-        }
-
+        private PersianDate _selectedWeekStart;
         public PersianDate SelectedWeekStart
         {
             get => _selectedWeekStart;
@@ -43,19 +39,10 @@ namespace PBManager.MVVM.ViewModel
             }
         }
 
-        public string WeekRangeText
-        {
-            get => _weekRangeText;
-            set => SetProperty(ref _weekRangeText, value);
-        }
-
         public AddStudyRecordViewModel(IStudyRecordService studyRecordService, ISubjectService subjectService)
         {
             _studyRecordService = studyRecordService;
             _subjectService = subjectService;
-
-            SubmitCommand = new RelayCommand(async () => await SubmitAsync());
-            LoadWeekCommand = new RelayCommand(async () => await LoadWeekAsync());
         }
         public async Task Initialize(Student student, DateTime? weekStartDate = null)
         {
@@ -83,6 +70,7 @@ namespace PBManager.MVVM.ViewModel
             WeekRangeText = $"{_selectedWeekStart.ToDateTime().ToString("yyyy/MM/dd", culture)} تا {endDate.ToDateTime().ToString("yyyy/MM/dd", culture)}";
         }
 
+        [RelayCommand]
         private async Task LoadWeekAsync()
         {
             try
@@ -171,6 +159,7 @@ namespace PBManager.MVVM.ViewModel
             }
         }
 
+        [RelayCommand]
         private async Task SubmitAsync()
         {
             bool hasError = false;

@@ -5,14 +5,13 @@ using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using PBManager.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using PBManager.Core.Entities;
 using PBManager.Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace PBManager.MVVM.ViewModel
 {
-    public class StudyManagementViewModel : ObservableObject
+    public partial class StudyManagementViewModel : ObservableObject
     {
         private readonly IStudentService _studentService;
 
@@ -23,21 +22,16 @@ namespace PBManager.MVVM.ViewModel
             set
             {
                 _students = value;
-                OnPropertyChanged();
                 FilteredStudents = CollectionViewSource.GetDefaultView(_students);
                 FilteredStudents.Filter = FilterStudents;
-                OnPropertyChanged();
+                SetProperty(ref _students, value);
             }
         }
 
         public StudentDetailViewModel DetailVM { get; }
 
+        [ObservableProperty]
         private StudyRecord _selectedRecord;
-        public StudyRecord SelectedRecord
-        {
-            get => _selectedRecord;
-            set { _selectedRecord = value; OnPropertyChanged(); }
-        }
 
         public ICollectionView FilteredStudents { get; private set; }
 
@@ -51,7 +45,7 @@ namespace PBManager.MVVM.ViewModel
             set
             {
                 _searchText = value;
-                OnPropertyChanged();
+                SetProperty(ref _searchText, value);
                 FilteredStudents?.Refresh();
             }
         }
@@ -69,8 +63,6 @@ namespace PBManager.MVVM.ViewModel
             }
         }
         public bool HasSelection => SelectedStudent != null;
-
-        public RelayCommand SaveCommand { get; }
 
         public StudyManagementViewModel(IStudentService studentService)
         {

@@ -31,6 +31,7 @@ namespace PBManager
         {
             Directory.CreateDirectory(Path.GetDirectoryName(DatabasePath));
             await DatabasePorter.HandlePendingImportOnStartupAsync(DatabasePath);
+
             base.OnStartup(e);
 
             var services = new ServiceCollection();
@@ -73,6 +74,7 @@ namespace PBManager
             services.AddScoped<IStudyRecordService, StudyRecordService>();
 
             services.AddTransient<IDatabasePorter, DatabasePorter>();
+            services.AddTransient<IDatabaseManagementService, DatabaseManagementService>();
 
             services.AddTransient<HomeViewModel>();
             services.AddTransient<MainViewModel>();

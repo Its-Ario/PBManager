@@ -204,7 +204,8 @@
                     x:Name="clearDbButton"
                     Margin="5"
                     Width="180" Height="70"
-                    Grid.Row="1">
+                    Grid.Row="1"
+                    Command="{Binding WipeDatabaseCommand}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
                         <Setter Property="Background" Value="#E53935"/>
