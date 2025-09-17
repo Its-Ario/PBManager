@@ -1,15 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CsvHelper;
-using System.Globalization;
 using System.IO;
-using System.Text;
-using ExcelDataReader;
 using PBManager.Core.Entities;
 using PBManager.Application.Interfaces;
 using System.Windows;
 using PBManager.Infrastructure.Parsers;
 using PBManager.Core.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+using PBManager.Infrastructure.Services.Parsers;
 
 namespace PBManager.MVVM.ViewModel
 {
@@ -55,12 +53,15 @@ namespace PBManager.MVVM.ViewModel
             set => SetProperty(ref _subjectsCount, value);
         }
 
-        public SettingsViewModel(IStudentService studentService, IStudyRecordService studyRecordService, ISubjectService subjectService, IClassService classService)
+        private readonly IDatabasePorter _porter;
+
+        public SettingsViewModel(IStudentService studentService, IStudyRecordService studyRecordService, ISubjectService subjectService, IClassService classService, IDatabasePorter porter)
         {
             _studentService = studentService;
             _studyRecordService = studyRecordService;
             _subjectService = subjectService;
             _classService = classService;
+            _porter = porter;
 
             _ = LoadData();
         }
@@ -81,7 +82,7 @@ namespace PBManager.MVVM.ViewModel
             IFileParser<Student> parser = Path.GetExtension(filePath).ToLowerInvariant() switch
             {
                 ".xlsx" => App.ServiceProvider.GetRequiredService<XlsxStudentParser>(),
-                ".csv" => App.ServiceProvider.GetRequiredService<CsvParser<Student>>(),
+                ".csv" => App.ServiceProvider.GetRequiredService<CsvStudentParser>(),
                 _ => throw new NotSupportedException("File type not supported.")
             };
             try
@@ -96,5 +97,51 @@ namespace PBManager.MVVM.ViewModel
                 MessageBox.Show($"Error: {ex.Message}");
             }
         }
+
+        public async Task ExportDatabaseAsync(string? filePath = null)
+        {
+            if (string.IsNullOrEmpty(filePath)) return;
+
+            try
+            {
+                await _porter.ExportDatabaseAsync(filePath);
+                MessageBox.Show("Export successful!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Export failed: {ex.Message}");
+            }
+        }
+
+        public async Task ImportDatabaseAsync(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath)) return;
+
+            try
+            {
+                var success = await _porter.ImportDatabaseAsync(filePath);
+                if (success)
+                {
+                    if (_porter.IsPendingImportOnRestart())
+                    {
+                        var result = MessageBox.Show(
+                            "Import successful! The application needs to restart to apply changes.\n\nRestart now?",
+                            "Restart Required",
+                            MessageBoxButton.YesNo);
+
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            System.Diagnostics.Process.Start(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                            System.Windows.Application.Current.Shutdown();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Import failed: {ex.Message}");
+            }
+        }
+
     }
 }

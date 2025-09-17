@@ -51,5 +51,37 @@ namespace PBManager.MVVM.View
                 }
             }
         }
+
+        private async void ImportDbButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Select a file",
+                Filter = "Sharifi Backup (*.sharifi)|*.sharifi|All Files (*.*)|*.*"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                string filePath = dialog.FileName;
+                if (filePath == null) MessageBox.Show("Invalid Path");
+                else await ViewModel.ImportDatabaseAsync(filePath);
+            }
+        }
+
+        private async void ExportDbButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Title = "Select output",
+                Filter = "Sharifi Backup (*.sharifi)|*.sharifi|All Files (*.*)|*.*",
+                FileName = $"PB_Backup_{DateTime.Now:yyyyMMdd_HHmmss}.sharifi"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                string filePath = dialog.FileName;
+                await ViewModel.ExportDatabaseAsync(filePath);
+            }
+        }
     }
 }

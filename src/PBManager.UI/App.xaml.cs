@@ -12,6 +12,9 @@ using PBManager.Application.Services;
 using PBManager.Core.Interfaces;
 using PBManager.Infrastructure.Repositories;
 using PBManager.Infrastructure.Parsers;
+using PBManager.Infrastructure.Services;
+using System.IO;
+using PBManager.Infrastructure.Services.Parsers;
 
 namespace PBManager
 {
@@ -19,15 +22,28 @@ namespace PBManager
     {
         public static IServiceProvider ServiceProvider { get; private set; }
 
-        protected override void OnStartup(StartupEventArgs e)
+        public static string DatabasePath { get; } = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "PBManager",
+        "data.db");
+
+        protected override async void OnStartup(StartupEventArgs e)
         {
+            Directory.CreateDirectory(Path.GetDirectoryName(DatabasePath));
+            await DatabasePorter.HandlePendingImportOnStartupAsync(DatabasePath);
             base.OnStartup(e);
 
             var services = new ServiceCollection();
-
             ConfigureServices(services);
-
             ServiceProvider = services.BuildServiceProvider();
+
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+
+                dbContext.Database.EnsureCreated();
+                dbContext.Database.Migrate();
+            }
 
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
@@ -42,7 +58,7 @@ namespace PBManager
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DatabaseContext>(options =>
-                options.UseSqlite("Data Source=data.db"));
+                options.UseSqlite($"Data Source={DatabasePath}"));
 
             services.AddMemoryCache();
 
@@ -56,6 +72,8 @@ namespace PBManager
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IStudyRecordService, StudyRecordService>();
 
+            services.AddTransient<IDatabasePorter, DatabasePorter>();
+
             services.AddTransient<HomeViewModel>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<SettingsViewModel>();
@@ -68,7 +86,7 @@ namespace PBManager
             services.AddTransient<StudyHistoryView>();
 
             services.AddTransient<XlsxStudentParser>();
-            services.AddTransient(typeof(CsvParser<>));
+            services.AddTransient<CsvStudentParser>();
         }
     }
 }

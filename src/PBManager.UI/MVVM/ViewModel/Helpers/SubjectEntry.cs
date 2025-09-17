@@ -71,7 +71,6 @@ namespace PBManager.UI.MVVM.ViewModel.Helpers
         {
             var weeklyMinutes = new Dictionary<DayOfWeek, int>();
 
-            // Parse and validate each day's input
             if (int.TryParse(MinutesSat, out int satMinutes) && satMinutes >= 0)
                 weeklyMinutes[DayOfWeek.Saturday] = satMinutes;
             else

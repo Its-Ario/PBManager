@@ -45,13 +45,13 @@
                         Margin="5"
                         Width="90" Height="70"
                         Style="{StaticResource ModernButtonStyle}"
-                        Grid.Row="1"/>
+                        Grid.Row="1" Click="ExportDbButton_Click"/>
                 <Button Content="وارد کردن"
                         x:Name="ImportDbButton"
                         Margin="5"
                         Width="90" Height="70"
                         Style="{StaticResource ModernButtonStyle}"
-                        Grid.Row="1" Grid.Column="1"/>
+                        Grid.Row="1" Grid.Column="1" Click="ImportDbButton_Click"/>
             </Grid>
         </Border>
 
