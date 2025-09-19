@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace PBManager.MVVM.ViewModel
+namespace PBManager.UI.MVVM.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {

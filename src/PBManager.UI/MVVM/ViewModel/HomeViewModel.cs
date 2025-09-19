@@ -8,7 +8,7 @@ using LiveChartsCore.Measure;
 using PBManager.Core.Entities;
 using PBManager.Application.Interfaces;
 
-namespace PBManager.MVVM.ViewModel
+namespace PBManager.UI.MVVM.ViewModel
 {
     public partial class HomeViewModel : ObservableObject
     {

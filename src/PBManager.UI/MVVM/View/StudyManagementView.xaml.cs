@@ -1,7 +1,6 @@
-﻿using PBManager.MVVM.ViewModel;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
-namespace PBManager.MVVM.View
+namespace PBManager.UI.MVVM.View
 {
     /// <summary>
     /// Interaction logic for StudyManagementView.xaml

@@ -4,14 +4,11 @@ using CommunityToolkit.Mvvm.Input;
 using System.Windows;
 using System.Globalization;
 using Mohsen;
-using Microsoft.Extensions.DependencyInjection;
 using PBManager.Core.Entities;
-using PBManager.Application.Services;
-using PBManager.UI.MVVM.ViewModel.Helpers;
 using PBManager.Core.Utils;
 using PBManager.Application.Interfaces;
 
-namespace PBManager.MVVM.ViewModel
+namespace PBManager.UI.MVVM.ViewModel
 {
     public partial class AddStudyRecordViewModel : ObservableObject
     {

@@ -9,7 +9,7 @@ using PBManager.Core.Entities;
 using PBManager.Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PBManager.MVVM.ViewModel
+namespace PBManager.UI.MVVM.ViewModel
 {
     public partial class StudyManagementViewModel : ObservableObject
     {

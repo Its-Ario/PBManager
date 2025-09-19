@@ -1,8 +1,6 @@
 ﻿using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
 using PBManager.Core.Interfaces;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace PBManager.Application.Services;
 

@@ -8,10 +8,9 @@ using PBManager.Core.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using PBManager.Infrastructure.Services.Parsers;
 using CommunityToolkit.Mvvm.Input;
-using System;
 using PBManager.Infrastructure.Exporters;
 
-namespace PBManager.MVVM.ViewModel
+namespace PBManager.UI.MVVM.ViewModel
 {
     public partial class SettingsViewModel : ObservableObject
     {
@@ -19,6 +18,7 @@ namespace PBManager.MVVM.ViewModel
         private readonly IStudyRecordService _studyRecordService;
         private readonly ISubjectService _subjectService;
         private readonly IClassService _classService;
+        private readonly IDialogService _dialogService;
 
         [ObservableProperty]
         private int _studyRecordCount;
@@ -34,7 +34,7 @@ namespace PBManager.MVVM.ViewModel
         private readonly IDatabasePorter _porter;
         private readonly IDatabaseManagementService _dbManagementService;
 
-        public SettingsViewModel(IStudentService studentService, IStudyRecordService studyRecordService, ISubjectService subjectService, IClassService classService, IDatabasePorter porter, IDatabaseManagementService dbManagementServices)
+        public SettingsViewModel(IStudentService studentService, IStudyRecordService studyRecordService, ISubjectService subjectService, IClassService classService, IDatabasePorter porter, IDatabaseManagementService dbManagementServices, IDialogService dialogService)
         {
             _studentService = studentService;
             _studyRecordService = studyRecordService;
@@ -42,6 +42,7 @@ namespace PBManager.MVVM.ViewModel
             _classService = classService;
             _porter = porter;
             _dbManagementService = dbManagementServices;
+            _dialogService = dialogService;
 
             _ = LoadData();
         }
@@ -181,6 +182,18 @@ namespace PBManager.MVVM.ViewModel
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        [RelayCommand]
+        private void ManageSubjects()
+        {
+            _dialogService.ShowManagementWindow<Subject>("مدیریت دروس");
+        }
+
+        [RelayCommand]
+        private void ManageClasses()
+        {
+            _dialogService.ShowManagementWindow<Class>("مدیریت کلاس ها");
         }
     }
 }

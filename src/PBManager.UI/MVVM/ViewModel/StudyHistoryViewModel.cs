@@ -3,13 +3,12 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
-using PBManager.MVVM.View;
+using PBManager.UI.MVVM.View;
 using PBManager.UI.MVVM.ViewModel.Helpers;
-using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace PBManager.MVVM.ViewModel
+namespace PBManager.UI.MVVM.ViewModel
 {
     public partial class StudyHistoryViewModel : ObservableObject
     {

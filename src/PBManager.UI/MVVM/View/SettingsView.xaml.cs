@@ -1,11 +1,11 @@
 ﻿using Microsoft.Win32;
-using PBManager.MVVM.ViewModel;
+using PBManager.UI.MVVM.ViewModel;
 using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PBManager.MVVM.View
+namespace PBManager.UI.MVVM.View
 {
     /// <summary>
     /// Interaction logic for SettingsView.xaml

@@ -1,4 +1,4 @@
-﻿using PBManager.MVVM.ViewModel;
+﻿using PBManager.UI.MVVM.ViewModel;
 using System.Windows;
 using System.Windows.Input;
 

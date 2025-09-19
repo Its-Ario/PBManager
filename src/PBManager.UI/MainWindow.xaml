@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PBManager"
-        xmlns:viewModel="clr-namespace:PBManager.MVVM.ViewModel"
+        xmlns:viewModel="clr-namespace:PBManager.UI.MVVM.ViewModel"
         mc:Ignorable="d"
         Title="سامانه مدیریت آموزش"
         Height="600" Width="920"

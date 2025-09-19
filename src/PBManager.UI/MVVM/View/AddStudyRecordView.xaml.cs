@@ -1,9 +1,8 @@
-﻿using PBManager.Core.Entities;
-using PBManager.MVVM.ViewModel;
+﻿using PBManager.UI.MVVM.ViewModel;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PBManager.MVVM.View
+namespace PBManager.UI.MVVM.View
 {
     /// <summary>
     /// Interaction logic for AddStudyRecordView.xaml

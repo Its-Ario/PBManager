@@ -4,8 +4,6 @@ using System.Windows;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore;
 using SkiaSharp;
-using PBManager.MVVM.View;
-using PBManager.MVVM.ViewModel;
 using PBManager.Infrastructure.Data;
 using PBManager.Application.Interfaces;
 using PBManager.Application.Services;
@@ -16,6 +14,9 @@ using PBManager.Infrastructure.Services;
 using System.IO;
 using PBManager.Infrastructure.Services.Parsers;
 using PBManager.Infrastructure.Exporters;
+using PBManager.UI.Services;
+using PBManager.UI.MVVM.View;
+using PBManager.UI.MVVM.ViewModel;
 
 namespace PBManager
 {
@@ -73,6 +74,8 @@ namespace PBManager
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IStudyRecordService, StudyRecordService>();
+            services.AddScoped(typeof(IManagementService<>), typeof(ManagementService<>));
+            services.AddSingleton<IDialogService, DialogService>();
 
             services.AddTransient<IDatabasePorter, DatabasePorter>();
             services.AddTransient<IDatabaseManagementService, DatabaseManagementService>();
