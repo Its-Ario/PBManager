@@ -8,6 +8,8 @@ using PBManager.Core.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using PBManager.Infrastructure.Services.Parsers;
 using CommunityToolkit.Mvvm.Input;
+using System;
+using PBManager.Infrastructure.Exporters;
 
 namespace PBManager.MVVM.ViewModel
 {
@@ -73,6 +75,24 @@ namespace PBManager.MVVM.ViewModel
             catch (Exception ex)
             {
                 MessageBox.Show($"Error: {ex.Message}");
+            }
+        }
+
+        public async Task ExportStudentsAsync(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath)) return;
+
+            var exporter = App.ServiceProvider.GetRequiredService<XlsxStudentExporter>();
+
+            try
+            {
+                await using var stream = File.Create(filePath);
+                await _studentService.ExportAllStudentsAsync(stream, exporter);
+                MessageBox.Show("Export complete!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Export failed: {ex.Message}");
             }
         }
 

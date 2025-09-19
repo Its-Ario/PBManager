@@ -80,7 +80,7 @@
                 Margin="5"
                 Width="90" Height="70"
                 Style="{StaticResource ModernButtonStyle}"
-                Grid.Row="1"/>
+                Grid.Row="1" Click="ExportStudentsButton_Click"/>
                 <Button Content="وارد کردن"
                 x:Name="ImportStudentsButton"
                 Margin="5"

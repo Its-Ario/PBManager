@@ -138,4 +138,11 @@ public class StudentService : IStudentService
             throw new InvalidOperationException("The file could not be processed. Please check the format and content.", ex);
         }
     }
+
+    public async Task ExportAllStudentsAsync(Stream stream, IDataExporter<Student> exporter)
+    {
+        var students = await _studentRepository.GetAllWithClassAsync();
+
+        await exporter.ExportAsync(students, stream);
+    }
 }

@@ -15,6 +15,7 @@ using PBManager.Infrastructure.Parsers;
 using PBManager.Infrastructure.Services;
 using System.IO;
 using PBManager.Infrastructure.Services.Parsers;
+using PBManager.Infrastructure.Exporters;
 
 namespace PBManager
 {
@@ -89,6 +90,7 @@ namespace PBManager
 
             services.AddTransient<XlsxStudentParser>();
             services.AddTransient<CsvStudentParser>();
+            services.AddTransient<XlsxStudentExporter>();
         }
     }
 }

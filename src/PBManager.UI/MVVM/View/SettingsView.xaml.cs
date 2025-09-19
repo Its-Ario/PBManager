@@ -83,5 +83,21 @@ namespace PBManager.MVVM.View
                 await ViewModel.ExportDatabaseAsync(filePath);
             }
         }
+
+        private async void ExportStudentsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Title = "Select output",
+                Filter = "Excel file (*.xlsx)|*.xlsx|All Files (*.*)|*.*",
+                FileName = $"PB_Students_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                string filePath = dialog.FileName;
+                await ViewModel.ExportStudentsAsync(filePath);
+            }
+        }
     }
 }

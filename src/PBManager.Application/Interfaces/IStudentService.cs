@@ -14,5 +14,6 @@ namespace PBManager.Application.Interfaces
         Task<int> AddStudentsAsync(IEnumerable<Student> students);
         Task<int> GetStudentsCountAsync();
         Task<ImportResult> ImportStudentsAsync(Stream fileStream, IFileParser<Student> parser);
+        Task ExportAllStudentsAsync(Stream stream, IDataExporter<Student> exporter);
     }
 }
