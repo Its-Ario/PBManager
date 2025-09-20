@@ -1,0 +1,82 @@
+﻿<Window x:Class="PBManager.UI.MVVM.View.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PBManager.UI.MVVM.View"
+        xmlns:helpers="clr-namespace:PBManager.UI.Helpers"
+        mc:Ignorable="d"
+        Height="450" Width="800"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        Background="Transparent">
+    <Border Background="#272537" CornerRadius="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid x:Name="TitleBar"
+                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
+                  Background="Transparent">
+
+                <TextBlock Text="سامانه مدیریت آموزش حلی ۳"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Foreground="White"
+                       FontSize="20"
+                       Grid.Column="1"/>
+
+                <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="0,5,5,0"
+                        Grid.Column="1">
+                    <Button x:Name="MinimizeButton" 
+                        Click="MinimizeButton_Click" 
+                        Content="—" 
+                        Style="{StaticResource WindowButtonStyle}"/>
+                    <Button x:Name="CloseButton" 
+                        Click="CloseButton_Click" 
+                        Content="✕" 
+                        Style="{StaticResource WindowButtonStyle}"/>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Width="300" VerticalAlignment="Center"
+                        Grid.Row="1">
+                <TextBlock Text="ورود به برنامه" FontSize="24" FontWeight="Bold"             HorizontalAlignment="Center"
+                           Foreground="White"/>
+                <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,10"
+                         Style="{StaticResource ModernTextBox}"
+                         Tag="نام کاربری"
+                         Height="30"/>
+                <PasswordBox x:Name="PasswordBox" Margin="0,5" helpers:PasswordBoxPlaceholder.PlaceholderText="رمز عبور"
+                             Padding="10,0,0,0"
+                             PasswordChanged="PasswordBox_PasswordChanged"
+                             Style="{StaticResource ModernPasswordBox}"
+                             Height="30"/>
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Crimson" Margin="0,5" FlowDirection="RightToLeft"/>
+                <Button Content="ورود"
+                        Command="{Binding LoginCommand}" 
+                        CommandParameter="{Binding ElementName=PasswordBox}"
+                        Margin="0,10"
+                        Height="30"
+                        Style="{StaticResource ModernButtonStyle}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="3"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="5">
+                <TextBlock Text="©️ Ario Shakeri 2025"
+                               Foreground="LightGray"
+                               FontFamily="Arial"/>
+                <TextBlock x:Name="versionLabel" 
+                           Foreground="LightGray" Margin="10 0"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
