@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace PBManager.Converters
+namespace PBManager.UI.Converters
 {
     public class StatusIconBackgroundConverter : IValueConverter
     {
@@ -10,7 +10,7 @@ namespace PBManager.Converters
         {
             if (value is bool isAbsent && isAbsent)
             {
-                return new SolidColorBrush(Color.FromRgb(0xff, 0x66, 0x66)); // Red for absent
+                return new SolidColorBrush(Color.FromRgb(0xdc, 0x14, 0x3c)); // Crimson for absent
             }
             return new SolidColorBrush(Color.FromRgb(0x44, 0xaa, 0x44)); // Green for present
         }

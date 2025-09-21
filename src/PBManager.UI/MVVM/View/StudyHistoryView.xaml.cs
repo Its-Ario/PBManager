@@ -10,13 +10,12 @@ namespace PBManager.UI.MVVM.View
     /// </summary>
     public partial class StudyHistoryView : Window
     {
-        private StudyHistoryViewModel _viewModel;
+        public StudyHistoryViewModel ViewModel => (StudyHistoryViewModel)this.DataContext!;
 
-        public StudyHistoryView(Student student)
+        public StudyHistoryView(StudyHistoryViewModel viewModel)
         {
             InitializeComponent();
-            this.DataContext = new StudyHistoryViewModel(student);
-            _viewModel = this.DataContext as StudyHistoryViewModel;
+            this.DataContext = viewModel;
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -46,9 +45,9 @@ namespace PBManager.UI.MVVM.View
                 var originalContent = ReloadButton.Content;
                 ReloadButton.Content = "⏳";
 
-                if (_viewModel?.Student != null)
+                if (ViewModel?.Student != null)
                 {
-                    await _viewModel.LoadData(_viewModel.Student.Id);
+                    await ViewModel.LoadData(ViewModel.Student.Id);
                 }
 
                 ReloadButton.Content = "✅";

@@ -26,7 +26,7 @@ namespace PBManager.UI.MVVM.ViewModel
         [ObservableProperty]
         private double _avgStudyTime;
         [ObservableProperty]
-        private string _mostStudiedSubject;
+        private string? _mostStudiedSubject;
         [ObservableProperty]
         private int _absentees;
 
@@ -42,7 +42,7 @@ namespace PBManager.UI.MVVM.ViewModel
         {
             AvgStudyTime = await _studyRecordService.GetWeeklyAverageAsync();
             Subject? subject = await _studyRecordService.GetMostStudiedWeeklySubjectAsync();
-            MostStudiedSubject = subject?.Name;
+            MostStudiedSubject = subject?.Name ?? "---";
             Absentees = await _studyRecordService.GetWeeklyAbsencesAsync();
 
             await LoadStudyOverTimeChartAsync();
@@ -57,7 +57,7 @@ namespace PBManager.UI.MVVM.ViewModel
             var labels = new List<string>();
 
             int i = 1;
-            foreach (var (start, end, minutes) in weeklyData)
+            foreach (var (_, _, minutes) in weeklyData)
             {
                 values.Add(minutes);
                 labels.Add($"هفته {i++}");

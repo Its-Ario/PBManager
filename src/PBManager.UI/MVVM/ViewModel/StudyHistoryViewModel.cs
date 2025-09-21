@@ -10,16 +10,17 @@ using System.Windows;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    public partial class StudyHistoryViewModel : ObservableObject
+    public partial class StudyHistoryViewModel(IStudyRecordService studyRecordService, IServiceProvider serviceProvider) : ObservableObject
     {
-        private readonly IStudyRecordService _studyRecordService;
+        private readonly IStudyRecordService _studyRecordService = studyRecordService;
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
 
         [ObservableProperty]
         private Student _student;
         [ObservableProperty]
-        private ObservableCollection<WeeklyStudyData> _records;
+        private ObservableCollection<WeeklyStudyData> _records = [];
         [ObservableProperty]
-        private ObservableCollection<WeeklyStudyData> _filteredRecords;
+        private ObservableCollection<WeeklyStudyData> _filteredRecords = [];
         [ObservableProperty]
         private int _totalWeeksCount;
         [ObservableProperty]
@@ -33,16 +34,14 @@ namespace PBManager.UI.MVVM.ViewModel
         [ObservableProperty]
         private bool _showAbsent;
         [ObservableProperty]
-        private string _emptyStateMessage;
+        private string _emptyStateMessage = string.Empty;
         [ObservableProperty]
         private bool _isEmptyState;
 
-        public StudyHistoryViewModel(Student student)
+        public async Task InitializeAsync(Student student)
         {
             Student = student;
-            _studyRecordService = App.ServiceProvider.GetRequiredService<IStudyRecordService>();
-
-            _ = LoadData(Student.Id);
+            await LoadData(Student.Id);
         }
 
         public async Task LoadData(int studentId)
@@ -59,7 +58,7 @@ namespace PBManager.UI.MVVM.ViewModel
 
                 if (allDates.Count == 0)
                 {
-                    Records = new ObservableCollection<WeeklyStudyData>();
+                    Records = [];
                     UpdateStatistics();
                     ApplyFilter();
                     return;
@@ -96,7 +95,7 @@ namespace PBManager.UI.MVVM.ViewModel
                             EndOfWeek = weekEnd,
                             TotalMinutes = 0,
                             AverageMinutes = 0,
-                            Records = new List<StudyRecord>(),
+                            Records = [],
                             IsAbsent = true
                         };
                     }
@@ -130,7 +129,7 @@ namespace PBManager.UI.MVVM.ViewModel
             {
                 MessageBox.Show($"خطا در بارگذاری اطلاعات: {ex.Message}", "خطا",
                                MessageBoxButton.OK, MessageBoxImage.Error);
-                Records = new ObservableCollection<WeeklyStudyData>();
+                Records = [];
                 UpdateStatistics();
                 ApplyFilter();
             }
@@ -178,7 +177,7 @@ namespace PBManager.UI.MVVM.ViewModel
         {
             if (Records == null || Records.Count == 0)
             {
-                FilteredRecords = new ObservableCollection<WeeklyStudyData>();
+                FilteredRecords = [];
                 EmptyStateMessage = "هیچ داده‌ای برای نمایش وجود ندارد";
                 IsEmptyState = true;
                 return;
@@ -210,7 +209,7 @@ namespace PBManager.UI.MVVM.ViewModel
         {
             if (weeklyRecord == null) return;
 
-            var view = App.ServiceProvider.GetRequiredService<AddStudyRecordView>();
+            var view = _serviceProvider.GetRequiredService<AddStudyRecordView>();
 
 
             if (weeklyRecord.IsAbsent)
@@ -219,7 +218,7 @@ namespace PBManager.UI.MVVM.ViewModel
                 {
                     _ = vm.Initialize(Student, weeklyRecord.StartOfWeek);
                 }
-                var result = view.ShowDialog();
+                view.ShowDialog();
                 return;
             }
 

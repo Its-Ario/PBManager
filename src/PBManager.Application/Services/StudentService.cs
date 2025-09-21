@@ -7,20 +7,14 @@ using PBManager.Core.Interfaces;
 
 namespace PBManager.Application.Services;
 
-public class StudentService : IStudentService
+public class StudentService(
+    IStudentRepository studentRepository,
+    IMemoryCache cache,
+    IAuditLogService auditLogService) : IStudentService
 {
-    private readonly IStudentRepository _studentRepository;
-    private readonly IMemoryCache _cache;
-    private readonly IAuditLogService _auditLogService;
-    public StudentService(
-        IStudentRepository studentRepository,
-        IMemoryCache cache,
-        IAuditLogService auditLogService)
-    {
-        _studentRepository = studentRepository;
-        _cache = cache;
-        _auditLogService = auditLogService;
-    }
+    private readonly IStudentRepository _studentRepository = studentRepository;
+    private readonly IMemoryCache _cache = cache;
+    private readonly IAuditLogService _auditLogService = auditLogService;
 
     public async Task<bool> AddStudentAsync(Student student)
     {
@@ -82,18 +76,18 @@ public class StudentService : IStudentService
     public async Task<List<Student>> GetAllStudentsAsync()
     {
         const string cacheKey = "AllStudents";
-        if (!_cache.TryGetValue(cacheKey, out List<Student> students))
+        if (!_cache.TryGetValue(cacheKey, out List<Student>? students))
         {
             students = await _studentRepository.GetAllWithClassAsync();
             _cache.Set(cacheKey, students, TimeSpan.FromMinutes(30));
         }
-        return students;
+        return students ?? [];
     }
 
     public async Task<ImportResult> ImportStudentsAsync(Stream fileStream, IFileParser<Student> parser)
     {
-        if (fileStream == null) throw new ArgumentNullException(nameof(fileStream));
-        if (parser == null) throw new ArgumentNullException(nameof(parser));
+        ArgumentNullException.ThrowIfNull(fileStream);
+        ArgumentNullException.ThrowIfNull(parser);
 
         try
         {
@@ -105,7 +99,7 @@ public class StudentService : IStudentService
                 _cache.Remove($"Student_{student.Id}");
             }
 
-            if (students.Any())
+            if (students.Count != 0)
             {
                 result.ImportedCount = await _studentRepository.AddRangeAsync(students);
                 await _studentRepository.AddRangeAsync(students);

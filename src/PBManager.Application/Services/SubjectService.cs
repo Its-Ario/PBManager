@@ -4,14 +4,9 @@ using PBManager.Core.Interfaces;
 
 namespace PBManager.Application.Services;
 
-public class SubjectService : ISubjectService
+public class SubjectService(ISubjectRepository subjectRepository) : ISubjectService
 {
-    private readonly ISubjectRepository _subjectRepository;
-
-    public SubjectService(ISubjectRepository subjectRepository)
-    {
-        _subjectRepository = subjectRepository;
-    }
+    private readonly ISubjectRepository _subjectRepository = subjectRepository;
 
     public Task<List<Subject>> GetSubjectsAsync()
     {

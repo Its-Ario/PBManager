@@ -6,28 +6,21 @@ using PBManager.Core.Interfaces;
 
 namespace PBManager.Application.Services;
 
-public class ClassService : IClassService
+public class ClassService(IClassRepository classRepository, IMemoryCache cache, IAuditLogService auditLogService) : IClassService
 {
-    private readonly IClassRepository _classRepository;
-    private readonly IMemoryCache _cache;
-    private readonly IAuditLogService _auditLogService;
-
-    public ClassService(IClassRepository classRepository, IMemoryCache cache, IAuditLogService auditLogService)
-    {
-        _classRepository = classRepository;
-        _cache = cache;
-        _auditLogService = auditLogService;
-    }
+    private readonly IClassRepository _classRepository = classRepository;
+    private readonly IMemoryCache _cache = cache;
+    private readonly IAuditLogService _auditLogService = auditLogService;
 
     public async Task<List<Class>> GetClassesAsync()
     {
         const string cacheKey = "AllClasses";
-        if (!_cache.TryGetValue(cacheKey, out List<Class> classes))
+        if (!_cache.TryGetValue(cacheKey, out List<Class>? classes))
         {
             classes = await _classRepository.GetAllAsync();
             _cache.Set(cacheKey, classes, TimeSpan.FromMinutes(30));
         }
-        return classes;
+        return classes ?? [];
     }
 
     public async Task<int> GetClassCountAsync()

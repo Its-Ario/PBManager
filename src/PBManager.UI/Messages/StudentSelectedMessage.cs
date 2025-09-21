@@ -1,11 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using PBManager.Core.Entities;
 
-namespace PBManager.Messages
+namespace PBManager.UI.Messages
 {
-    public class StudentSelectedMessage : ValueChangedMessage<Student?>
+    public class StudentSelectedMessage(Student? student) : ValueChangedMessage<Student?>(student)
     {
-        public StudentSelectedMessage(Student? student) : base(student) { }
     }
-
 }

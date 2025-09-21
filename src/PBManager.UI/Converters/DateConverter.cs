@@ -1,18 +1,18 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 
-namespace PBManager.Converters
+namespace PBManager.UI.Converters
 {
     class DateConverter : IValueConverter
     {
-        private readonly PersianCalendar _persianCalendar = new PersianCalendar();
+        private readonly PersianCalendar _persianCalendar = new();
 
         private static readonly string[] PersianMonthNames =
-        {
+        [
         "فروردین", "اردیبهشت", "خرداد", "تیر",
         "مرداد", "شهریور", "مهر", "آبان",
         "آذر", "دی", "بهمن", "اسفند"
-    };
+    ];
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

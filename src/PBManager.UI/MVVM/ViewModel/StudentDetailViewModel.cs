@@ -1,4 +1,4 @@
-﻿using PBManager.Messages;
+﻿using PBManager.UI.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore.Kernel.Sketches;
@@ -10,19 +10,23 @@ using LiveChartsCore.Measure;
 using PBManager.Core.Entities;
 using PBManager.Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+using PBManager.UI.MVVM.View;
+using System;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
     public partial class StudentDetailViewModel : ObservableObject, IRecipient<StudentSelectedMessage>
     {
         private readonly IStudyRecordService _studyRecordService;
+        private readonly IServiceProvider _serviceProvider;
         
         public Margin DrawMargin { get; set; } = new(50, 0, 50, 50);
 
         [ObservableProperty]
-        private ICartesianAxis[] _studyOverTimeXAxes;
+        private ICartesianAxis[]? _studyOverTimeXAxes;
         [ObservableProperty]
-        private ISeries[] _studyOverTimeSeries;
+        private ISeries[]? _studyOverTimeSeries;
         [ObservableProperty]
         private Student? _student;
         [ObservableProperty]
@@ -32,15 +36,18 @@ namespace PBManager.UI.MVVM.ViewModel
         [ObservableProperty]
         private int _globalRank;
 
-        public StudentDetailViewModel()
+        public StudentDetailViewModel(IStudyRecordService studyRecordService, IServiceProvider serviceProvider)
         {
-            _studyRecordService = App.ServiceProvider.GetRequiredService<IStudyRecordService>();
+            _studyRecordService = studyRecordService;
+            _serviceProvider = serviceProvider;
+           
             WeakReferenceMessenger.Default.Register(this);
         }
 
         public void Receive(StudentSelectedMessage message)
         {
             Student = message.Value;
+            if (Student == null) return;
 
             _ = LoadAsync(Student.Id);
         }
@@ -59,7 +66,7 @@ namespace PBManager.UI.MVVM.ViewModel
                 ClassRank = await classRankTask;
                 GlobalRank = await globalRankTask;
 
-                await LoadStudyOverTimeChartAsync(Student.Id);
+                await LoadStudyOverTimeChartAsync(studentId);
             }
             catch (OperationCanceledException)
             {
@@ -79,7 +86,7 @@ namespace PBManager.UI.MVVM.ViewModel
             var labels = new List<string>();
 
             int i = 1;
-            foreach (var (start, end, minutes) in weeklyData)
+            foreach (var (_, _, minutes) in weeklyData)
             {
                 values.Add(minutes);
                 labels.Add($"هفته {i++}");
@@ -105,6 +112,34 @@ namespace PBManager.UI.MVVM.ViewModel
                     Padding = new LiveChartsCore.Drawing.Padding(0),
                 }
            ];
+        }
+
+        [RelayCommand]
+        private void ViewHistory()
+        {
+            if (Student == null) return;
+
+            var historyView = _serviceProvider.GetRequiredService<StudyHistoryView>();
+            if (historyView.DataContext is StudyHistoryViewModel viewModel)
+            {
+                _ = viewModel.InitializeAsync(Student);
+            }
+
+            historyView.Show();
+        }
+
+        [RelayCommand]
+        private void SubmitNewRecord()
+        {
+            if (Student == null) return;
+
+            var recordView = _serviceProvider.GetRequiredService<AddStudyRecordView>();
+            if (recordView.DataContext is AddStudyRecordViewModel viewModel)
+            {
+                _ = viewModel.Initialize(Student);
+            }
+
+            recordView.Show();
         }
     }
 }

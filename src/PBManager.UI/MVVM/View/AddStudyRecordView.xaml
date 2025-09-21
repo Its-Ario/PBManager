@@ -12,7 +12,7 @@
         ResizeMode="NoResize"
         Background="Transparent"
         AllowsTransparency="True">
-    <Border Background="#272537" CornerRadius="20">
+    <Border Background="{StaticResource BgPrimaryBrush}" CornerRadius="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -59,18 +59,18 @@
                     <Button x:Name="InfoButton" Content="ℹ"
                             Width="25" Height="25"
                             FontWeight="Bold"
-                            Background="#353340"
+                            Background="{StaticResource TableHeaderBrush}"
                             Foreground="White"
-                            BorderBrush="#272537"
+                            BorderBrush="{StaticResource BgPrimaryBrush}"
                             Click="InfoButton_Click"/>
                     <Popup x:Name="InfoPopup" AllowsTransparency="True"
                            PlacementTarget="{Binding ElementName=InfoButton}"
                            Placement="Bottom"
                            StaysOpen="False">
-                        <Border Background="#353340" 
+                        <Border Background="{StaticResource TableHeaderBrush}" 
                                 Padding="10" 
                                 CornerRadius="10"
-                                BorderBrush="#272537"
+                                BorderBrush="{StaticResource BgPrimaryBrush}"
                                 BorderThickness="1">
                             <TextBlock FlowDirection="RightToLeft" 
                                        Foreground="White"
@@ -93,7 +93,7 @@
                 </StackPanel>
             </Grid>
 
-            <Border Grid.Row="1" Background="#353340" CornerRadius="8" Margin="10,5,10,5" Padding="15">
+            <Border Grid.Row="1" Background="{StaticResource TableHeaderBrush}" CornerRadius="8" Margin="10,5,10,5" Padding="15">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -114,8 +114,8 @@
                             Grid.Column="1"
                             SelectedDateChanged="WeekStartDatePicker_SelectedDateChanged"
                             SelectedDate="{Binding SelectedWeekStart, Mode=TwoWay}"
-                            Background="#2a2836"
-                            BorderBrush="#444"
+                            Background="{StaticResource TableBgBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
                             Height="35"
                             FontSize="14"
                             HorizontalAlignment="Left"
@@ -124,7 +124,7 @@
                     <TextBlock x:Name="WeekRangeDisplay"
                                Grid.Column="2"
                                Text="{Binding WeekRangeText}"
-                               Foreground="#B0B0B0"
+                               Foreground="White"
                                FontSize="12"
                                VerticalAlignment="Center"
                                Margin="15,0,15,0"/>
@@ -147,7 +147,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" Background="#353340" CornerRadius="8,8,0,0" Padding="5">
+                    <Border Grid.Row="0" Background="{StaticResource TableHeaderBrush}" CornerRadius="8,8,0,0" Padding="5">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="120"/>
@@ -179,11 +179,11 @@
                         </Grid>
                     </Border>
 
-                    <Border Grid.Row="1" Background="#2a2836" CornerRadius="0,0,8,8" Padding="5">
+                    <Border Grid.Row="1" Background="{StaticResource TableBgBrush}" CornerRadius="0,0,8,8" Padding="5">
                         <ItemsControl ItemsSource="{Binding WeeklySubjectEntries}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,2" Padding="5" Background="#323040" CornerRadius="5">
+                                    <Border Margin="0,2" Padding="5" Background="{StaticResource BorderBrush}" CornerRadius="5">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="120"/>
@@ -203,18 +203,18 @@
                                                        FontWeight="Medium"/>
 
                                             <!-- Saturday -->
-                                            <Border Grid.Column="1" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                            <Border Grid.Column="1" CornerRadius="5" Background="{StaticResource TableHeaderBrush}" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding (Validation.HasError), ElementName=SatTextBox}" Value="True">
-                                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                                <Setter Property="BorderBrush" Value="Crimson"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding (Validation.HasError), ElementName=SatTextBox}" Value="False">
-                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource SubmitGreenBrush}"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Text.Length, ElementName=SatTextBox}" Value="0">
-                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -226,7 +226,7 @@
                                             </Border>
 
                                             <!-- Sunday -->
-                                            <Border Grid.Column="2" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                            <Border Grid.Column="2" CornerRadius="5" Background="{StaticResource TableHeaderBrush}" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
@@ -234,10 +234,10 @@
                                                                 <Setter Property="BorderBrush" Value="Red"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding (Validation.HasError), ElementName=SunTextBox}" Value="False">
-                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource SubmitGreenBrush}"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Text.Length, ElementName=SunTextBox}" Value="0">
-                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -248,7 +248,7 @@
                                             </Border>
 
                                             <!-- Monday -->
-                                            <Border Grid.Column="3" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                            <Border Grid.Column="3" CornerRadius="5" Background="{StaticResource TableHeaderBrush}" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
@@ -256,10 +256,10 @@
                                                                 <Setter Property="BorderBrush" Value="Red"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding (Validation.HasError), ElementName=MonTextBox}" Value="False">
-                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource SubmitGreenBrush}"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Text.Length, ElementName=MonTextBox}" Value="0">
-                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -270,7 +270,7 @@
                                             </Border>
 
                                             <!-- Tuesday -->
-                                            <Border Grid.Column="4" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                            <Border Grid.Column="4" CornerRadius="5" Background="{StaticResource TableHeaderBrush}" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
@@ -278,10 +278,10 @@
                                                                 <Setter Property="BorderBrush" Value="Red"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding (Validation.HasError), ElementName=TueTextBox}" Value="False">
-                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource SubmitGreenBrush}"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Text.Length, ElementName=TueTextBox}" Value="0">
-                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -292,7 +292,7 @@
                                             </Border>
 
                                             <!-- Wednesday -->
-                                            <Border Grid.Column="5" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                            <Border Grid.Column="5" CornerRadius="5" Background="{StaticResource TableHeaderBrush}" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
@@ -300,10 +300,10 @@
                                                                 <Setter Property="BorderBrush" Value="Red"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding (Validation.HasError), ElementName=WedTextBox}" Value="False">
-                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource SubmitGreenBrush}"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Text.Length, ElementName=WedTextBox}" Value="0">
-                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -314,7 +314,7 @@
                                             </Border>
 
                                             <!-- Thursday -->
-                                            <Border Grid.Column="6" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                            <Border Grid.Column="6" CornerRadius="5" Background="{StaticResource TableHeaderBrush}" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
@@ -322,10 +322,10 @@
                                                                 <Setter Property="BorderBrush" Value="Red"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding (Validation.HasError), ElementName=ThuTextBox}" Value="False">
-                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource SubmitGreenBrush}"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Text.Length, ElementName=ThuTextBox}" Value="0">
-                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -336,7 +336,7 @@
                                             </Border>
 
                                             <!-- Friday -->
-                                            <Border Grid.Column="7" CornerRadius="5" Background="#353340" Width="60" Height="30" BorderThickness="1">
+                                            <Border Grid.Column="7" CornerRadius="5" Background="{StaticResource TableHeaderBrush}" Width="60" Height="30" BorderThickness="1">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
@@ -344,10 +344,10 @@
                                                                 <Setter Property="BorderBrush" Value="Red"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding (Validation.HasError), ElementName=FriTextBox}" Value="False">
-                                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource SubmitGreenBrush}"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Text.Length, ElementName=FriTextBox}" Value="0">
-                                                                <Setter Property="BorderBrush" Value="#444"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -371,7 +371,7 @@
                     Height="35"
                     Width="120"
                     HorizontalAlignment="Center"
-                    Command="{Binding SubmitCommand}" Click="submitBtn_Click">
+                    Command="{Binding SubmitCommand}" Click="SubmitBtn_Click">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
                         <Setter Property="Content" Value="ثبت"/>

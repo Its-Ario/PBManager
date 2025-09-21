@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="PrimaryColor">#FF784FF2</Color>
+    <Color x:Key="PrimaryShadowColor">#FF784FF2</Color>
+
+    <Color x:Key="BgPrimaryColor">#FF272537</Color>
+    <Color x:Key="BgSecondaryColor">#FF22202F</Color>
+
+    <Color x:Key="ElementColor">#FF5C6BC0</Color>
+    <Color x:Key="ElementHoverColor">#FF3949AB</Color>
+    <Color x:Key="ElementPressedColor">#FF283593</Color>
+
+    <Color x:Key="SubmitGreenColor">#FF44aa44</Color>
+
+    <Color x:Key="TableBgColor">#FF2a2836</Color>
+    <Color x:Key="TableHeaderColor">#FF353340</Color>
+
+    <Color x:Key="BorderBrushColor">#FF4F4C5E</Color>
+
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
+    <SolidColorBrush x:Key="PrimaryShadowBrush" Color="{StaticResource PrimaryShadowColor}"/>
+
+    <SolidColorBrush x:Key="BgPrimaryBrush" Color="{StaticResource BgPrimaryColor}"/>
+    <SolidColorBrush x:Key="BgSecondaryBrush" Color="{StaticResource BgSecondaryColor}"/>
+
+    <SolidColorBrush x:Key="ElementBrush" Color="{StaticResource ElementColor}"/>
+    <SolidColorBrush x:Key="ElementHoverBrush" Color="{StaticResource ElementHoverColor}"/>
+    <SolidColorBrush x:Key="ElementPressedBrush" Color="{StaticResource ElementPressedColor}"/>
+
+    <SolidColorBrush x:Key="SubmitGreenBrush" Color="{StaticResource SubmitGreenColor}"/>
+
+    <SolidColorBrush x:Key="TableHeaderBrush" Color="{StaticResource TableHeaderColor}"/>
+    <SolidColorBrush x:Key="TableBgBrush" Color="{StaticResource TableBgColor}"/>
+
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderBrushColor}"/>
+</ResourceDictionary>

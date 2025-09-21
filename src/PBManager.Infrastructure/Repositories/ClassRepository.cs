@@ -6,14 +6,9 @@ using System.Diagnostics;
 
 namespace PBManager.Infrastructure.Repositories;
 
-public class ClassRepository : IClassRepository
+public class ClassRepository(DatabaseContext db) : IClassRepository
 {
-    private readonly DatabaseContext _db;
-
-    public ClassRepository(DatabaseContext db)
-    {
-        _db = db;
-    }
+    private readonly DatabaseContext _db = db;
 
     public async Task<List<Class>> GetAllAsync()
     {

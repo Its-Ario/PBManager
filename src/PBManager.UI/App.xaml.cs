@@ -22,7 +22,7 @@ namespace PBManager
 {
     public partial class App : System.Windows.Application
     {
-        public static IServiceProvider ServiceProvider { get; private set; }
+        public static IServiceProvider? ServiceProvider { get; private set; }
 
         public static string DatabasePath { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -31,8 +31,8 @@ namespace PBManager
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(DatabasePath));
-            await DatabasePorter.HandlePendingImportOnStartupAsync(DatabasePath);
+            Directory.CreateDirectory(Path.GetDirectoryName(DatabasePath) ?? string.Empty);
+            DatabasePorter.HandlePendingImportOnStartup(DatabasePath);
 
             base.OnStartup(e);
 
@@ -44,8 +44,8 @@ namespace PBManager
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
-                dbContext.Database.EnsureCreated();
-                dbContext.Database.Migrate();
+                await dbContext.Database.EnsureCreatedAsync();
+                await dbContext.Database.MigrateAsync();
             }
 
             var loginWindow = ServiceProvider.GetRequiredService<LoginView>();
@@ -58,7 +58,7 @@ namespace PBManager
             );
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlite($"Data Source={DatabasePath}"));
@@ -93,6 +93,7 @@ namespace PBManager
             services.AddTransient<AddStudyRecordViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<HistoryViewModel>();
+            services.AddTransient<StudyHistoryViewModel>();
 
             services.AddTransient<MainWindow>();
             services.AddTransient<AddStudyRecordView>();

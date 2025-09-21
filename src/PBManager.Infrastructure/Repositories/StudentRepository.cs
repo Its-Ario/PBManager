@@ -5,18 +5,16 @@ using PBManager.Infrastructure.Data;
 
 namespace PBManager.Infrastructure.Repositories;
 
-public class StudentRepository : IStudentRepository
+public class StudentRepository(DatabaseContext db) : IStudentRepository
 {
-    private readonly DatabaseContext _db;
-
-    public StudentRepository(DatabaseContext db) { _db = db; }
+    private readonly DatabaseContext _db = db;
 
     public Task<Student?> FindByIdAsync(int id) => _db.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
     public Task<List<Student>> GetAllWithClassAsync() => _db.Students.AsNoTracking().Include(r => r.Class).AsNoTracking().ToListAsync();
-    public Task<bool> ExistsByNationalCodeAsync(string code) => _db.Students.AsNoTracking().AnyAsync(s => s.NationalCode == code);
-    public async Task AddAsync(Student s) => await _db.Students.AddAsync(s);
-    public void Update(Student s) => _db.Students.Update(s);
-    public void Delete(Student s) => _db.Students.Remove(s);
+    public Task<bool> ExistsByNationalCodeAsync(string nationalCode) => _db.Students.AsNoTracking().AnyAsync(s => s.NationalCode == nationalCode);
+    public async Task AddAsync(Student student) => await _db.Students.AddAsync(student);
+    public void Update(Student student) => _db.Students.Update(student);
+    public void Delete(Student student) => _db.Students.Remove(student);
     public Task<int> GetCountAsync() => _db.Students.AsNoTracking().CountAsync();
     public Task<int> SaveChangesAsync() => _db.SaveChangesAsync();
 

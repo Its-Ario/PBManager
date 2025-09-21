@@ -8,19 +8,13 @@ using System.Windows;
 
 namespace PBManager.UI.MVVM.ViewModel;
 
-[ObservableObject]
-public partial class ManagementViewModel<T> where T : class, IManagedEntity
+public partial class ManagementViewModel<T>(IManagementService<T> service) : ObservableObject where T : class, IManagedEntity
 {
-    private readonly IManagementService<T> _service;
+    private readonly IManagementService<T> _service = service;
 
-    [ObservableProperty] private string _windowTitle;
+    [ObservableProperty] private string? _windowTitle;
     [ObservableProperty] private T? _selectedItem;
-    public ObservableCollection<T> Items { get; } = new();
-
-    public ManagementViewModel(IManagementService<T> service)
-    {
-        _service = service;
-    }
+    public ObservableCollection<T> Items { get; } = [];
 
     public async Task LoadAsync(string title)
     {

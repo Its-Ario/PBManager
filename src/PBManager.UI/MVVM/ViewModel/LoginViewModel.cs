@@ -4,21 +4,15 @@ using PBManager.Application.Interfaces;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    [ObservableObject]
-    public partial class LoginViewModel
+    public partial class LoginViewModel(IAuthenticationService authService) : ObservableObject
     {
-        private readonly IAuthenticationService _authService;
+        private readonly IAuthenticationService _authService = authService;
 
-        [ObservableProperty] private string _username;
-        [ObservableProperty] private string _password;
-        [ObservableProperty] private string _errorMessage;
+        [ObservableProperty] private string? _username;
+        [ObservableProperty] private string? _password;
+        [ObservableProperty] private string? _errorMessage;
 
         public event EventHandler? LoginSuccess;
-
-        public LoginViewModel(IAuthenticationService authService)
-        {
-            _authService = authService;
-        }
 
         [RelayCommand]
         private async Task LoginAsync()

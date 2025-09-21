@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
-             xmlns:conv="clr-namespace:PBManager.Converters"
+             xmlns:conv="clr-namespace:PBManager.UI.Converters"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="360">
 
@@ -102,12 +102,14 @@
                     x:Name="submitNewRecord"
                     Margin="5"
                     Width="110" Height="50"
-                    Style="{StaticResource ModernButtonStyle}" Click="submitNewRecord_Click"/>
+                    Style="{StaticResource ModernButtonStyle}" 
+                    Command="{Binding SubmitNewRecordCommand}"/>
             <Button Content="تاریخچه مطالعه"
                     x:Name="viewHistory"
                     Margin="5"
                     Width="110" Height="50"
-                    Style="{StaticResource ModernButtonStyle}" Click="viewHistory_Click"/>
+                    Style="{StaticResource ModernButtonStyle}" 
+                    Command="{Binding ViewHistoryCommand}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="4">

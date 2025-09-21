@@ -5,21 +5,16 @@ using System.Security.Cryptography;
 
 namespace PBManager.Application.Services
 {
-    public partial class AuthenticationService : IAuthenticationService
+    public partial class AuthenticationService(IUserRepository userRepository, IAuditLogService auditLogService, IUserSession userSession) : IAuthenticationService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IAuditLogService _auditLogService;
-        private readonly IUserSession _userSession;
+        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IAuditLogService _auditLogService = auditLogService;
+        private readonly IUserSession _userSession = userSession;
 
-        public AuthenticationService(IUserRepository userRepository, IAuditLogService auditLogService, IUserSession userSession)
+        public async Task<bool> LoginAsync(string? username, string? password)
         {
-            _userRepository = userRepository;
-            _auditLogService = auditLogService;
-            _userSession = userSession;
-        }
+            if (username == null || password == null) return false;
 
-        public async Task<bool> LoginAsync(string username, string password)
-        {
             var user = await _userRepository.GetByUsernameAsync(username);
             if (user != null && VerifyPassword(password, user.PasswordHash))
             {
@@ -63,7 +58,7 @@ namespace PBManager.Application.Services
             _userSession.Clear();
         }
 
-        private string HashPassword(string password)
+        private static string HashPassword(string password)
         {
             const int saltSize = 16;
             const int hashSize = 20;
@@ -80,7 +75,7 @@ namespace PBManager.Application.Services
             return Convert.ToBase64String(hashBytes);
         }
 
-        private bool VerifyPassword(string password, string base64Hash)
+        private static bool VerifyPassword(string password, string base64Hash)
         {
             byte[] hashBytes = Convert.FromBase64String(base64Hash);
             const int saltSize = 16;

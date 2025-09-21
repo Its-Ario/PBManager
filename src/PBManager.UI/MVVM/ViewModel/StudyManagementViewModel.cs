@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows.Data;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
-using PBManager.Messages;
+using PBManager.UI.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PBManager.Core.Entities;
 using PBManager.Application.Interfaces;
@@ -15,7 +15,7 @@ namespace PBManager.UI.MVVM.ViewModel
     {
         private readonly IStudentService _studentService;
 
-        private ObservableCollection<Student> _students;
+        private ObservableCollection<Student> _students = [];
         public ObservableCollection<Student> Students
         {
             get => _students;
@@ -31,11 +31,11 @@ namespace PBManager.UI.MVVM.ViewModel
         public StudentDetailViewModel DetailVM { get; }
 
         [ObservableProperty]
-        private StudyRecord _selectedRecord;
+        private StudyRecord? _selectedRecord;
 
-        public ICollectionView FilteredStudents { get; private set; }
+        public ICollectionView? FilteredStudents { get; private set; }
 
-        private string _searchText;
+        private string _searchText = string.Empty;
         public string SearchText
         {
             get
@@ -64,15 +64,15 @@ namespace PBManager.UI.MVVM.ViewModel
         }
         public bool HasSelection => SelectedStudent != null;
 
-        public StudyManagementViewModel(IStudentService studentService)
+        public StudyManagementViewModel(IStudentService studentService, IServiceProvider serviceProvider)
         {
             _studentService = studentService;
 
-            DetailVM = App.ServiceProvider.GetRequiredService<StudentDetailViewModel>();
+            DetailVM = serviceProvider.GetRequiredService<StudentDetailViewModel>();
 
             if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
-                LoadData();
+                _ = LoadData();
             }
         }
 
@@ -87,7 +87,7 @@ namespace PBManager.UI.MVVM.ViewModel
                    (student.Class?.Name?.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
-        private async void LoadData()
+        private async Task LoadData()
         {
             try
             {

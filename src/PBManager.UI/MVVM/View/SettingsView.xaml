@@ -20,7 +20,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Border Background="#22202F" CornerRadius="8" Padding="5 5 5 0"
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="5 5 5 0"
                 Grid.Column="2" Margin="5" Grid.Row="1">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -55,7 +55,7 @@
             </Grid>
         </Border>
 
-        <Border Background="#22202F" CornerRadius="8" Padding="5 5 5 0"
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="5 5 5 0"
         Grid.Column="2" Margin="5">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -90,7 +90,7 @@
             </Grid>
         </Border>
 
-        <Border Background="#22202F" CornerRadius="8" Padding="5 5 5 0"
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="5 5 5 0"
         Margin="5" Grid.Column="1">
             <Grid>
 
@@ -115,7 +115,7 @@
             </Grid>
         </Border>
 
-        <Border Background="#22202F" CornerRadius="8" Padding="5 5 5 0"
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="5 5 5 0"
                 Margin="5">
             <Grid>
 
@@ -140,7 +140,7 @@
             </Grid>
         </Border>
 
-        <Border Background="#22202F" CornerRadius="8" Padding="10 10 10 0"
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="10 10 10 0"
                 Grid.Row="1" Grid.Column="1" Margin="5">
             <Grid FlowDirection="RightToLeft">
                 <Grid.ColumnDefinitions>
@@ -200,7 +200,7 @@
             </Grid>
         </Border>
 
-        <Border Background="#22202F" CornerRadius="8" Padding="10 10 10 0"
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="10 10 10 0"
         Grid.Row="1" Margin="5">
             <Button Content="حذف دیتابیس"
                     x:Name="clearDbButton"
@@ -210,7 +210,7 @@
                     Command="{Binding WipeDatabaseCommand}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
-                        <Setter Property="Background" Value="#E53935"/>
+                        <Setter Property="Background" Value="Crimson"/>
                         <Setter Property="Foreground" Value="White"/>
                         <Setter Property="Template">
                             <Setter.Value>

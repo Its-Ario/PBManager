@@ -12,10 +12,13 @@ namespace PBManager.UI.MVVM.View
     /// </summary>
     public partial class LoginView : Window
     {
-        public LoginView(LoginViewModel viewModel)
+        private readonly IServiceProvider _serviceProvider;
+        public LoginView(LoginViewModel viewModel, IServiceProvider serviceProvider)
         {
             InitializeComponent();
             DataContext = viewModel;
+
+            _serviceProvider = serviceProvider;
 
             viewModel.LoginSuccess += OnLoginSuccess;
 
@@ -45,8 +48,8 @@ namespace PBManager.UI.MVVM.View
 
         private void OnLoginSuccess(object? sender, EventArgs e)
         {
-            var mainWindow = App.ServiceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            mainWindow?.Show();
             this.Close();
         }
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)

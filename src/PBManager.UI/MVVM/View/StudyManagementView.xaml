@@ -15,11 +15,10 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Border Background="#22202F" CornerRadius="8" Padding="15" Margin="0,0,10,0" Grid.Column="0">
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="15" Margin="0,0,10,0" Grid.Column="0">
             <StackPanel>
                 <TextBox x:Name="SearchBox"
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                         Foreground="#CFCFCF"
                          Tag="جستجو"
                          Margin="40 10"
                          Style="{StaticResource ModernTextBox}"
@@ -70,7 +69,7 @@
             </TextBlock.Style>
         </TextBlock>
 
-        <Border Background="#22202F" CornerRadius="8" Padding="15" 
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="15" 
                 Margin="10,0,0,0" Grid.Column="1">
             <Border.Style>
                 <Style TargetType="Border">

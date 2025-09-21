@@ -15,7 +15,7 @@ public partial class InputDialog : Window
 
     public string Answer => txtAnswer.Text;
 
-    private void btnDialogOk_Click(object sender, RoutedEventArgs e)
+    private void BtnDialogOk_Click(object sender, RoutedEventArgs e)
     {
         this.DialogResult = true;
     }

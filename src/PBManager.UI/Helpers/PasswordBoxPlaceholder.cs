@@ -26,15 +26,11 @@ public static class PasswordBoxPlaceholder
 
     private static void OnPasswordChanged(object sender, RoutedEventArgs e)
     {
-        if (sender is PasswordBox passwordBox)
+        if (sender is PasswordBox passwordBox && passwordBox.Template.FindName("placeholderText", passwordBox) is TextBlock placeholder)
         {
-            var placeholder = passwordBox.Template.FindName("placeholderText", passwordBox) as TextBlock;
-            if (placeholder != null)
-            {
-                placeholder.Visibility = string.IsNullOrEmpty(passwordBox.Password)
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-            }
+            placeholder.Visibility = string.IsNullOrEmpty(passwordBox.Password)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
     }
 }

@@ -6,14 +6,9 @@ using PBManager.UI.MVVM.View;
 
 namespace PBManager.UI.Services;
 
-public class DialogService : IDialogService
+public class DialogService(IServiceProvider serviceProvider) : IDialogService
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public DialogService(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public void ShowManagementWindow<T>(string title) where T : class, IManagedEntity
     {

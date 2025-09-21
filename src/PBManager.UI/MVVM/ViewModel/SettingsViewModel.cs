@@ -19,6 +19,7 @@ namespace PBManager.UI.MVVM.ViewModel
         private readonly ISubjectService _subjectService;
         private readonly IClassService _classService;
         private readonly IDialogService _dialogService;
+        private readonly IServiceProvider _serviceProvider;
 
         [ObservableProperty]
         private int _studyRecordCount;
@@ -34,7 +35,7 @@ namespace PBManager.UI.MVVM.ViewModel
         private readonly IDatabasePorter _porter;
         private readonly IDatabaseManagementService _dbManagementService;
 
-        public SettingsViewModel(IStudentService studentService, IStudyRecordService studyRecordService, ISubjectService subjectService, IClassService classService, IDatabasePorter porter, IDatabaseManagementService dbManagementServices, IDialogService dialogService)
+        public SettingsViewModel(IStudentService studentService, IStudyRecordService studyRecordService, ISubjectService subjectService, IClassService classService, IDatabasePorter porter, IDatabaseManagementService dbManagementServices, IDialogService dialogService, IServiceProvider serviceProvider)
         {
             _studentService = studentService;
             _studyRecordService = studyRecordService;
@@ -43,6 +44,7 @@ namespace PBManager.UI.MVVM.ViewModel
             _porter = porter;
             _dbManagementService = dbManagementServices;
             _dialogService = dialogService;
+            _serviceProvider = serviceProvider;
 
             _ = LoadData();
         }
@@ -62,8 +64,8 @@ namespace PBManager.UI.MVVM.ViewModel
             if (string.IsNullOrEmpty(filePath)) return;
             IFileParser<Student> parser = Path.GetExtension(filePath).ToLowerInvariant() switch
             {
-                ".xlsx" => App.ServiceProvider.GetRequiredService<XlsxStudentParser>(),
-                ".csv" => App.ServiceProvider.GetRequiredService<CsvStudentParser>(),
+                ".xlsx" => _serviceProvider.GetRequiredService<XlsxStudentParser>(),
+                ".csv" => _serviceProvider.GetRequiredService<CsvStudentParser>(),
                 _ => throw new NotSupportedException("File type not supported.")
             };
             try
@@ -83,7 +85,7 @@ namespace PBManager.UI.MVVM.ViewModel
         {
             if (string.IsNullOrEmpty(filePath)) return;
 
-            var exporter = App.ServiceProvider.GetRequiredService<XlsxStudentExporter>();
+            var exporter = _serviceProvider.GetRequiredService<XlsxStudentExporter>();
 
             try
             {
@@ -119,20 +121,17 @@ namespace PBManager.UI.MVVM.ViewModel
             try
             {
                 var success = await _porter.ImportDatabaseAsync(filePath);
-                if (success)
+                if (success && _porter.IsPendingImportOnRestart())
                 {
-                    if (_porter.IsPendingImportOnRestart())
-                    {
-                        var result = MessageBox.Show(
-                            "Import successful! The application needs to restart to apply changes.\n\nRestart now?",
-                            "Restart Required",
-                            MessageBoxButton.YesNo);
+                    var result = MessageBox.Show(
+                        "Import successful! The application needs to restart to apply changes.\n\nRestart now?",
+                        "Restart Required",
+                        MessageBoxButton.YesNo);
 
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            System.Diagnostics.Process.Start(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-                            System.Windows.Application.Current.Shutdown();
-                        }
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start(Environment.ProcessPath ?? string.Empty);
+                        System.Windows.Application.Current.Shutdown();
                     }
                 }
             }

@@ -7,8 +7,7 @@ using Mohsen;
 
 namespace PBManager.UI.MVVM.ViewModel;
 
-[ObservableObject]
-public partial class HistoryViewModel
+public partial class HistoryViewModel : ObservableObject
 {
     private readonly IAuditLogRepository _auditRepository;
     private readonly IUserRepository _userRepository;
@@ -16,9 +15,9 @@ public partial class HistoryViewModel
     private int _currentPage = 1;
     private const int PageSize = 50;
 
-    public ObservableCollection<AuditLog> Logs { get; } = new();
-    public ObservableCollection<string> AvailableEntityTypes { get; } = new();
-    public ObservableCollection<User> AvailableUsers { get; } = new();
+    public ObservableCollection<AuditLog> Logs { get; } = [];
+    public ObservableCollection<string> AvailableEntityTypes { get; } = [];
+    public ObservableCollection<User> AvailableUsers { get; } = [];
 
     [ObservableProperty] private string? _entityTypeFilter;
     [ObservableProperty] private int? _userFilter;
@@ -28,6 +27,9 @@ public partial class HistoryViewModel
     {
         _auditRepository = auditRepository;
         _userRepository = userRepository;
+
+        UserFilter = 0;
+
         _ = InitializeAsync();
     }
 
@@ -46,7 +48,7 @@ public partial class HistoryViewModel
         AvailableEntityTypes.Add("StudyRecord");
 
         var users = await _userRepository.GetAllAsync();
-        AvailableUsers.Add(new User { Id = 0, Username = "All Users" });
+        AvailableUsers.Add(new User { Id = 0, Username = "همه کاربران" });
         foreach (var user in users)
         {
             AvailableUsers.Add(user);

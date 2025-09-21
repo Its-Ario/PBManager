@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Windows;
 
-namespace PBManager.Converters
+namespace PBManager.UI.Converters
 {
     public class InverseBooleanToVisibilityConverter : IValueConverter
     {

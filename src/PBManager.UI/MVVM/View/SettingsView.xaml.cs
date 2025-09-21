@@ -12,7 +12,7 @@ namespace PBManager.UI.MVVM.View
     /// </summary>
     public partial class SettingsView : UserControl
     {
-        public SettingsViewModel? ViewModel => this.DataContext as SettingsViewModel;
+        public SettingsViewModel ViewModel => (SettingsViewModel)this.DataContext!;
 
         public SettingsView()
         {
@@ -39,7 +39,6 @@ namespace PBManager.UI.MVVM.View
             if (dialog.ShowDialog() == true)
             {
                 string filePath = dialog.FileName;
-                string extension = Path.GetExtension(filePath).ToLowerInvariant();
 
                 try
                 {

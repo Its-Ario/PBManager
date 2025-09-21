@@ -10,17 +10,17 @@ using PBManager.Application.Interfaces;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    public partial class AddStudyRecordViewModel : ObservableObject
+    public partial class AddStudyRecordViewModel(IStudyRecordService studyRecordService, ISubjectService subjectService) : ObservableObject
     {
-        private readonly IStudyRecordService _studyRecordService;
-        private readonly ISubjectService _subjectService;
+        private readonly IStudyRecordService _studyRecordService = studyRecordService;
+        private readonly ISubjectService _subjectService = subjectService;
 
         public ObservableCollection<SubjectEntry> WeeklySubjectEntries { get; set; } = [];
 
         [ObservableProperty]
         private Student _student;
         [ObservableProperty]
-        private string _weekRangeText;
+        private string _weekRangeText = string.Empty;
         [ObservableProperty]
         private bool _isEditMode;
 
@@ -36,14 +36,9 @@ namespace PBManager.UI.MVVM.ViewModel
             }
         }
 
-        public AddStudyRecordViewModel(IStudyRecordService studyRecordService, ISubjectService subjectService)
-        {
-            _studyRecordService = studyRecordService;
-            _subjectService = subjectService;
-        }
         public async Task Initialize(Student student, DateTime? weekStartDate = null)
         {
-            _student = student;
+            Student = student;
             IsEditMode = false;
             SelectedWeekStart = new PersianDate(DateUtils.GetPersianStartOfWeek(weekStartDate ?? DateTime.Today));
             await LoadWeekAsync();
@@ -51,10 +46,10 @@ namespace PBManager.UI.MVVM.ViewModel
 
         public async Task Initialize(Student student, IEnumerable<StudyRecord> existingRecords)
         {
-            _student = student;
+            Student = student;
             IsEditMode = true;
             var recordsList = existingRecords.ToList();
-            var earliestDate = recordsList.Any() ? recordsList.Min(r => r.Date) : DateTime.Today;
+            var earliestDate = recordsList.Count != 0 ? recordsList.Min(r => r.Date) : DateTime.Today;
             SelectedWeekStart = new PersianDate(DateUtils.GetPersianStartOfWeek(earliestDate));
             await LoadSubjectsWithExistingData(recordsList);
         }
@@ -72,12 +67,12 @@ namespace PBManager.UI.MVVM.ViewModel
         {
             try
             {
-                var existingRecords = await _studyRecordService.GetStudyRecordsForWeekAsync(_student, _selectedWeekStart.ToDateTime());
+                var existingRecords = await _studyRecordService.GetStudyRecordsForWeekAsync(Student, _selectedWeekStart.ToDateTime());
 
-                if (existingRecords.Any())
+                if (existingRecords.Count != 0)
                 {
                     IsEditMode = true;
-                    await LoadSubjectsWithExistingData(existingRecords.ToList());
+                    await LoadSubjectsWithExistingData([.. existingRecords]);
                 }
                 else
                 {
@@ -188,7 +183,7 @@ namespace PBManager.UI.MVVM.ViewModel
                         var recordDate = CalculateDateForPersianWeekDay(startOfWeek.ToDateTime(), dayMinutes.Key);
                         allRecords.Add(new StudyRecord
                         {
-                            StudentId = _student.Id,
+                            StudentId = Student.Id,
                             SubjectId = entry.Subject.Id,
                             MinutesStudied = dayMinutes.Value,
                             Date = recordDate
@@ -208,7 +203,7 @@ namespace PBManager.UI.MVVM.ViewModel
             {
                 if (IsEditMode)
                 {
-                    await _studyRecordService.DeleteStudyRecordsForWeekAsync(_student, startOfWeek.ToDateTime());
+                    await _studyRecordService.DeleteStudyRecordsForWeekAsync(Student, startOfWeek.ToDateTime());
                 }
 
                 await _studyRecordService.AddStudyRecordsAsync(allRecords, startOfWeek.ToDateTime());
@@ -237,7 +232,7 @@ namespace PBManager.UI.MVVM.ViewModel
             }
         }
 
-        private DateTime CalculateDateForPersianWeekDay(DateTime startOfWeek, DayOfWeek dayOfWeek)
+        private static DateTime CalculateDateForPersianWeekDay(DateTime startOfWeek, DayOfWeek dayOfWeek)
         {
             var daysToAdd = dayOfWeek switch
             {

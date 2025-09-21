@@ -47,7 +47,7 @@ namespace PBManager.UI.MVVM.View
             }
         }
 
-        private void submitBtn_Click(object sender, RoutedEventArgs e)
+        private void SubmitBtn_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

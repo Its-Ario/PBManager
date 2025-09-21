@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace PBManager.Converters
+namespace PBManager.UI.Converters
 {
     public class AbsentBorderConverter : IValueConverter
     {

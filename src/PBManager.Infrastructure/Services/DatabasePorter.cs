@@ -12,7 +12,7 @@ public class DatabasePorter : IDatabasePorter
 {
     private const string APP_SECRET_KEY = "PBManager_fhkV8).iL.f=#\"~wHVB3FQ6+";
     private const string APP_SALT = "PBManager_Salt_v1";
-    private const int KEY_DERIVATION_ITERATIONS = 50000;
+    private const int KEY_DERIVATION_ITERATIONS = 100000;
     private const string TEMP_DB_SUFFIX = ".pending_import";
     private const string STARTUP_FLAG_FILE = "db_import_pending.flag";
 
@@ -23,7 +23,7 @@ public class DatabasePorter : IDatabasePorter
         _db = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public static async Task HandlePendingImportOnStartupAsync(string dbPath)
+    public static void HandlePendingImportOnStartup(string dbPath)
     {
         var flagFile = Path.Combine(Path.GetDirectoryName(dbPath) ?? "", STARTUP_FLAG_FILE);
         var tempDbPath = dbPath + TEMP_DB_SUFFIX;
@@ -42,13 +42,14 @@ public class DatabasePorter : IDatabasePorter
 
                 File.Delete(tempDbPath);
                 File.Delete(flagFile);
-
-                Debug.WriteLine($"Database import completed on startup. Backup saved as: {Path.GetFileName(backupPath)}");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Failed to complete database import on startup: {ex.Message}");
-                try { File.Delete(flagFile); } catch { }
+                try { File.Delete(flagFile); } 
+                catch {
+                    Debug.WriteLine("Failed to delete file");
+                }
             }
         }
     }
@@ -102,7 +103,7 @@ public class DatabasePorter : IDatabasePorter
         await File.WriteAllTextAsync(flagFile, $"Import scheduled at: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
     }
 
-    private byte[] Encrypt(byte[] dataToEncrypt)
+    private static byte[] Encrypt(byte[] dataToEncrypt)
     {
         using var aes = Aes.Create();
         aes.Padding = PaddingMode.PKCS7;
@@ -124,7 +125,7 @@ public class DatabasePorter : IDatabasePorter
         return memoryStream.ToArray();
     }
 
-    private byte[] Decrypt(byte[] dataToDecrypt)
+    private static byte[] Decrypt(byte[] dataToDecrypt)
     {
         using var aes = Aes.Create();
         aes.Padding = PaddingMode.PKCS7;
@@ -149,10 +150,10 @@ public class DatabasePorter : IDatabasePorter
 
     private async Task<byte[]> GetDatabaseBytesAsync()
     {
-        var tempFile = Path.GetTempFileName();
+        var tempFile = Path.GetRandomFileName();
         try
         {
-            await _db.Database.ExecuteSqlRawAsync($"VACUUM INTO '{tempFile}'");
+            await _db.Database.ExecuteSqlAsync($"VACUUM INTO '{tempFile}'");
             return await File.ReadAllBytesAsync(tempFile);
         }
         finally
@@ -161,7 +162,7 @@ public class DatabasePorter : IDatabasePorter
         }
     }
 
-    private async Task<byte[]> CompressAsync(byte[] data)
+    private static async Task<byte[]> CompressAsync(byte[] data)
     {
         using var output = new MemoryStream();
         await using (var gzip = new GZipStream(output, CompressionMode.Compress, true))
@@ -171,7 +172,7 @@ public class DatabasePorter : IDatabasePorter
         return output.ToArray();
     }
 
-    private async Task<byte[]> DecompressAsync(byte[] compressedData)
+    private static async Task<byte[]> DecompressAsync(byte[] compressedData)
     {
         using var input = new MemoryStream(compressedData);
         await using var gzip = new GZipStream(input, CompressionMode.Decompress);

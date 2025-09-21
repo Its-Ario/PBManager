@@ -6,7 +6,7 @@
         Background="Transparent"
         AllowsTransparency="True"
         WindowStyle="None">
-    <Border Background="#272537" CornerRadius="20">
+    <Border Background="{StaticResource BgPrimaryBrush}" CornerRadius="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -80,7 +80,7 @@
                         FontSize="25"
                         Width="60"
                         Height="30"
-                        Background="#44aa44"
+                        Background="{StaticResource SubmitGreenBrush}"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"/>
             </StackPanel>

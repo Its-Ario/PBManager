@@ -5,10 +5,9 @@ using PBManager.Infrastructure.Data;
 
 namespace PBManager.Infrastructure.Repositories
 {
-    public class AuditLogRepository : IAuditLogRepository
+    public class AuditLogRepository(DatabaseContext db) : IAuditLogRepository
     {
-        private readonly DatabaseContext _db;
-        public AuditLogRepository(DatabaseContext db) { _db = db; }
+        private readonly DatabaseContext _db = db;
 
         public async Task AddAsync(AuditLog log) => await _db.AuditLogs.AddAsync(log);
         public async Task SaveChangesAsync() => await _db.SaveChangesAsync();

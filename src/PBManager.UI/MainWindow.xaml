@@ -13,7 +13,7 @@
         Background="Transparent"
         AllowsTransparency="True">
     
-    <Border Background="#272537" CornerRadius="20">
+    <Border Background="{StaticResource BgPrimaryBrush}" CornerRadius="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="75"/>

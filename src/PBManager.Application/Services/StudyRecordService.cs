@@ -7,26 +7,18 @@ using PBManager.Core.Utils;
 
 namespace PBManager.Application.Services;
 
-public class StudyRecordService : IStudyRecordService
+public class StudyRecordService(
+    IStudyRecordRepository repository,
+    IStudentRepository studentRepository,
+    IMemoryCache cache,
+    IAuditLogService auditLogService) : IStudyRecordService
 {
-    private readonly IStudyRecordRepository _repository;
-    private readonly IStudentRepository _studentRepository;
-    private readonly IMemoryCache _cache;
-    private readonly IAuditLogService _auditLogService;
+    private readonly IStudyRecordRepository _repository = repository;
+    private readonly IStudentRepository _studentRepository = studentRepository;
+    private readonly IMemoryCache _cache = cache;
+    private readonly IAuditLogService _auditLogService = auditLogService;
 
-    public StudyRecordService(
-        IStudyRecordRepository repository,
-        IStudentRepository studentRepository,
-        IMemoryCache cache,
-        IAuditLogService auditLogService)
-    {
-        _repository = repository;
-        _studentRepository = studentRepository;
-        _cache = cache;
-        _auditLogService = auditLogService;
-    }
-
-    private MemoryCacheEntryOptions GetDefaultCacheOptions(TimeSpan? absoluteExpiration = null) =>
+    private static MemoryCacheEntryOptions GetDefaultCacheOptions(TimeSpan? absoluteExpiration = null) =>
         new MemoryCacheEntryOptions()
             .SetSlidingExpiration(TimeSpan.FromMinutes(10))
             .SetAbsoluteExpiration(absoluteExpiration ?? TimeSpan.FromHours(1));
@@ -43,10 +35,10 @@ public class StudyRecordService : IStudyRecordService
 
     public async Task AddStudyRecordsAsync(List<StudyRecord> records, DateTime startOfWeek)
     {
-        if (records == null || !records.Any())
+        if (records == null || records.Count == 0)
             throw new ArgumentException("No study records provided.");
 
-        var studentId = records.First().StudentId;
+        var studentId = records[0].StudentId;
         var student = await _studentRepository.FindByIdAsync(studentId);
         var weekStart = DateUtils.GetPersianStartOfWeek(startOfWeek);
 
@@ -66,7 +58,7 @@ public class StudyRecordService : IStudyRecordService
         var weekStart = DateUtils.GetPersianStartOfWeek(startOfWeek);
         var recordsToDelete = await _repository.GetRecordsForWeekAsync(student.Id, weekStart);
 
-        if (recordsToDelete.Any())
+        if (recordsToDelete.Count != 0)
         {
             int count = recordsToDelete.Count;
             _repository.DeleteRange(recordsToDelete);
@@ -96,12 +88,12 @@ public class StudyRecordService : IStudyRecordService
     public async Task<List<StudyRecord>> GetStudyRecordsForStudentAsync(int studentId)
     {
         string cacheKey = $"StudyRecords_Student_{studentId}";
-        if (!_cache.TryGetValue(cacheKey, out List<StudyRecord> studyRecords))
+        if (!_cache.TryGetValue(cacheKey, out List<StudyRecord>? studyRecords))
         {
             studyRecords = await _repository.GetStudentRecords(studentId);
             _cache.Set(cacheKey, studyRecords, GetDefaultCacheOptions());
         }
-        return studyRecords;
+        return studyRecords ?? [];
     }
 
     public async Task<double> GetStudentWeeklyAverageAsync(int studentId)
@@ -214,37 +206,37 @@ public class StudyRecordService : IStudyRecordService
     public async Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>> GetWeeklyStudyDataAsync(int studentId, int weeks = 8)
     {
         string cacheKey = $"WeeklyStudyData_Student_{studentId}";
-        if (!_cache.TryGetValue(cacheKey, out List<(DateTime, DateTime, double)> weeklyData))
+        if (!_cache.TryGetValue(cacheKey, out List<(DateTime, DateTime, double)>? weeklyData))
         {
             var records = await _repository.GetRecordsForLastWeeksAsync(studentId, weeks);
             weeklyData = CalculateWeeklyAveragesForChart(records, true, weeks);
             _cache.Set(cacheKey, weeklyData, GetDefaultCacheOptions());
         }
-        return weeklyData;
+        return weeklyData ?? [];
     }
 
     public async Task<List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)>> GetWeeklyStudyDataAsync(int weeks = 8)
     {
         const string cacheKey = "WeeklyStudyData_All";
-        if (!_cache.TryGetValue(cacheKey, out List<(DateTime, DateTime, double)> weeklyData))
+        if (!_cache.TryGetValue(cacheKey, out List<(DateTime, DateTime, double)>? weeklyData))
         {
             var records = await _repository.GetRecordsForLastWeeksAsync(null, weeks);
             weeklyData = CalculateWeeklyAveragesForChart(records, false, weeks);
             _cache.Set(cacheKey, weeklyData, GetDefaultCacheOptions());
         }
-        return weeklyData;
+        return weeklyData ?? [];
     }
 
     public async Task<List<DateTime>> GetStudentAbsentWeeksAsync(int studentId)
     {
         var absentWeeks = new List<DateTime>();
         var allRecordDates = await _repository.GetAllRecordDatesAsync();
-        if (!allRecordDates.Any()) return absentWeeks;
+        if (allRecordDates.Count == 0) return absentWeeks;
 
         var studentRecordDates = await _repository.GetStudentRecordDatesAsync(studentId);
 
-        var firstWeekStart = DateUtils.GetPersianStartOfWeek(allRecordDates.First());
-        var lastWeekStart = DateUtils.GetPersianStartOfWeek(allRecordDates.Last());
+        var firstWeekStart = DateUtils.GetPersianStartOfWeek(allRecordDates[0]);
+        var lastWeekStart = DateUtils.GetPersianStartOfWeek(allRecordDates[^1]);
 
         for (var week = firstWeekStart; week <= lastWeekStart; week = week.AddDays(7))
         {
@@ -265,20 +257,20 @@ public class StudyRecordService : IStudyRecordService
 
     public Task<int> GetStudyRecordCountAsync() => _repository.GetCountAsync();
 
-    private double CalculateAverageFromRecords(List<StudyRecord> records)
+    private static double CalculateAverageFromRecords(List<StudyRecord> records)
     {
-        if (!records.Any()) return 0;
+        if (records.Count == 0) return 0;
         var weeklyTotals = records
             .GroupBy(r => DateUtils.GetPersianStartOfWeek(r.Date))
             .Select(g => g.Sum(r => r.MinutesStudied))
             .ToList();
-        return weeklyTotals.Any() ? weeklyTotals.Average() : 0;
+        return weeklyTotals.Count != 0 ? weeklyTotals.Average() : 0;
     }
 
-    private List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)> CalculateWeeklyAveragesForChart(List<StudyRecord> records, bool singleStudent, int weeks)
+    private static List<(DateTime StartOfWeek, DateTime EndOfWeek, double AverageMinutes)> CalculateWeeklyAveragesForChart(List<StudyRecord> records, bool singleStudent, int weeks)
     {
         var results = new List<(DateTime, DateTime, double)>();
-        if (!records.Any()) return results;
+        if (records.Count == 0) return results;
 
         var lastDate = records.Max(r => r.Date);
         var lastWeekStart = DateUtils.GetPersianStartOfWeek(lastDate);
@@ -305,10 +297,10 @@ public class StudyRecordService : IStudyRecordService
             }
             results.Add((weekStart, weekEnd, averageMinutes));
         }
-        return results.OrderBy(r => r.Item1).ToList();
+        return [.. results.OrderBy(r => r.Item1)];
     }
 
-    private (DateTime startOfWeek, DateTime endOfWeek) GetCurrentPersianWeekRange()
+    private static (DateTime startOfWeek, DateTime endOfWeek) GetCurrentPersianWeekRange()
     {
         DateTime today = DateTime.UtcNow.Date;
         DateTime startOfWeek = DateUtils.GetPersianStartOfWeek(today);

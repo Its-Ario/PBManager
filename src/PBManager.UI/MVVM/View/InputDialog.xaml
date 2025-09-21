@@ -5,7 +5,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
-        Background="#272537">
+        Background="{StaticResource BgPrimaryBrush}">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -17,7 +17,7 @@
                    Foreground="White"/>
 
         <Border CornerRadius="10" Grid.Row="1"
-                Background="#22202F">
+                Background="{StaticResource BgSecondaryBrush}">
             <TextBox x:Name="txtAnswer"
                      Background="Transparent"
                      VerticalContentAlignment="Center"
@@ -27,9 +27,9 @@
         </Border>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button x:Name="btnDialogOk" Content="تایید" IsDefault="True" MinWidth="60" Margin="0,0,10,0" Click="btnDialogOk_Click"
+            <Button x:Name="btnDialogOk" Content="تایید" IsDefault="True" MinWidth="60" Margin="0,0,10,0" Click="BtnDialogOk_Click"
                     Style="{StaticResource ModernButtonStyle}"
-                    Background="#44aa44"/>
+                    Background="{StaticResource SubmitGreenBrush}"/>
             <Button Content="کنسل" IsCancel="True" MinWidth="60"
                     Height="20"
                     Background="Crimson"

@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 
-namespace PBManager.Converters
+namespace PBManager.UI.Converters
 {
     class MinuteToHourConverter : IValueConverter
     {
