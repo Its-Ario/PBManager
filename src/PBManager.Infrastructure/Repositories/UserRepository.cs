@@ -20,6 +20,13 @@ namespace PBManager.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.Username.Equals(username));
         }
 
+        public async Task<List<User>> GetAllAsync()
+        {
+            return await _db.Users
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task AddAsync(User user)
         {
             await _db.Users.AddAsync(user);

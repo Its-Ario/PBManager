@@ -70,6 +70,7 @@ namespace PBManager
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<IStudyRecordRepository, StudyRecordRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
             services.AddScoped<IClassService, ClassService>();
             services.AddScoped<IStudentService, StudentService>();
@@ -77,7 +78,9 @@ namespace PBManager
             services.AddScoped<IStudyRecordService, StudyRecordService>();
             services.AddScoped(typeof(IManagementService<>), typeof(ManagementService<>));
             services.AddSingleton<IDialogService, DialogService>();
-            services.AddSingleton<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IAuditLogService, AuditLogService>();
+            services.AddSingleton<IUserSession, UserSession>();
 
             services.AddTransient<IDatabasePorter, DatabasePorter>();
             services.AddTransient<IDatabaseManagementService, DatabaseManagementService>();
@@ -89,6 +92,7 @@ namespace PBManager
             services.AddTransient<StudyManagementViewModel>();
             services.AddTransient<AddStudyRecordViewModel>();
             services.AddTransient<LoginViewModel>();
+            services.AddTransient<HistoryViewModel>();
 
             services.AddTransient<MainWindow>();
             services.AddTransient<AddStudyRecordView>();

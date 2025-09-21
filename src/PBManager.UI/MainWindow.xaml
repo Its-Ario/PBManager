@@ -68,7 +68,7 @@
                              Foreground="White"
                              FontSize="14"
                              Style="{StaticResource MenuButtonTheme}"
-                             Command="{Binding StudyManagementViewCommand}"/>
+                             Command="{Binding HistoryViewCommand}"/>
                 <RadioButton Content="تنظیمات"
                              Height="50"
                              Tag="&#xE713;"

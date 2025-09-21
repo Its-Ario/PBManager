@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using PBManager.Application.Interfaces;
 using PBManager.Application.DTOs;
+using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
+using PBManager.Core.Enums;
 using PBManager.Core.Interfaces;
 
 namespace PBManager.Application.Services;
@@ -10,11 +11,15 @@ public class StudentService : IStudentService
 {
     private readonly IStudentRepository _studentRepository;
     private readonly IMemoryCache _cache;
-
-    public StudentService(IStudentRepository studentRepository, IMemoryCache cache)
+    private readonly IAuditLogService _auditLogService;
+    public StudentService(
+        IStudentRepository studentRepository,
+        IMemoryCache cache,
+        IAuditLogService auditLogService)
     {
         _studentRepository = studentRepository;
         _cache = cache;
+        _auditLogService = auditLogService;
     }
 
     public async Task<bool> AddStudentAsync(Student student)
@@ -30,14 +35,15 @@ public class StudentService : IStudentService
         _cache.Remove("AllStudents");
         _cache.Remove("StudentsCount");
 
+        await _auditLogService.LogAsync(ActionType.Create, nameof(Student), student.Id, $"دانش آموز جدید ایجاد شد: {student.FullName}");
+
         return true;
     }
 
     public async Task<bool> DeleteStudentAsync(int id)
     {
         var student = await _studentRepository.FindByIdAsync(id);
-        if (student == null)
-            return false;
+        if (student == null) return false;
 
         _studentRepository.Delete(student);
         await _studentRepository.SaveChangesAsync();
@@ -45,6 +51,8 @@ public class StudentService : IStudentService
         _cache.Remove("AllStudents");
         _cache.Remove("StudentsCount");
         _cache.Remove($"Student_{id}");
+
+        await _auditLogService.LogAsync(ActionType.Delete, nameof(Student), id, $"دانش آموز حذف شد: {student.FullName}");
 
         return true;
     }
@@ -56,6 +64,8 @@ public class StudentService : IStudentService
 
         _cache.Remove("AllStudents");
         _cache.Remove($"Student_{student.Id}");
+
+        await _auditLogService.LogAsync(ActionType.Update, nameof(Student), student.Id, $"دانش آموز ویرایش شد: {student.FullName}");
     }
 
     public async Task<int> AddStudentsAsync(IEnumerable<Student> students)
@@ -75,10 +85,51 @@ public class StudentService : IStudentService
         if (!_cache.TryGetValue(cacheKey, out List<Student> students))
         {
             students = await _studentRepository.GetAllWithClassAsync();
-
             _cache.Set(cacheKey, students, TimeSpan.FromMinutes(30));
         }
         return students;
+    }
+
+    public async Task<ImportResult> ImportStudentsAsync(Stream fileStream, IFileParser<Student> parser)
+    {
+        if (fileStream == null) throw new ArgumentNullException(nameof(fileStream));
+        if (parser == null) throw new ArgumentNullException(nameof(parser));
+
+        try
+        {
+            var students = new List<Student>();
+            var result = new ImportResult();
+            await foreach (var student in parser.ParseAsync(fileStream))
+            {
+                students.Add(student);
+                _cache.Remove($"Student_{student.Id}");
+            }
+
+            if (students.Any())
+            {
+                result.ImportedCount = await _studentRepository.AddRangeAsync(students);
+                await _studentRepository.AddRangeAsync(students);
+                _cache.Remove("StudentsCount");
+            }
+            result.SkippedCount = parser.SkippedCount;
+
+            await _auditLogService.LogAsync(ActionType.Import, nameof(Student), null, $"تعداد {result.ImportedCount} دانش آموز از فایل ورودی ثبت شد و {result.SkippedCount} ردیف نادیده گرفته شد.");
+
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("The file could not be processed. Please check the format and content.", ex);
+        }
+    }
+
+    public async Task ExportAllStudentsAsync(Stream stream, IDataExporter<Student> exporter)
+    {
+        var students = await _studentRepository.GetAllWithClassAsync();
+        await exporter.ExportAsync(students, stream);
+
+        await _auditLogService.LogAsync(ActionType.Export, nameof(Student), null, $"خروجی از اطلاعات {students.Count} دانش آموز گرفته شد.");
     }
 
     public async Task<Student?> GetStudentByIdAsync(int id)
@@ -104,45 +155,5 @@ public class StudentService : IStudentService
             _cache.Set(cacheKey, count, TimeSpan.FromMinutes(30));
         }
         return count;
-    }
-
-    public async Task<ImportResult> ImportStudentsAsync(Stream fileStream, IFileParser<Student> parser)
-    {
-        if (fileStream == null) throw new ArgumentNullException(nameof(fileStream));
-        if (parser == null) throw new ArgumentNullException(nameof(parser));
-
-        var result = new ImportResult();
-
-        try
-        {
-            var students = new List<Student>();
-
-            await foreach (var student in parser.ParseAsync(fileStream))
-            {
-                students.Add(student);
-                _cache.Remove($"Student_{student.Id}");
-            }
-            result.SkippedCount = parser.SkippedCount;
-
-            if (students.Any())
-            {
-                result.ImportedCount = await _studentRepository.AddRangeAsync(students);
-
-                _cache.Remove("AllStudents");
-                _cache.Remove("StudentsCount");
-            }
-            return result;
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException("The file could not be processed. Please check the format and content.", ex);
-        }
-    }
-
-    public async Task ExportAllStudentsAsync(Stream stream, IDataExporter<Student> exporter)
-    {
-        var students = await _studentRepository.GetAllWithClassAsync();
-
-        await exporter.ExportAsync(students, stream);
     }
 }

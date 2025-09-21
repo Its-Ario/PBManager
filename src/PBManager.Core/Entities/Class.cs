@@ -4,7 +4,7 @@ namespace PBManager.Core.Entities
 {
     public class Class : IManagedEntity
     {
-        public required int Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

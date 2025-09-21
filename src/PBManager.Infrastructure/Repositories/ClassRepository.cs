@@ -3,7 +3,6 @@ using PBManager.Core.Entities;
 using PBManager.Core.Interfaces;
 using PBManager.Infrastructure.Data;
 using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace PBManager.Infrastructure.Repositories;
 
@@ -47,4 +46,11 @@ public class ClassRepository : IClassRepository
         .AsNoTracking()
         .FirstOrDefaultAsync(c => c.Id == id);
     }
+
+    public async Task AddAsync(Class c) => await _db.Classes.AddAsync(c);
+    public void Update(Class c) => _db.Classes.Update(c);
+    public void Delete(Class c) => _db.Classes.Remove(c);
+    public async Task<int> SaveChangesAsync() {
+        return await _db.SaveChangesAsync();
+     }
 }

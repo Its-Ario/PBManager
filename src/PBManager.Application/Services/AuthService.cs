@@ -1,24 +1,21 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PBManager.Application.Interfaces;
+﻿using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
+using PBManager.Core.Enums;
 using System.Security.Cryptography;
 
 namespace PBManager.Application.Services
 {
-
-    public partial class AuthenticationService : ObservableObject, IAuthenticationService
+    public partial class AuthenticationService : IAuthenticationService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IAuditLogService _auditLogService;
+        private readonly IUserSession _userSession;
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsLoggedIn))]
-        private User? _currentUser;
-
-        public bool IsLoggedIn => CurrentUser != null;
-
-        public AuthenticationService(IUserRepository userRepository)
+        public AuthenticationService(IUserRepository userRepository, IAuditLogService auditLogService, IUserSession userSession)
         {
             _userRepository = userRepository;
+            _auditLogService = auditLogService;
+            _userSession = userSession;
         }
 
         public async Task<bool> LoginAsync(string username, string password)
@@ -26,16 +23,18 @@ namespace PBManager.Application.Services
             var user = await _userRepository.GetByUsernameAsync(username);
             if (user != null && VerifyPassword(password, user.PasswordHash))
             {
-                CurrentUser = user;
+                _userSession.SetUser(user);
+                await _auditLogService.LogAsync(ActionType.Login, nameof(User), user.Id, $"کاربر '{username}' با موفقیت وارد شد.");
                 return true;
             }
+
+            await _auditLogService.LogAsync(ActionType.Login, nameof(User), null, $"تلاش ناموفق برای ورود با نام کاربری: '{username}'.");
             return false;
         }
 
         public async Task<bool> RegisterAsync(string username, string password, bool isAdmin = false)
         {
-            var existingUser = await _userRepository.GetByUsernameAsync(username);
-            if (existingUser != null)
+            if (await _userRepository.GetByUsernameAsync(username) != null)
             {
                 return false;
             }
@@ -49,12 +48,19 @@ namespace PBManager.Application.Services
 
             await _userRepository.AddAsync(newUser);
             await _userRepository.SaveChangesAsync();
+
+            await _auditLogService.LogAsync(ActionType.Create, nameof(User), newUser.Id, $"کاربر جدید '{username}' ثبت نام کرد.");
             return true;
         }
 
-        public void Logout()
+        public async Task LogoutAsync()
         {
-            CurrentUser = null;
+            var userToLogOut = _userSession.CurrentUser;
+            if (userToLogOut != null)
+            {
+                await _auditLogService.LogAsync(ActionType.Logout, nameof(User), userToLogOut.Id, $"کاربر '{userToLogOut.Username}' خارج شد.");
+            }
+            _userSession.Clear();
         }
 
         private string HashPassword(string password)
@@ -80,6 +86,11 @@ namespace PBManager.Application.Services
             const int saltSize = 16;
             const int hashSize = 20;
             const int iterations = 10000;
+
+            if (hashBytes.Length < saltSize + hashSize)
+            {
+                return false;
+            }
 
             byte[] salt = new byte[saltSize];
             Array.Copy(hashBytes, 0, salt, 0, saltSize);

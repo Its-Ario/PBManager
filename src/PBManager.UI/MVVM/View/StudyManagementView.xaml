@@ -17,72 +17,38 @@
         </Grid.ColumnDefinitions>
         <Border Background="#22202F" CornerRadius="8" Padding="15" Margin="0,0,10,0" Grid.Column="0">
             <StackPanel>
-                <Border CornerRadius="15"
-                        Background="#353340"
-                        Width="250" Height="30"
-                        Margin="0,0,0,10"
-                        SnapsToDevicePixels="True">
-                    <Grid>
-                        <TextBox x:Name="SearchBox"
-                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                 Background="Transparent"
-                                 BorderThickness="0"
-                                 Foreground="#CFCFCF"
-                                 Padding="5"
-                                 VerticalContentAlignment="Center"
-                                 FlowDirection="RightToLeft"/>
-
-                        <TextBlock Text="جستجو"
-                                   Margin="0,0,10,0"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Right"
-                                   Foreground="DarkGray"
-                                   FontSize="11"
-                                   IsHitTestVisible="False">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Grid>
-                </Border>
-
-
-                <ListView x:Name="listView"
-                          Style="{StaticResource ModernListView}"
+                <TextBox x:Name="SearchBox"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Foreground="#CFCFCF"
+                         Tag="جستجو"
+                         Margin="40 10"
+                         Style="{StaticResource ModernTextBox}"
+                         VerticalContentAlignment="Center"
+                         FlowDirection="RightToLeft"/>
+                <DataGrid x:Name="dataGrid"
                           ItemsSource="{Binding FilteredStudents}"
-                          ItemContainerStyle="{StaticResource ModernListViewItem}"
-                          MaxHeight="350" MaxWidth="300"
+                          SelectedItem="{Binding SelectedStudent}"
+                          Style="{StaticResource ModernDataGrid}"
+                          CellStyle="{StaticResource ModernDataGridCell}"
+                          ColumnHeaderStyle="{StaticResource ModernDataGridColumnHeader}"
+                          RowStyle="{StaticResource ModernDataGridRow}"
+                          MaxHeight="350"
                           FlowDirection="RightToLeft"
-                          SelectedItem="{Binding SelectedStudent}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="نام" Width="200" HeaderContainerStyle="{StaticResource ModernColumnHeader}">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding FullName}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="کلاس" Width="100" HeaderContainerStyle="{StaticResource ModernColumnHeader}">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock FontFamily="/Fonts/#Shabnam FD" Text="{Binding Class.Name}" Style="{StaticResource DataTextBlock}"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                          IsReadOnly="True" 
+                          AutoGenerateColumns="False"
+                          CanUserSortColumns="True">
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Header="نام" 
+                            Binding="{Binding FullName}" 
+                            Width="2*"/>
+
+                        <DataGridTextColumn Header="کلاس" 
+                            Binding="{Binding Class.Name}" 
+                            Width="*"/>
+
+                    </DataGrid.Columns>
+                </DataGrid>
             </StackPanel>
         </Border>
         
@@ -96,7 +62,7 @@
                 <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
                     <Setter Property="Visibility" Value="Collapsed"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedItem, ElementName=listView}" Value="{x:Null}">
+                        <DataTrigger Binding="{Binding SelectedItem, ElementName=dataGrid}" Value="{x:Null}">
                             <Setter Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                     </Style.Triggers>
@@ -109,7 +75,7 @@
             <Border.Style>
                 <Style TargetType="Border">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedItem, ElementName=listView}" Value="{x:Null}">
+                        <DataTrigger Binding="{Binding SelectedItem, ElementName=dataGrid}" Value="{x:Null}">
                             <Setter Property="Visibility" Value="Hidden"/>
                         </DataTrigger>
                     </Style.Triggers>

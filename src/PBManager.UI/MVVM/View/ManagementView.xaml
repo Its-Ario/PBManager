@@ -39,37 +39,27 @@
                 </StackPanel>
             </Grid>
 
-            <ListView Grid.Row="1" ItemsSource="{Binding Items}"
-                      SelectedItem="{Binding SelectedItem}"
-                      Style="{StaticResource ModernListView}"
-                      ItemContainerStyle="{StaticResource ModernListViewItem}"
-                      Background="Transparent"
-                      Foreground="White"
-                      MaxWidth="300">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="ID"
-                                    HeaderContainerStyle="{StaticResource ModernColumnHeader}"
-                                    Width="Auto">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Id}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="Name"
-                                 HeaderContainerStyle="{StaticResource ModernColumnHeader}"
-                                 Width="250">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                        </ListView.View>
-            </ListView>
+            <DataGrid Grid.Row="1" 
+          ItemsSource="{Binding Items}"
+          SelectedItem="{Binding SelectedItem}"
+          Style="{StaticResource ModernDataGrid}"
+          CellStyle="{StaticResource ModernDataGridCell}"
+          ColumnHeaderStyle="{StaticResource ModernDataGridColumnHeader}"
+          RowStyle="{StaticResource ModernDataGridRow}"
+          Background="Transparent"
+          MaxWidth="300"
+          IsReadOnly="True"
+          AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" 
+                            Binding="{Binding Id}" 
+                            Width="Auto"/>
+                    <DataGridTextColumn Header="Name" 
+                            Binding="{Binding Name}" 
+                            Width="*"/>
 
+                </DataGrid.Columns>
+            </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
 
                 <Button Content="ویرایش"

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
+using PBManager.Core.Enums;
 using PBManager.Core.Interfaces;
 using PBManager.Core.Utils;
 
@@ -11,12 +12,18 @@ public class StudyRecordService : IStudyRecordService
     private readonly IStudyRecordRepository _repository;
     private readonly IStudentRepository _studentRepository;
     private readonly IMemoryCache _cache;
+    private readonly IAuditLogService _auditLogService;
 
-    public StudyRecordService(IStudyRecordRepository repository, IStudentRepository studentRepository, IMemoryCache cache)
+    public StudyRecordService(
+        IStudyRecordRepository repository,
+        IStudentRepository studentRepository,
+        IMemoryCache cache,
+        IAuditLogService auditLogService)
     {
         _repository = repository;
         _studentRepository = studentRepository;
         _cache = cache;
+        _auditLogService = auditLogService;
     }
 
     private MemoryCacheEntryOptions GetDefaultCacheOptions(TimeSpan? absoluteExpiration = null) =>
@@ -29,6 +36,9 @@ public class StudyRecordService : IStudyRecordService
         await _repository.AddAsync(record);
         await _repository.SaveChangesAsync();
         InvalidateCachesForRecord(record);
+
+        await _auditLogService.LogAsync(ActionType.Create, nameof(StudyRecord), record.Id,
+        $"ثبت {record.MinutesStudied} دقیقه مطالعه برای دانش آموز {record.StudentId} در تاریخ {record.Date:yyyy-MM-dd}");
     }
 
     public async Task AddStudyRecordsAsync(List<StudyRecord> records, DateTime startOfWeek)
@@ -37,6 +47,7 @@ public class StudyRecordService : IStudyRecordService
             throw new ArgumentException("No study records provided.");
 
         var studentId = records.First().StudentId;
+        var student = await _studentRepository.FindByIdAsync(studentId);
         var weekStart = DateUtils.GetPersianStartOfWeek(startOfWeek);
 
         if (await _repository.DoesRecordExistForWeekAsync(studentId, weekStart))
@@ -45,6 +56,9 @@ public class StudyRecordService : IStudyRecordService
         await _repository.AddRangeAsync(records);
         await _repository.SaveChangesAsync();
         records.ForEach(InvalidateCachesForRecord);
+
+        await _auditLogService.LogAsync(ActionType.Create, nameof(StudyRecord), null, 
+        $"ثبت {records.Count} رکورد مطالعه برای دانش آموز '{student?.FullName}' برای هفته شروع شده در {weekStart:yyyy-MM-dd}");
     }
 
     public async Task DeleteStudyRecordsForWeekAsync(Student student, DateTime startOfWeek)
@@ -54,9 +68,13 @@ public class StudyRecordService : IStudyRecordService
 
         if (recordsToDelete.Any())
         {
+            int count = recordsToDelete.Count;
             _repository.DeleteRange(recordsToDelete);
             await _repository.SaveChangesAsync();
             recordsToDelete.ForEach(InvalidateCachesForRecord);
+
+            await _auditLogService.LogAsync(ActionType.Delete, nameof(StudyRecord), null,
+            $"حذف {count} رکورد مطالعه برای دانش آموز '{student.FullName}' برای هفته شروع شده در {weekStart:yyyy-MM-dd}");
         }
     }
 

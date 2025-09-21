@@ -14,6 +14,7 @@ namespace PBManager.Infrastructure.Data
         public DbSet<GradeRecord> GradeRecords { get; set; }
         public DbSet<StudyRecord> StudyRecords { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

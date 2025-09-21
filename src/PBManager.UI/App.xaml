@@ -11,7 +11,9 @@
                 <ResourceDictionary Source="Theme/TextBoxTheme.xaml"/>
                 <ResourceDictionary Source="Theme/WindowButtonTheme.xaml"/>
                 <ResourceDictionary Source="Theme/ModernButtonTheme.xaml"/>
-                <ResourceDictionary Source="Theme/ListViewTheme.xaml"/>
+                <ResourceDictionary Source="Theme/DataGridTheme.xaml"/>
+                <ResourceDictionary Source="Theme/ComboBoxTheme.xaml"/>
+                <ResourceDictionary Source="Theme/ScrollBarTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
@@ -30,6 +32,11 @@
                 <view:SettingsView/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type viewModel:HistoryViewModel}">
+                <view:HistoryView/>
+            </DataTemplate>
+
+
             <FontFamily x:Key="AppFont">/Fonts/#Shabnam FD</FontFamily>
 
             <Style TargetType="Control">
@@ -41,6 +48,10 @@
             </Style>
 
             <Style TargetType="Window">
+                <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+            </Style>
+
+            <Style TargetType="DataGrid">
                 <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
             </Style>
         </ResourceDictionary>
