@@ -13,5 +13,8 @@ namespace PBManager.Core.Interfaces
         Task<List<GradeRecord>> GetAllAsync();
         Task<List<GradeRecord>> GetGradesForStudentAsync(int studentId);
         Task<List<GradeRecord>> GetGradesForSubjectAsync(int subjectId);
+        Task<List<GradeRecord>> GetGradesForExamAsync(int examId);
+        Task<List<GradeRecord>> GetAllExamGradesAsync();
+        Task<List<GradeRecord>> GetAllExamGradesForClassAsync(int classId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using PBManager.Application.DTOs;
 using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
 using PBManager.Core.Enums;
@@ -6,9 +7,9 @@ using PBManager.Core.Interfaces;
 
 namespace PBManager.Application.Services
 {
-
     public class GradeService(
         IGradeRepository repository,
+        IStudentRepository studentRepository,
         IMemoryCache cache,
         IAuditLogService auditLogService) : IGradeService
     {
@@ -156,6 +157,108 @@ namespace PBManager.Application.Services
                 cache.Set(cacheKey, topSubject, GetDefaultCacheOptions());
             }
             return topSubject;
+        }
+
+        public async Task<List<StudentExamScore>> GetAllExamScoresForStudentAsync(int studentId)
+        {
+            string cacheKey = $"ExamScores_Student_{studentId}";
+            if (!cache.TryGetValue(cacheKey, out List<StudentExamScore> examScores))
+            {
+                var grades = await repository.GetGradesForStudentAsync(studentId);
+
+                examScores = grades
+                    .Where(g => g.Exam != null)
+                    .GroupBy(g => g.Exam)
+                    .Select(group => new StudentExamScore
+                    {
+                        StudentId = studentId,
+                        ExamId = group.Key.Id,
+                        ExamName = group.Key.Name,
+                        ExamDate = group.Key.Date,
+                        AverageScore = group.Average(g => g.Score)
+                    })
+                    .OrderByDescending(e => e.ExamDate)
+                    .ToList();
+
+                cache.Set(cacheKey, examScores, GetDefaultCacheOptions());
+            }
+            return examScores;
+        }
+
+        public async Task<List<StudentExamScore>> GetRankedScoresForExamAsync(int examId)
+        {
+            string cacheKey = $"RankedScores_Exam_{examId}";
+            if (!cache.TryGetValue(cacheKey, out List<StudentExamScore> rankedScores))
+            {
+                var grades = await repository.GetGradesForExamAsync(examId);
+
+                rankedScores = grades
+                    .GroupBy(g => g.Student)
+                    .Select(group => new StudentExamScore
+                    {
+                        StudentId = group.Key.Id,
+                        ExamId = examId,
+                        ExamName = group.First().Exam?.Name ?? "Unknown",
+                        ExamDate = group.First().Exam?.Date ?? DateTime.MinValue,
+                        AverageScore = group.Average(g => g.Score)
+                    })
+                    .OrderByDescending(s => s.AverageScore)
+                    .ToList();
+
+                cache.Set(cacheKey, rankedScores, GetDefaultCacheOptions());
+            }
+            return rankedScores;
+        }
+
+        public async Task<int> GetOverallExamRankAsync(int studentId)
+        {
+            string cacheKey = $"OverallExamRank_{studentId}";
+            if (!cache.TryGetValue(cacheKey, out int rankInfo))
+            {
+                var allGrades = await repository.GetAllExamGradesAsync();
+                rankInfo = CalculateRank(allGrades, studentId);
+                cache.Set(cacheKey, rankInfo, GetDefaultCacheOptions());
+            }
+            return rankInfo;
+        }
+
+        public async Task<int> GetClassExamRankAsync(int studentId)
+        {
+            string cacheKey = $"ClassExamRank_{studentId}";
+            if (!cache.TryGetValue(cacheKey, out int rankInfo))
+            {
+                var student = await studentRepository.FindByIdAsync(studentId);
+                    if (student?.ClassId == null) return 0;
+
+                var classGrades = await repository.GetAllExamGradesForClassAsync(student.ClassId);
+                rankInfo = CalculateRank(classGrades, studentId);
+                cache.Set(cacheKey, rankInfo, GetDefaultCacheOptions()) ;
+            }
+            return rankInfo;
+        }
+
+        private int CalculateRank(List<GradeRecord> grades, int studentId)
+        {
+            if (!grades.Any()) return 0;
+
+            var studentAverages = grades
+                .GroupBy(g => g.Student)
+                .Select(group => new
+                {
+                    StudentId = group.Key.Id,
+                    AverageScore = group.Average(g => g.Score)
+                })
+                .OrderByDescending(x => x.AverageScore)
+                .ToList();
+
+            var studentIndex = studentAverages.FindIndex(x => x.StudentId == studentId);
+
+            if (studentIndex == -1)
+            {
+                return 0;
+            }
+
+            return studentIndex + 1;
         }
     }
 }

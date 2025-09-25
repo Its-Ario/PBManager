@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="PBManager.UI.MVVM.View.StudyOverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:conv="clr-namespace:PBManager.UI.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="360">
+
+    <UserControl.Resources>
+        <conv:MinuteToHourConverter x:Key="MinuteToHourConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="10" FlowDirection="RightToLeft">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="میانگین مطالعه هفتگی:" 
+                       FontWeight="Bold"
+                       FontSize="11"
+                       Foreground="White"
+                       Grid.Row="0" Grid.Column="0"/>
+            <TextBlock Text="{Binding AvgWeeklyStudy, Converter={StaticResource MinuteToHourConverter}}" 
+                       Foreground="LightGray"
+                       Grid.Row="0" Grid.Column="1"/>
+
+            <TextBlock Text="رتبه در کلاس:" 
+                       FontWeight="Bold"
+                       FontSize="11"
+                       Foreground="White"
+                       Grid.Row="1" Grid.Column="0"/>
+            <TextBlock Text="{Binding ClassRank}" 
+                       Foreground="LightGray"
+                       Grid.Row="1" Grid.Column="1"/>
+
+            <TextBlock Text="رتبه در پایه:" 
+                       FontWeight="Bold"
+                       FontSize="11"
+                       Foreground="White"
+                       Grid.Row="2" Grid.Column="0"/>
+            <TextBlock Text="{Binding GlobalRank}" 
+                       Foreground="LightGray"
+                       Grid.Row="2" Grid.Column="1"/>
+        </Grid>
+        <StackPanel Grid.Row="1"
+                    Margin="0 20 0 0"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center">
+            <Button Content="ثبت اطلاعات مطالعه"
+                    x:Name="submitNewRecord"
+                    Margin="5"
+                    Width="110" Height="50"
+                    Style="{StaticResource ModernButtonStyle}" 
+                    Command="{Binding SubmitNewRecordCommand}"/>
+            <Button Content="تاریخچه مطالعه"
+                    x:Name="viewHistory"
+                    Margin="5"
+                    Width="110" Height="50"
+                    Style="{StaticResource ModernButtonStyle}" 
+                    Command="{Binding ViewHistoryCommand}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2">
+            <TextBlock Text="پیشرفت مطالعه" Foreground="White" Margin="0,0,0,5"/>
+            <lvc:CartesianChart Height="190" FlowDirection="LeftToRight"
+                    DrawMargin="{Binding DrawMargin}"
+                    XAxes="{Binding StudyOverTimeXAxes}"
+                    Series="{Binding StudyOverTimeSeries}"
+                    ZoomMode="X"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

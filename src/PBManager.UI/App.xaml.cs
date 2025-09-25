@@ -17,6 +17,7 @@ using PBManager.Infrastructure.Exporters;
 using PBManager.UI.Services;
 using PBManager.UI.MVVM.View;
 using PBManager.UI.MVVM.ViewModel;
+using PBManager.Infrastructure;
 
 namespace PBManager
 {
@@ -72,6 +73,7 @@ namespace PBManager
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuditLogRepository, AuditLogRepository>();
             services.AddScoped<IGradeRepository, GradeRepository>();
+            services.AddScoped<IExamRepository, ExamRepository>();
 
             services.AddScoped<IClassService, ClassService>();
             services.AddScoped<IStudentService, StudentService>();
@@ -82,6 +84,7 @@ namespace PBManager
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IAuditLogService, AuditLogService>();
             services.AddScoped<IGradeService, GradeService>();
+            services.AddScoped<IExamService, ExamService>();
             services.AddSingleton<IUserSession, UserSession>();
 
             services.AddTransient<IDatabasePorter, DatabasePorter>();
@@ -91,15 +94,20 @@ namespace PBManager
             services.AddTransient<MainViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<StudentDetailViewModel>();
+            services.AddTransient<StudyOverviewViewModel>();
             services.AddTransient<StudyManagementViewModel>();
             services.AddTransient<AddStudyRecordViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<HistoryViewModel>();
             services.AddTransient<StudyHistoryViewModel>();
+            services.AddTransient<GradeOverviewViewModel>();
+            services.AddTransient<AddGradeRecordViewModel>();
 
             services.AddTransient<MainWindow>();
             services.AddTransient<AddStudyRecordView>();
+            services.AddTransient<StudyOverviewView>();
             services.AddTransient<StudyHistoryView>();
+            services.AddTransient<AddGradeRecordView>();
             services.AddTransient<LoginView>();
 
             services.AddTransient<XlsxStudentParser>();

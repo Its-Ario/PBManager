@@ -1,4 +1,5 @@
-﻿using PBManager.Core.Entities;
+﻿using PBManager.Application.DTOs;
+using PBManager.Core.Entities;
 
 namespace PBManager.Application.Interfaces
 {
@@ -14,5 +15,9 @@ namespace PBManager.Application.Interfaces
         Task<double> GetOverallAverageGradeAsync();
         Task<(int Rank, int Total)> GetStudentRankBySubjectAsync(int studentId, int subjectId);
         Task<Subject?> GetTopPerformingSubjectAsync(int studentId);
+        Task<List<StudentExamScore>> GetAllExamScoresForStudentAsync(int studentId);
+        Task<List<StudentExamScore>> GetRankedScoresForExamAsync(int examId);
+        Task<int> GetOverallExamRankAsync(int studentId);
+        Task<int> GetClassExamRankAsync(int studentId);
     }
 }

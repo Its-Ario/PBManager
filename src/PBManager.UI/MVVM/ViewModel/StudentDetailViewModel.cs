@@ -1,145 +1,41 @@
-﻿using PBManager.UI.Messages;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.ComponentModel;
-using LiveChartsCore.Kernel.Sketches;
-using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Painting;
-using SkiaSharp;
-using LiveChartsCore.Measure;
-using PBManager.Core.Entities;
-using PBManager.Application.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PBManager.UI.MVVM.View;
-using System;
+using PBManager.Core.Entities;
 
-namespace PBManager.UI.MVVM.ViewModel
+namespace PBManager.UI.MVVM.ViewModel;
+
+[ObservableObject]
+public partial class StudentDetailViewModel
 {
-    public partial class StudentDetailViewModel : ObservableObject, IRecipient<StudentSelectedMessage>
+    [ObservableProperty]
+    private Student _student;
+
+    [ObservableProperty]
+    private object? _currentSubViewModel;
+
+    public StudyOverviewViewModel StudyOverviewVM { get; }
+    public GradeOverviewViewModel GradeOverviewVM { get; }
+
+    public StudentDetailViewModel(
+        StudyOverviewViewModel studyOverviewViewModel,
+        GradeOverviewViewModel gradeOverviewViewModel)
     {
-        private readonly IStudyRecordService _studyRecordService;
-        private readonly IServiceProvider _serviceProvider;
-        
-        public Margin DrawMargin { get; set; } = new(50, 0, 50, 50);
-
-        [ObservableProperty]
-        private ICartesianAxis[]? _studyOverTimeXAxes;
-        [ObservableProperty]
-        private ISeries[]? _studyOverTimeSeries;
-        [ObservableProperty]
-        private Student? _student;
-        [ObservableProperty]
-        private double _avgWeeklyStudy;
-        [ObservableProperty]
-        private int _classRank;
-        [ObservableProperty]
-        private int _globalRank;
-
-        public StudentDetailViewModel(IStudyRecordService studyRecordService, IServiceProvider serviceProvider)
-        {
-            _studyRecordService = studyRecordService;
-            _serviceProvider = serviceProvider;
-           
-            WeakReferenceMessenger.Default.Register(this);
-        }
-
-        public void Receive(StudentSelectedMessage message)
-        {
-            Student = message.Value;
-            if (Student == null) return;
-
-            _ = LoadAsync(Student.Id);
-        }
-
-        public async Task LoadAsync(int studentId)
-        {
-            try
-            {
-                Task<double> avgStudyTask = _studyRecordService.GetStudentWeeklyAverageAsync(studentId);
-                Task<int> classRankTask = _studyRecordService.GetClassWeeklyRankAsync(studentId);
-                Task<int> globalRankTask = _studyRecordService.GetGlobalWeeklyRankAsync(studentId);
-
-                await Task.WhenAll(avgStudyTask, classRankTask, globalRankTask);
-
-                AvgWeeklyStudy = await avgStudyTask;
-                ClassRank = await classRankTask;
-                GlobalRank = await globalRankTask;
-
-                await LoadStudyOverTimeChartAsync(studentId);
-            }
-            catch (OperationCanceledException)
-            {
-                Console.WriteLine("Data loading was cancelled.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to load student data: {ex.Message}");
-            }
-        }
-
-        public async Task LoadStudyOverTimeChartAsync(int studentId)
-        {
-            var weeklyData = await _studyRecordService.GetWeeklyStudyDataAsync(studentId, 4);
-
-            var values = new List<double>();
-            var labels = new List<string>();
-
-            int i = 1;
-            foreach (var (_, _, minutes) in weeklyData)
-            {
-                values.Add(minutes);
-                labels.Add($"هفته {i++}");
-            }
-
-            StudyOverTimeSeries =
-            [
-                new LineSeries<double>
-                {
-                    Values = values,
-                    Stroke = new SolidColorPaint(new SKColor(92, 107, 192), 3),
-                    Fill = null,
-                    GeometrySize = 10
-                }
-            ];
-
-            StudyOverTimeXAxes =
-               [
-               new Axis
-                {
-                    Labels = labels,
-                    LabelsRotation = 45,
-                    Padding = new LiveChartsCore.Drawing.Padding(0),
-                }
-           ];
-        }
-
-        [RelayCommand]
-        private void ViewHistory()
-        {
-            if (Student == null) return;
-
-            var historyView = _serviceProvider.GetRequiredService<StudyHistoryView>();
-            if (historyView.DataContext is StudyHistoryViewModel viewModel)
-            {
-                _ = viewModel.InitializeAsync(Student);
-            }
-
-            historyView.Show();
-        }
-
-        [RelayCommand]
-        private void SubmitNewRecord()
-        {
-            if (Student == null) return;
-
-            var recordView = _serviceProvider.GetRequiredService<AddStudyRecordView>();
-            if (recordView.DataContext is AddStudyRecordViewModel viewModel)
-            {
-                _ = viewModel.Initialize(Student);
-            }
-
-            recordView.Show();
-        }
+        StudyOverviewVM = studyOverviewViewModel;
+        GradeOverviewVM = gradeOverviewViewModel;
     }
+
+    public async Task InitializeAsync(Student student)
+    {
+        Student = student;
+        await StudyOverviewVM.InitializeAsync(student);
+        await GradeOverviewVM.InitializeAsync(student);
+
+        CurrentSubViewModel = StudyOverviewVM;
+    }
+
+    [RelayCommand]
+    private void ShowStudyOverview() => CurrentSubViewModel = StudyOverviewVM;
+
+    [RelayCommand]
+    private void ShowGrades() => CurrentSubViewModel = GradeOverviewVM;
 }

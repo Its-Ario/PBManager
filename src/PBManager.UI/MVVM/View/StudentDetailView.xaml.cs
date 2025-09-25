@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using Microsoft.Extensions.DependencyInjection;
-using PBManager.UI.MVVM.ViewModel;
+﻿using System.Windows.Controls;
 
 namespace PBManager.UI.MVVM.View
 {

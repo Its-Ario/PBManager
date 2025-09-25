@@ -1,124 +1,50 @@
 ﻿<UserControl x:Class="PBManager.UI.MVVM.View.StudentDetailView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
-             xmlns:conv="clr-namespace:PBManager.UI.Converters"
-             mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="360">
-
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:PBManager.UI.MVVM.ViewModel"
+             xmlns:views="clr-namespace:PBManager.UI.MVVM.View">
     <UserControl.Resources>
-        <conv:MinuteToHourConverter x:Key="MinuteToHourConverter"/>
+        <DataTemplate DataType="{x:Type vm:StudyOverviewViewModel}">
+            <views:StudyOverviewView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AddGradeRecordViewModel}">
+            <views:AddGradeRecordView/>
+        </DataTemplate>
     </UserControl.Resources>
 
-    <Grid Margin="10" FlowDirection="RightToLeft">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding Student.FullName}" 
-               Grid.Row="0"
-               HorizontalAlignment="Center"
-               FontWeight="Bold"
-               FontSize="20"
-               Foreground="White"/>
+        <Border Grid.Row="0" Background="#2A2839" Padding="15" 
+                CornerRadius="8,8,0,0"
+                FlowDirection="RightToLeft">
+            <Grid>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="{Binding Student.FullName}" Foreground="White" FontSize="22" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Student.Class.Name}" Foreground="#A0A0A0" Margin="0,5,0,0"/>
+                </StackPanel>
 
-        <Grid Grid.Row="1" Margin="0 15 0 0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+                    <Button Content="مطالعه"
+                            Style="{StaticResource ModernButtonStyle}" 
+                            Command="{Binding ShowStudyOverviewCommand}"
+                            Width="50"
+                            Height="25"
+                            Margin="0,0,5,0"/>
+                    <Button Content="نمرات" Style="{StaticResource ModernButtonStyle}"
+                            Command="{Binding ShowGradesCommand}"
+                            Width="50"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-            <TextBlock Text="کلاس:" 
-                   FontWeight="Bold"
-                   Foreground="White"
-                   Grid.Row="0" Grid.Column="0"/>
-            <TextBlock Text="{Binding Student.Class.Name}" 
-                   Foreground="LightGray"
-                   Grid.Row="0" Grid.Column="1"/>
-
-            <TextBlock Text="کد ملی:" 
-                   FontWeight="Bold"
-                   Foreground="White"
-                   Grid.Row="1" Grid.Column="0"/>
-            <TextBlock Text="{Binding Student.NationalCode}" 
-                   Foreground="LightGray"
-                   Grid.Row="1" Grid.Column="1"/>
-        </Grid>
-
-        <Grid Grid.Row="2" Margin="0 20 0 0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="140"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Text="میانگین مطالعه هفتگی:" 
-                       FontWeight="Bold"
-                       FontSize="11"
-                       Foreground="White"
-                       Grid.Row="0" Grid.Column="0"/>
-            <TextBlock Text="{Binding AvgWeeklyStudy, Converter={StaticResource MinuteToHourConverter}}" 
-                       Foreground="LightGray"
-                       Grid.Row="0" Grid.Column="1"/>
-
-            <TextBlock Text="رتبه در کلاس:" 
-                       FontWeight="Bold"
-                       FontSize="11"
-                       Foreground="White"
-                       Grid.Row="1" Grid.Column="0"/>
-            <TextBlock Text="{Binding ClassRank}" 
-                       Foreground="LightGray"
-                       Grid.Row="1" Grid.Column="1"/>
-
-            <TextBlock Text="رتبه در پایه:" 
-                       FontWeight="Bold"
-                       FontSize="11"
-                       Foreground="White"
-                       Grid.Row="2" Grid.Column="0"/>
-            <TextBlock Text="{Binding GlobalRank}" 
-                       Foreground="LightGray"
-                       Grid.Row="2" Grid.Column="1"/>
-        </Grid>
-        <StackPanel Grid.Row="3"
-                    Margin="0 20 0 0"
-                    Orientation="Horizontal"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Center">
-            <Button Content="ثبت اطلاعات مطالعه"
-                    x:Name="submitNewRecord"
-                    Margin="5"
-                    Width="110" Height="50"
-                    Style="{StaticResource ModernButtonStyle}" 
-                    Command="{Binding SubmitNewRecordCommand}"/>
-            <Button Content="تاریخچه مطالعه"
-                    x:Name="viewHistory"
-                    Margin="5"
-                    Width="110" Height="50"
-                    Style="{StaticResource ModernButtonStyle}" 
-                    Command="{Binding ViewHistoryCommand}"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="4">
-            <TextBlock Text="پیشرفت مطالعه" Foreground="White" Margin="0,0,0,5"/>
-            <lvc:CartesianChart Height="190" FlowDirection="LeftToRight"
-                    DrawMargin="{Binding DrawMargin}"
-                    XAxes="{Binding StudyOverTimeXAxes}"
-                    Series="{Binding StudyOverTimeSeries}"
-                    ZoomMode="X"/>
-        </StackPanel>
+        <ContentControl Grid.Row="1" Content="{Binding CurrentSubViewModel}" Margin="10"/>
     </Grid>
 </UserControl>

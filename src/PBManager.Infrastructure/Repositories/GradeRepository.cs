@@ -22,31 +22,31 @@ namespace PBManager.Infrastructure.Repositories
             dbContext.GradeRecords.Remove(grade);
         }
 
-        public Task<int> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync()
         {
-            return dbContext.SaveChangesAsync();
+            return await dbContext.SaveChangesAsync();
         }
 
-        public Task<GradeRecord?> GetByIdAsync(int gradeId)
+        public async Task<GradeRecord?> GetByIdAsync(int gradeId)
         {
-            return dbContext.GradeRecords
+            return await dbContext.GradeRecords
                 .Include(g => g.Student)
                 .Include(g => g.Subject)
                 .FirstOrDefaultAsync(g => g.Id == gradeId);
         }
 
-        public Task<List<GradeRecord>> GetAllAsync()
+        public async Task<List<GradeRecord>> GetAllAsync()
         {
-            return dbContext.GradeRecords
+            return await dbContext.GradeRecords
                 .AsNoTracking()
                 .Include(g => g.Student)
                 .Include(g => g.Subject)
                 .ToListAsync();
         }
 
-        public Task<List<GradeRecord>> GetGradesForStudentAsync(int studentId)
+        public async Task<List<GradeRecord>> GetGradesForStudentAsync(int studentId)
         {
-            return dbContext.GradeRecords
+            return await dbContext.GradeRecords
                 .AsNoTracking()
                 .Where(g => g.StudentId == studentId)
                 .Include(g => g.Subject)
@@ -54,13 +54,40 @@ namespace PBManager.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public Task<List<GradeRecord>> GetGradesForSubjectAsync(int subjectId)
+        public async Task<List<GradeRecord>> GetGradesForSubjectAsync(int subjectId)
         {
-            return dbContext.GradeRecords
+            return await dbContext.GradeRecords
                 .AsNoTracking()
                 .Where(g => g.SubjectId == subjectId)
                 .Include(g => g.Student)
                 .OrderByDescending(g => g.Score)
+                .ToListAsync();
+        }
+
+        public async Task<List<GradeRecord>> GetGradesForExamAsync(int examId)
+        {
+            return await dbContext.GradeRecords
+                .Include(g => g.Student)
+                .Where(g => g.ExamId == examId)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<List<GradeRecord>> GetAllExamGradesAsync()
+        {
+            return await dbContext.GradeRecords
+                .Where(g => g.ExamId != null)
+                .Include(g => g.Student)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<List<GradeRecord>> GetAllExamGradesForClassAsync(int classId)
+        {
+            return await dbContext.GradeRecords
+                .Where(g => g.ExamId != null && g.Student.ClassId == classId)
+                .Include(g => g.Student)
+                .AsNoTracking()
                 .ToListAsync();
         }
     }

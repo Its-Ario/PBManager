@@ -216,7 +216,7 @@ namespace PBManager.UI.MVVM.ViewModel
             {
                 if (view.DataContext is AddStudyRecordViewModel vm)
                 {
-                    _ = vm.Initialize(Student, weeklyRecord.StartOfWeek);
+                    _ = vm.InitializeAsync(Student, weeklyRecord.StartOfWeek);
                 }
                 view.ShowDialog();
                 return;
@@ -228,9 +228,9 @@ namespace PBManager.UI.MVVM.ViewModel
 
                 if (view.DataContext is AddStudyRecordViewModel vm)
                 {
-                    _ = vm.Initialize(Student, studyRecords);
+                    _ = vm.InitializeAsync(Student, studyRecords);
                 }
-                var result = view.ShowDialog();
+               var result = view.ShowDialog();
 
                 if (result == true)
                 {

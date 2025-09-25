@@ -37,6 +37,13 @@
                 <view:HistoryView/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type viewModel:StudyOverviewViewModel}">
+                <view:StudyOverviewView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:GradeOverviewViewModel}">
+                <view:GradeOverviewView/>
+            </DataTemplate> 
 
             <FontFamily x:Key="AppFont">/Fonts/#Shabnam FD</FontFamily>
 

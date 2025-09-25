@@ -2,8 +2,6 @@
 using System.ComponentModel;
 using System.Windows.Data;
 using System.Windows;
-using CommunityToolkit.Mvvm.Messaging;
-using PBManager.UI.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PBManager.Core.Entities;
 using PBManager.Application.Interfaces;
@@ -14,6 +12,7 @@ namespace PBManager.UI.MVVM.ViewModel
     public partial class StudyManagementViewModel : ObservableObject
     {
         private readonly IStudentService _studentService;
+        private readonly IServiceProvider _serviceProvider;
 
         private ObservableCollection<Student> _students = [];
         public ObservableCollection<Student> Students
@@ -28,7 +27,8 @@ namespace PBManager.UI.MVVM.ViewModel
             }
         }
 
-        public StudentDetailViewModel DetailVM { get; }
+        [ObservableProperty]
+        private StudentDetailViewModel? _detailVM;
 
         [ObservableProperty]
         private StudyRecord? _selectedRecord;
@@ -50,25 +50,15 @@ namespace PBManager.UI.MVVM.ViewModel
             }
         }
 
+        [ObservableProperty]
         private Student? _selectedStudent;
-        public Student? SelectedStudent
-        {
-            get => _selectedStudent;
-            set
-            {
-                if (SetProperty(ref _selectedStudent, value))
-                {
-                    WeakReferenceMessenger.Default.Send(new StudentSelectedMessage(value));
-                }
-            }
-        }
+
         public bool HasSelection => SelectedStudent != null;
 
         public StudyManagementViewModel(IStudentService studentService, IServiceProvider serviceProvider)
         {
             _studentService = studentService;
-
-            DetailVM = serviceProvider.GetRequiredService<StudentDetailViewModel>();
+            _serviceProvider = serviceProvider;
 
             if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
@@ -98,6 +88,20 @@ namespace PBManager.UI.MVVM.ViewModel
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading data: {ex.Message}");
+            }
+        }
+
+        async partial void OnSelectedStudentChanged(Student? value)
+        {
+            if (value != null)
+            {
+                DetailVM = _serviceProvider.GetRequiredService<StudentDetailViewModel>();
+
+                await DetailVM.InitializeAsync(value);
+            }
+            else
+            {
+                DetailVM = null;
             }
         }
     }

@@ -9,5 +9,6 @@ namespace PBManager.Core.Entities
 
         public ICollection<StudyRecord> StudyRecords { get; set; }
         public ICollection<GradeRecord> GradeRecords { get; set; }
+        public ICollection<Exam> Exams { get; set; } = new List<Exam>();
     }
 }

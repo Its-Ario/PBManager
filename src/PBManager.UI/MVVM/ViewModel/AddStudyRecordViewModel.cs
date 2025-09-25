@@ -36,7 +36,7 @@ namespace PBManager.UI.MVVM.ViewModel
             }
         }
 
-        public async Task Initialize(Student student, DateTime? weekStartDate = null)
+        public async Task InitializeAsync(Student student, DateTime? weekStartDate = null)
         {
             Student = student;
             IsEditMode = false;
@@ -44,7 +44,7 @@ namespace PBManager.UI.MVVM.ViewModel
             await LoadWeekAsync();
         }
 
-        public async Task Initialize(Student student, IEnumerable<StudyRecord> existingRecords)
+        public async Task InitializeAsync(Student student, IEnumerable<StudyRecord> existingRecords)
         {
             Student = student;
             IsEditMode = true;
