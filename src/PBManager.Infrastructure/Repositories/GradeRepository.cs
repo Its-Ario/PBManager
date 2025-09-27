@@ -12,6 +12,11 @@ namespace PBManager.Infrastructure.Repositories
             await dbContext.GradeRecords.AddAsync(grade);
         }
 
+        public async Task AddRangeAsync(IEnumerable<GradeRecord> grades)
+        {
+            await dbContext.GradeRecords.AddRangeAsync(grades);
+        }
+
         public void Update(GradeRecord grade)
         {
             dbContext.GradeRecords.Update(grade);
@@ -20,6 +25,11 @@ namespace PBManager.Infrastructure.Repositories
         public void Delete(GradeRecord grade)
         {
             dbContext.GradeRecords.Remove(grade);
+        }
+
+        public void Delete(IEnumerable<GradeRecord> grades)
+        {
+            dbContext.GradeRecords.RemoveRange(grades);
         }
 
         public async Task<int> SaveChangesAsync()

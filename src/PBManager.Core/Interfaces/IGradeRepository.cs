@@ -5,8 +5,10 @@ namespace PBManager.Core.Interfaces
     public interface IGradeRepository
     {
         Task AddAsync(GradeRecord grade);
+        Task AddRangeAsync(IEnumerable<GradeRecord> grades);
         void Update(GradeRecord grade);
         void Delete(GradeRecord grade);
+        void Delete(IEnumerable<GradeRecord> grades);
         Task<int> SaveChangesAsync();
 
         Task<GradeRecord?> GetByIdAsync(int gradeId);

@@ -15,9 +15,10 @@ namespace PBManager.UI.MVVM.ViewModel.Helpers
         [ObservableProperty]
         private string _score;
 
-        public GradeEntry(Subject subject)
+        public GradeEntry(Subject subject, string? score = null)
         {
             Subject = subject;
+            if(score != null) Score = score;
         }
     }
 }

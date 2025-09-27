@@ -4,6 +4,7 @@ using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
 using PBManager.Core.Enums;
 using PBManager.Core.Interfaces;
+using System.Diagnostics;
 
 namespace PBManager.Application.Services
 {
@@ -63,13 +64,26 @@ namespace PBManager.Application.Services
             cache.Remove($"TopSubject_Student_{grade.StudentId}");
         }
 
-        public Task<List<GradeRecord>> GetGradesForStudentAsync(int studentId)
+        public Task<List<GradeRecord>> GetGradesForStudentAsync(int studentId, int? examId = null)
         {
-            string cacheKey = $"Grades_Student_{studentId}";
-            return cache.GetOrCreateAsync(cacheKey, entry =>
+            string cacheKey = examId == null
+                ? $"Grades_Student_{studentId}"
+                : $"Grades_Student_{studentId}_Exam_{examId}";
+
+            return cache.GetOrCreateAsync(cacheKey, async entry =>
             {
                 entry.SetOptions(GetDefaultCacheOptions());
-                return repository.GetGradesForStudentAsync(studentId);
+
+                var grades = await repository.GetGradesForStudentAsync(studentId);
+
+                if (examId.HasValue)
+                {
+                    grades = grades.Where(g => g.ExamId == examId).ToList();
+                }
+
+                Debug.WriteLine(grades.Count);
+
+                return grades;
             })!;
         }
 
@@ -208,6 +222,29 @@ namespace PBManager.Application.Services
                 cache.Set(cacheKey, rankedScores, GetDefaultCacheOptions());
             }
             return rankedScores;
+        }
+
+        public async Task SaveGradesForExamAsync(int studentId, int examId, IEnumerable<GradeRecord> gradeRecords)
+        {
+            var records = gradeRecords.ToList();
+            if (records.Any())
+            {
+                await repository.AddRangeAsync(records);
+                await repository.SaveChangesAsync();
+            }
+
+            var cacheKey = $"Grades_Student_{studentId}_Exam_{examId}";
+            cache.Remove(cacheKey);
+            cache.Remove($"Grades_Student_{studentId}");
+        }
+
+        public async Task DeleteRecords(int studentId, int examId)
+        {
+            var records = await repository.GetGradesForExamAsync(examId);
+            var studentRecords = records.Where(g => g.StudentId == studentId);
+
+            repository.Delete(studentRecords);
+            await repository.SaveChangesAsync();
         }
 
         public async Task<int> GetOverallExamRankAsync(int studentId)

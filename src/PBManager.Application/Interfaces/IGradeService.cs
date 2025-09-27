@@ -9,7 +9,7 @@ namespace PBManager.Application.Interfaces
         Task UpdateGradeAsync(GradeRecord grade);
         Task<bool> DeleteGradeAsync(int gradeId);
 
-        Task<List<GradeRecord>> GetGradesForStudentAsync(int studentId);
+        Task<List<GradeRecord>> GetGradesForStudentAsync(int studentId, int? examId = null);
         Task<double> GetAverageGradeForStudentAsync(int studentId);
         Task<double> GetAverageGradeForSubjectAsync(int subjectId);
         Task<double> GetOverallAverageGradeAsync();
@@ -17,6 +17,8 @@ namespace PBManager.Application.Interfaces
         Task<Subject?> GetTopPerformingSubjectAsync(int studentId);
         Task<List<StudentExamScore>> GetAllExamScoresForStudentAsync(int studentId);
         Task<List<StudentExamScore>> GetRankedScoresForExamAsync(int examId);
+        Task SaveGradesForExamAsync(int studentId, int examId, IEnumerable<GradeRecord> gradeRecords);
+        Task DeleteRecords(int studentId, int examId);
         Task<int> GetOverallExamRankAsync(int studentId);
         Task<int> GetClassExamRankAsync(int studentId);
     }
