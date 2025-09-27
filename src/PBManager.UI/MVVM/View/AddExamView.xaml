@@ -47,6 +47,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -55,7 +57,7 @@
                 <TextBlock Text="نام" VerticalAlignment="Center" Foreground="White"
                FontWeight="Bold"
                Margin="30,0"/>
-                <TextBox Grid.Column="1" Text="{Binding Score, UpdateSourceTrigger=PropertyChanged}"
+                <TextBox Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
              Width="250"
          Style="{StaticResource ModernTextBox}"/>
 
@@ -69,15 +71,42 @@
                                            Grid.Column="1"
                                            Grid.Row="1"
                                            Margin="10"
-                                           SelectedDate="{Binding SelectedWeekStart, Mode=TwoWay}"
+                                           SelectedDate="{Binding SelectedDate}"
                                            Background="{StaticResource TableBgBrush}"
                                            BorderBrush="{StaticResource BorderBrush}"
                                            Height="35" Width="250"
                                            FontSize="14"/>
+
+                <TextBlock Text="درس" VerticalAlignment="Center"
+                           Foreground="White"
+                           FontWeight="Bold"
+                           Margin="30,0"
+                           Grid.Row="2"/>
+
+                <ComboBox ItemsSource="{Binding AvailableSubjects}"
+                          SelectedItem="{Binding SelectedSubject}"
+                          DisplayMemberPath="Name"
+                          Style="{StaticResource ModernComboBox}"
+                          Width="250"
+                          Grid.Row="2" Grid.Column="1"/>
+
+                <TextBlock Text="حداکثر نمره" VerticalAlignment="Center"
+                           Foreground="White"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Grid.Row="3"/>
+
+                <TextBox Grid.Column="1" Grid.Row="3"
+                         Text="{Binding MaxScore, 
+                         UpdateSourceTrigger=PropertyChanged}"
+                         Width="250"
+                         Margin="10"
+                         Style="{StaticResource ModernTextBox}"/>
             </Grid>
             <Button Grid.Column="1" Grid.Row="2" Content="ثبت"
                     Style="{StaticResource ModernButtonStyle}"
                     Background="{StaticResource SubmitGreenBrush}"
+                    Command="{Binding SubmitCommand}"
                     Width="100"
                     Height="30"
                     Margin="10"/>

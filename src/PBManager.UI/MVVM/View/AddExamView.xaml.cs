@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PBManager.UI.MVVM.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +20,10 @@ namespace PBManager.UI.MVVM.View
     /// </summary>
     public partial class AddExamView : Window
     {
-        public AddExamView()
+        public AddExamView(AddExamViewModel viewModel)
         {
             InitializeComponent();
+            this.DataContext = viewModel;
         }
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
