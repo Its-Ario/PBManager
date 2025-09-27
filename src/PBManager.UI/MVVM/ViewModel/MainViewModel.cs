@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PBManager.UI.MVVM.View;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
@@ -9,6 +10,7 @@ namespace PBManager.UI.MVVM.ViewModel
         private readonly StudyManagementViewModel _managementVM;
         private readonly SettingsViewModel _settingsVM;
         private readonly HistoryViewModel _historyVM;
+        private readonly ExamManagementViewModel _examManagementVM;
         
         [ObservableProperty]
         private object _currentView;
@@ -16,12 +18,14 @@ namespace PBManager.UI.MVVM.ViewModel
         HomeViewModel homeVM,
         StudyManagementViewModel managementVM,
         SettingsViewModel settingsVM,
-        HistoryViewModel historyVM)
+        HistoryViewModel historyVM,
+        ExamManagementViewModel examVM)
         {
             _homeVM = homeVM;
             _managementVM = managementVM;
             _settingsVM = settingsVM;
             _historyVM = historyVM;
+            _examManagementVM = examVM;
 
             CurrentView = _homeVM;
         }
@@ -37,5 +41,8 @@ namespace PBManager.UI.MVVM.ViewModel
 
         [RelayCommand]
         private void HistoryView() => CurrentView = _historyVM;
+
+        [RelayCommand]
+        private void ExamManagementView() => CurrentView = _examManagementVM;
     }
 }

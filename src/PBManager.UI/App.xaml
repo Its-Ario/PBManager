@@ -43,7 +43,11 @@
 
             <DataTemplate DataType="{x:Type viewModel:GradeOverviewViewModel}">
                 <view:GradeOverviewView/>
-            </DataTemplate> 
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:ExamManagementViewModel}">
+                <view:ExamManagementView/>
+            </DataTemplate>
 
             <FontFamily x:Key="AppFont">/Fonts/#Shabnam FD</FontFamily>
 

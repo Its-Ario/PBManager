@@ -30,9 +30,6 @@ namespace PBManager.UI.MVVM.ViewModel
         [ObservableProperty]
         private StudentDetailViewModel? _detailVM;
 
-        [ObservableProperty]
-        private StudyRecord? _selectedRecord;
-
         public ICollectionView? FilteredStudents { get; private set; }
 
         private string _searchText = string.Empty;
