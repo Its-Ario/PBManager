@@ -68,8 +68,7 @@ namespace PBManager.UI.MVVM.ViewModel
 
             if (item is not Exam exam) return false;
 
-            return (exam.Name?.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                   (exam.Date.ToString().IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0);
+            return (exam.Name?.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
         private async Task LoadData()
@@ -92,7 +91,7 @@ namespace PBManager.UI.MVVM.ViewModel
         }
 
         [RelayCommand]
-        private void AddNewExamAsync()
+        private void AddNewExam()
         {
             var view = _serviceProvider.GetRequiredService<AddExamView>();
             view.Show();

@@ -69,7 +69,6 @@
                                            Grid.Column="1"
                                            Grid.Row="1"
                                            Margin="10"
-                                           SelectedDateChanged="WeekStartDatePicker_SelectedDateChanged"
                                            SelectedDate="{Binding SelectedWeekStart, Mode=TwoWay}"
                                            Background="{StaticResource TableBgBrush}"
                                            BorderBrush="{StaticResource BorderBrush}"
