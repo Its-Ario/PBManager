@@ -62,8 +62,9 @@
                     Orientation="Horizontal"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Center">
-            <Button Content="ثبت اطلاعات مطالعه"
+            <Button Content="مدیریت اطلاعات مطالعه"
                     x:Name="submitNewRecord"
+                    FontSize="10"
                     Margin="5"
                     Width="110" Height="50"
                     Style="{StaticResource ModernButtonStyle}" 

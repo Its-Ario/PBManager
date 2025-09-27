@@ -93,7 +93,7 @@ namespace PBManager.Application.Services
             if (!cache.TryGetValue(cacheKey, out double average))
             {
                 var grades = await repository.GetGradesForStudentAsync(studentId);
-                average = grades.Any() ? grades.Average(g => g.Score) : 0;
+                average = grades.Count != 0 ? grades.Average(g => g.Score) : 0;
                 cache.Set(cacheKey, average, GetDefaultCacheOptions());
             }
             return average;
@@ -105,7 +105,7 @@ namespace PBManager.Application.Services
             if (!cache.TryGetValue(cacheKey, out double average))
             {
                 var grades = await repository.GetGradesForSubjectAsync(subjectId);
-                average = grades.Any() ? grades.Average(g => g.Score) : 0;
+                average = grades.Count != 0 ? grades.Average(g => g.Score) : 0;
                 cache.Set(cacheKey, average, GetDefaultCacheOptions());
             }
             return average;
@@ -117,7 +117,7 @@ namespace PBManager.Application.Services
             if (!cache.TryGetValue(cacheKey, out double average))
             {
                 var grades = await repository.GetAllAsync();
-                average = grades.Any() ? grades.Average(g => g.Score) : 0;
+                average = grades.Count != 0 ? grades.Average(g => g.Score) : 0;
                 cache.Set(cacheKey, average, GetDefaultCacheOptions());
             }
             return average;
@@ -156,7 +156,7 @@ namespace PBManager.Application.Services
             if (!cache.TryGetValue(cacheKey, out Subject? topSubject))
             {
                 var studentGrades = await repository.GetGradesForStudentAsync(studentId);
-                if (!studentGrades.Any())
+                if (studentGrades.Count == 0)
                 {
                     return null;
                 }
@@ -180,7 +180,7 @@ namespace PBManager.Application.Services
             {
                 var grades = await repository.GetGradesForStudentAsync(studentId);
 
-                examScores = grades
+                examScores = [.. grades
                     .Where(g => g.Exam != null)
                     .GroupBy(g => g.Exam)
                     .Select(group => new StudentExamScore
@@ -191,8 +191,7 @@ namespace PBManager.Application.Services
                         ExamDate = group.Key.Date,
                         AverageScore = group.Average(g => g.Score)
                     })
-                    .OrderByDescending(e => e.ExamDate)
-                    .ToList();
+                    .OrderByDescending(e => e.ExamDate)];
 
                 cache.Set(cacheKey, examScores, GetDefaultCacheOptions());
             }
@@ -206,7 +205,7 @@ namespace PBManager.Application.Services
             {
                 var grades = await repository.GetGradesForExamAsync(examId);
 
-                rankedScores = grades
+                rankedScores = [.. grades
                     .GroupBy(g => g.Student)
                     .Select(group => new StudentExamScore
                     {
@@ -216,8 +215,7 @@ namespace PBManager.Application.Services
                         ExamDate = group.First().Exam?.Date ?? DateTime.MinValue,
                         AverageScore = group.Average(g => g.Score)
                     })
-                    .OrderByDescending(s => s.AverageScore)
-                    .ToList();
+                    .OrderByDescending(s => s.AverageScore)];
 
                 cache.Set(cacheKey, rankedScores, GetDefaultCacheOptions());
             }
@@ -226,8 +224,8 @@ namespace PBManager.Application.Services
 
         public async Task SaveGradesForExamAsync(int studentId, int examId, IEnumerable<GradeRecord> gradeRecords)
         {
-            var records = gradeRecords.ToList();
-            if (records.Any())
+            List<GradeRecord> records = gradeRecords.ToList();
+            if (records.Count != 0)
             {
                 await repository.AddRangeAsync(records);
                 await repository.SaveChangesAsync();
@@ -274,9 +272,9 @@ namespace PBManager.Application.Services
             return rankInfo;
         }
 
-        private int CalculateRank(List<GradeRecord> grades, int studentId)
+        private static int CalculateRank(List<GradeRecord> grades, int studentId)
         {
-            if (!grades.Any()) return 0;
+            if (grades.Count == 0) return 0;
 
             var studentAverages = grades
                 .GroupBy(g => g.Student)

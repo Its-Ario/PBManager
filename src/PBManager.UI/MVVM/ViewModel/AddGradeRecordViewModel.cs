@@ -8,15 +8,14 @@ using System.Windows;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    [ObservableObject]
-    public partial class AddGradeRecordViewModel
+    public partial class AddGradeRecordViewModel(IExamService examService, IGradeService gradeService) : ObservableObject
     {
-        private readonly IExamService _examService;
-        private readonly IGradeService _gradeService;
+        private readonly IExamService _examService = examService;
+        private readonly IGradeService _gradeService = gradeService;
         private Student _student;
 
-        public ObservableCollection<Exam> AvailableExams { get; } = new();
-        public ObservableCollection<GradeEntry> GradeEntries { get; } = new();
+        public ObservableCollection<Exam> AvailableExams { get; } = [];
+        public ObservableCollection<GradeEntry> GradeEntries { get; } = [];
 
         [ObservableProperty]
         private Exam? _selectedExam;
@@ -25,13 +24,7 @@ namespace PBManager.UI.MVVM.ViewModel
         [NotifyPropertyChangedFor(nameof(SubmitButtonText))]
         private bool _isEditMode;
 
-        public string SubmitButtonText => IsEditMode ? "Update Grades" : "Save Grades";
-
-        public AddGradeRecordViewModel(IExamService examService, IGradeService gradeService)
-        {
-            _examService = examService;
-            _gradeService = gradeService;
-        }
+        public string SubmitButtonText => IsEditMode ? "ویرایش نمرات" : "ثبت نمرات";
 
         public async Task InitializeAsync(Student student)
         {
@@ -68,7 +61,7 @@ namespace PBManager.UI.MVVM.ViewModel
             {
                 var existingGrades = await _gradeService.GetGradesForStudentAsync(_student.Id, exam.Id);
 
-                IsEditMode = existingGrades.Any();
+                IsEditMode = existingGrades.Count != 0;
 
                 if (exam.Subjects != null)
                 {
@@ -82,7 +75,8 @@ namespace PBManager.UI.MVVM.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while loading grades: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"خطا در بارگذاری داده‌ها: {ex.Message}",
+                               "خطا", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -116,18 +110,18 @@ namespace PBManager.UI.MVVM.ViewModel
                 await _gradeService.SaveGradesForExamAsync(_student.Id, SelectedExam.Id, gradeRecordsToSave);
 
                 string message = IsEditMode
-                    ? $"Grades have been successfully updated for {SelectedExam.Name}."
-                    : $"Grades have been successfully saved for {SelectedExam.Name}.";
-                MessageBox.Show(message, "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ? $"نمرات آزمون با موفقیت بروزرسانی شد! ({gradeRecordsToSave.Count} رکورد)"
+                    : $"نمرات آزمون با موفقیت ثبت شد! ({gradeRecordsToSave.Count} رکورد)";
+                MessageBox.Show(message, "موفقیت", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 IsEditMode = true;
             }
             catch (Exception ex)
             {
                 string errorMessage = IsEditMode
-                    ? $"Failed to update grades: {ex.Message}"
-                    : $"Failed to save grades: {ex.Message}";
-                MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ? $"خطا در بروزرسانی اطلاعات: {ex.Message}"
+                    : $"خطا در ثبت اطلاعات: {ex.Message}";
+                MessageBox.Show(errorMessage, "خطا", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

@@ -85,7 +85,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Button Grid.Row="3" Content="ذخیره نمرات"
+            <Button Grid.Row="3" Content="{Binding SubmitButtonText}"
                     Command="{Binding SaveGradesCommand}"
                     Style="{StaticResource ModernButtonStyle}"
                     HorizontalAlignment="Right" Margin="10"

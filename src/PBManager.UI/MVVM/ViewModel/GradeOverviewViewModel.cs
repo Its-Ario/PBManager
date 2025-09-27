@@ -13,10 +13,10 @@ using SkiaSharp;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    public partial class GradeOverviewViewModel : ObservableObject
+    public partial class GradeOverviewViewModel(IGradeService gradeService, IServiceProvider serviceProvider) : ObservableObject
     {
-        private readonly IGradeService _gradeRecordService;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IGradeService _gradeRecordService = gradeService;
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
 
         public Margin DrawMargin { get; set; } = new(50, 0, 50, 50);
 
@@ -32,12 +32,6 @@ namespace PBManager.UI.MVVM.ViewModel
         private int _classRank;
         [ObservableProperty]
         private int _globalRank;
-
-        public GradeOverviewViewModel(IGradeService gradeService, IServiceProvider serviceProvider)
-        {
-            _gradeRecordService = gradeService;
-            _serviceProvider = serviceProvider;
-        }
 
         public async Task InitializeAsync(Student student)
         {
