@@ -1,11 +1,6 @@
 ﻿using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
 using PBManager.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PBManager.Application.Services
 {
@@ -16,6 +11,12 @@ namespace PBManager.Application.Services
         public ExamService(IExamRepository examRepository)
         {
             _examRepository = examRepository;
+        }
+
+        public async Task AddExamAsync(Exam exam)
+        {
+            await _examRepository.AddAsync(exam);
+            await _examRepository.SaveChangesAsync();
         }
 
         public Task<List<Exam>> GetAllExamsWithSubjectsAsync()

@@ -4,6 +4,6 @@ namespace PBManager.Application.Interfaces;
 
 public interface ISubjectService
 {
-    Task<List<Subject>> GetSubjectsAsync();
+    Task<List<Subject>> GetSubjectsAsync(bool tracking = false);
     Task<int> GetSubjectCountAsync();
 }

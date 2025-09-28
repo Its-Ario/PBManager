@@ -14,9 +14,11 @@ public class SubjectRepository : ISubjectRepository
         _db = db;
     }
 
-    public Task<List<Subject>> GetAllAsync()
+    public Task<List<Subject>> GetAllAsync(bool tracking = false)
     {
-        return _db.Subjects.AsNoTracking().ToListAsync();
+        var sub = _db.Subjects;
+        if (tracking) return sub.ToListAsync();
+        return sub.AsNoTracking().ToListAsync();
     }
 
     public Task<int> GetCountAsync()

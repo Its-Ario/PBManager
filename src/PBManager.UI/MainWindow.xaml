@@ -54,7 +54,7 @@
                              Foreground="White"
                              FontSize="14"
                              Style="{StaticResource MenuButtonTheme}"
-                             Command="{Binding StudyManagementViewCommand}"/>
+                             Command="{Binding StudentManagementViewCommand}"/>
                 <RadioButton Content="مدیریت آزمون ها"
                              Height="50"
                              Tag="&#xE71D;"

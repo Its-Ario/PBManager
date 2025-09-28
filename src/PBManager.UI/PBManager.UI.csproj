@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -11,8 +11,9 @@
 	<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	<StartupObject>PBManager.App</StartupObject>
 	<ApplicationIcon>book.ico</ApplicationIcon>
-	<FileVersion>0.4-beta</FileVersion>
-	<InformationalVersion>0.4-beta</InformationalVersion>
+	<FileVersion>0.5-beta</FileVersion>
+	<InformationalVersion>0.5-beta</InformationalVersion>
+	<AssemblyName>سامانه مدیریت آموزش</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

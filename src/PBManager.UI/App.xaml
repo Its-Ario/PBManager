@@ -21,8 +21,8 @@
                 <view:HomeView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type viewModel:StudyManagementViewModel}">
-                <view:StudyManagementView/>
+            <DataTemplate DataType="{x:Type viewModel:StudentManagementViewModel}">
+                <view:StudentManagementView/>
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type viewModel:StudentDetailViewModel}">

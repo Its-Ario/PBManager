@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    public partial class StudyManagementViewModel : ObservableObject
+    public partial class StudentManagementViewModel : ObservableObject
     {
         private readonly IStudentService _studentService;
         private readonly IServiceProvider _serviceProvider;
@@ -52,7 +52,7 @@ namespace PBManager.UI.MVVM.ViewModel
 
         public bool HasSelection => SelectedStudent != null;
 
-        public StudyManagementViewModel(IStudentService studentService, IServiceProvider serviceProvider)
+        public StudentManagementViewModel(IStudentService studentService, IServiceProvider serviceProvider)
         {
             _studentService = studentService;
             _serviceProvider = serviceProvider;

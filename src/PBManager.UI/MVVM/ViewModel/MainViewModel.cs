@@ -7,7 +7,7 @@ namespace PBManager.UI.MVVM.ViewModel
     public partial class MainViewModel : ObservableObject
     {
         private readonly HomeViewModel _homeVM;
-        private readonly StudyManagementViewModel _managementVM;
+        private readonly StudentManagementViewModel _managementVM;
         private readonly SettingsViewModel _settingsVM;
         private readonly HistoryViewModel _historyVM;
         private readonly ExamManagementViewModel _examManagementVM;
@@ -16,7 +16,7 @@ namespace PBManager.UI.MVVM.ViewModel
         private object _currentView;
         public MainViewModel(
         HomeViewModel homeVM,
-        StudyManagementViewModel managementVM,
+        StudentManagementViewModel managementVM,
         SettingsViewModel settingsVM,
         HistoryViewModel historyVM,
         ExamManagementViewModel examVM)
@@ -34,7 +34,7 @@ namespace PBManager.UI.MVVM.ViewModel
         private void HomeView() => CurrentView = _homeVM;
 
         [RelayCommand]
-        private void StudyManagementView() => CurrentView = _managementVM;
+        private void StudentManagementView() => CurrentView = _managementVM;
 
         [RelayCommand]
         private void SettingsView() => CurrentView = _settingsVM;

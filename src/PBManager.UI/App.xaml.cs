@@ -95,7 +95,7 @@ namespace PBManager
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<StudentDetailViewModel>();
             services.AddTransient<StudyOverviewViewModel>();
-            services.AddTransient<StudyManagementViewModel>();
+            services.AddTransient<StudentManagementViewModel>();
             services.AddTransient<AddStudyRecordViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<HistoryViewModel>();

@@ -3,11 +3,11 @@
 namespace PBManager.UI.MVVM.View
 {
     /// <summary>
-    /// Interaction logic for StudyManagementView.xaml
+    /// Interaction logic for StudentManagementView.xaml
     /// </summary>
-    public partial class StudyManagementView : UserControl
+    public partial class StudentManagementView : UserControl
     {
-        public StudyManagementView()
+        public StudentManagementView()
         {
             InitializeComponent();
         }

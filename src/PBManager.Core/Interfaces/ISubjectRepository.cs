@@ -4,6 +4,6 @@ namespace PBManager.Core.Interfaces;
 
 public interface ISubjectRepository
 {
-    Task<List<Subject>> GetAllAsync();
+    Task<List<Subject>> GetAllAsync(bool tracking = false);
     Task<int> GetCountAsync();
 }

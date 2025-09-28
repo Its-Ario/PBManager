@@ -8,9 +8,9 @@ public class SubjectService(ISubjectRepository subjectRepository) : ISubjectServ
 {
     private readonly ISubjectRepository _subjectRepository = subjectRepository;
 
-    public Task<List<Subject>> GetSubjectsAsync()
+    public Task<List<Subject>> GetSubjectsAsync(bool tracking = false)
     {
-        return _subjectRepository.GetAllAsync();
+        return _subjectRepository.GetAllAsync(tracking);
     }
 
     public Task<int> GetSubjectCountAsync()

@@ -7,6 +7,7 @@
         xmlns:helpers="clr-namespace:PBManager.UI.Helpers"
         mc:Ignorable="d"
         Height="450" Width="800"
+        Title="سامانه مدیریت آموزش | ورود"
         AllowsTransparency="True"
         WindowStyle="None"
         Background="Transparent">
