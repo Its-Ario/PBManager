@@ -13,7 +13,8 @@
 	<ApplicationIcon>book.ico</ApplicationIcon>
 	<FileVersion>0.5-beta</FileVersion>
 	<InformationalVersion>0.5-beta</InformationalVersion>
-	<AssemblyName>سامانه مدیریت آموزش</AssemblyName>
+	  <AssemblyName>PBManager</AssemblyName>
+	<AssemblyTitle>سامانه مدیریت آموزش</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>

@@ -16,6 +16,9 @@ namespace PBManager.UI.MVVM.ViewModel
         private readonly IExamService _examService;
         private readonly IServiceProvider _serviceProvider;
 
+        [ObservableProperty]
+        private ExamOverviewViewModel? _examVM;
+
         private ObservableCollection<Exam> _exams = [];
         public ObservableCollection<Exam> Exams
         {
@@ -87,7 +90,8 @@ namespace PBManager.UI.MVVM.ViewModel
 
         async partial void OnSelectedExamChanged(Exam? value)
         {
-            MessageBox.Show(value?.Name ?? "---");
+            ExamVM = _serviceProvider.GetRequiredService<ExamOverviewViewModel>();
+            await ExamVM.InitializeAsync(value);
         }
 
         [RelayCommand]

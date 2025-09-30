@@ -10,5 +10,6 @@ namespace PBManager.Core.Interfaces
         void Update(Exam exam);
         void Delete(Exam exam);
         Task<int> SaveChangesAsync();
+        Task<int> GetParticipantCountAsync(int examId);
     }
 }

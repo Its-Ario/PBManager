@@ -106,7 +106,7 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <ContentControl Content="{Binding DetailVM}" />
+            <ContentControl Content="{Binding ExamVM}" />
         </Border>
     </Grid>
 </UserControl>

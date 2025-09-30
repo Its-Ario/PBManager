@@ -48,14 +48,14 @@
                              Style="{StaticResource MenuButtonTheme}"
                              IsChecked="True"
                              Command="{Binding HomeViewCommand}"/>
-                <RadioButton Content="مدیریت دانش‌آموزان"
+                <RadioButton Content="دانش‌آموزان"
                              Height="50"
                              Tag="&#xE736;"
                              Foreground="White"
                              FontSize="14"
                              Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding StudentManagementViewCommand}"/>
-                <RadioButton Content="مدیریت آزمون ها"
+                <RadioButton Content="آزمون‌ها"
                              Height="50"
                              Tag="&#xE71D;"
                              Foreground="White"

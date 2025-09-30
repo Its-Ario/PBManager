@@ -2,11 +2,6 @@
 using PBManager.Core.Entities;
 using PBManager.Core.Interfaces;
 using PBManager.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PBManager.Infrastructure
 {
@@ -45,6 +40,15 @@ namespace PBManager.Infrastructure
         public void Delete(Exam exam)
         {
             _db.Exams.Remove(exam);
+        }
+
+        public async Task<int> GetParticipantCountAsync(int examId)
+        {
+            return await _db.GradeRecords
+                .Where(gr => gr.ExamId == examId)
+                .Select(gr => gr.StudentId)
+                .Distinct()
+                .CountAsync();
         }
 
         public async Task<int> SaveChangesAsync()

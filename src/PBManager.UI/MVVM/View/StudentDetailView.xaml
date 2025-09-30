@@ -5,15 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:PBManager.UI.MVVM.ViewModel"
              xmlns:views="clr-namespace:PBManager.UI.MVVM.View">
-    <UserControl.Resources>
-        <DataTemplate DataType="{x:Type vm:StudyOverviewViewModel}">
-            <views:StudyOverviewView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:AddGradeRecordViewModel}">
-            <views:AddGradeRecordView/>
-        </DataTemplate>
-    </UserControl.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

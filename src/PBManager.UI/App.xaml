@@ -45,6 +45,10 @@
                 <view:GradeOverviewView/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type viewModel:ExamOverviewViewModel}">
+                <view:ExamOverviewView/>
+            </DataTemplate>
+
             <DataTemplate DataType="{x:Type viewModel:ExamManagementViewModel}">
                 <view:ExamManagementView/>
             </DataTemplate>
