@@ -11,8 +11,8 @@
 	<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	<StartupObject>PBManager.App</StartupObject>
 	<ApplicationIcon>book.ico</ApplicationIcon>
-	<FileVersion>0.5-beta</FileVersion>
-	<InformationalVersion>0.5-beta</InformationalVersion>
+	<FileVersion>0.6-beta</FileVersion>
+	<InformationalVersion>0.6-beta</InformationalVersion>
 	  <AssemblyName>PBManager</AssemblyName>
 	<AssemblyTitle>سامانه مدیریت آموزش</AssemblyTitle>
   </PropertyGroup>
