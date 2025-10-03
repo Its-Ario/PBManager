@@ -150,10 +150,10 @@ public class DatabasePorter : IDatabasePorter
 
     private async Task<byte[]> GetDatabaseBytesAsync()
     {
-        var tempFile = Path.GetRandomFileName();
+        var tempFile = Path.GetTempFileName();
         try
         {
-            await _db.Database.ExecuteSqlAsync($"VACUUM INTO '{tempFile}'");
+            await _db.Database.ExecuteSqlRawAsync($"VACUUM INTO '{tempFile}'");
             return await File.ReadAllBytesAsync(tempFile);
         }
         finally
