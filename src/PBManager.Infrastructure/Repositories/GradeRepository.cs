@@ -60,6 +60,7 @@ namespace PBManager.Infrastructure.Repositories
                 .AsNoTracking()
                 .Where(g => g.StudentId == studentId)
                 .Include(g => g.Subject)
+                .Include(g => g.Exam)
                 .OrderByDescending(g => g.Date)
                 .ToListAsync();
         }

@@ -17,6 +17,7 @@ namespace PBManager.Application.Interfaces
         Task<Subject?> GetTopPerformingSubjectAsync(int studentId);
         Task<List<StudentExamScore>> GetAllExamScoresForStudentAsync(int studentId);
         Task<List<StudentExamScore>> GetRankedScoresForExamAsync(int examId);
+        Task<List<GradeRecord>> GetExamRecords(int examId);
         Task SaveGradesForExamAsync(int studentId, int examId, IEnumerable<GradeRecord> gradeRecords);
         Task DeleteRecords(int studentId, int examId);
         Task<int> GetOverallExamRankAsync(int studentId);

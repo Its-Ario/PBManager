@@ -21,10 +21,7 @@ namespace PBManager.UI.MVVM.ViewModel
         private Exam? _selectedExam;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(SubmitButtonText))]
         private bool _isEditMode;
-
-        public string SubmitButtonText => IsEditMode ? "ویرایش نمرات" : "ثبت نمرات";
 
         public async Task InitializeAsync(Student student)
         {
@@ -86,16 +83,20 @@ namespace PBManager.UI.MVVM.ViewModel
             if (SelectedExam == null || _student == null) return;
 
             var gradeRecordsToSave = new List<GradeRecord>();
+            double maxScore = SelectedExam.MaxScore;
+            
             foreach (var entry in GradeEntries)
             {
                 if (double.TryParse(entry.Score, out double score))
                 {
+                    double normalizedScore = Math.Round((score / maxScore) * 100, 2);
+
                     gradeRecordsToSave.Add(new GradeRecord
                     {
                         StudentId = _student.Id,
                         SubjectId = entry.Subject.Id,
                         ExamId = SelectedExam.Id,
-                        Score = score,
+                        Score = normalizedScore,
                         Date = SelectedExam.Date
                     });
                 }

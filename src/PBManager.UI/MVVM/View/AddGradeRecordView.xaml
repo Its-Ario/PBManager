@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                 Title="سامانه مدیریت آموزش | ثبت نمرات"
-                Height="520" Width="400"
+                Height="280" Width="450"
                 WindowStyle="None"
                 ResizeMode="NoResize"
                 Background="Transparent"
@@ -60,10 +60,10 @@
                 <TextBlock Text="آزمون:" VerticalAlignment="Center" 
                Foreground="White" Margin="10,0"/>
                 <ComboBox ItemsSource="{Binding AvailableExams}"
-          SelectedItem="{Binding SelectedExam}"
-          DisplayMemberPath="Name"
-          Style="{StaticResource ModernComboBox}"
-          Width="200"/>
+                          SelectedItem="{Binding SelectedExam}"
+                          DisplayMemberPath="Name"
+                          Style="{StaticResource ModernComboBox}"
+                          Width="200"/>
             </StackPanel>
 
             <ItemsControl Grid.Row="2" ItemsSource="{Binding GradeEntries}" Margin="15" FlowDirection="RightToLeft">
@@ -73,24 +73,43 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+
                             <TextBlock Text="{Binding Subject.Name}" VerticalAlignment="Center" Foreground="White"
-                                       FontWeight="Bold"
-                                       Margin="30,0"/>
+                           FontWeight="Bold"
+                           Margin="30,0"/>
+
                             <TextBox Grid.Column="1" Text="{Binding Score, UpdateSourceTrigger=PropertyChanged}"
-                                     Width="100"
-                                 Style="{StaticResource ModernTextBox}"/>
+                         Width="60"
+                         Style="{StaticResource ModernTextBox}"/>
+
+                            <TextBlock Grid.Column="2"
+                                       Foreground="White"
+                                       Text="{Binding DataContext.SelectedExam.MaxScore, RelativeSource={RelativeSource AncestorType=ItemsControl}, StringFormat=از {0}}"
+                                VerticalAlignment="Center" Margin="5,0"/>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Button Grid.Row="3" Content="{Binding SubmitButtonText}"
-                    Command="{Binding SaveGradesCommand}"
-                    Style="{StaticResource ModernButtonStyle}"
-                    HorizontalAlignment="Right" Margin="10"
-                    Width="100" Height="30"
-                    Click="Button_Click"/>
+            <Button Grid.Row="3"
+                    Background="{StaticResource SubmitGreenBrush}"
+                    Command="{Binding SubmitCommand}"
+                    Width="100"
+                    Height="30"
+                    Margin="10">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+                        <Setter Property="Content" Value="ثبت"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                <Setter Property="Content" Value="بروزرسانی"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </Grid>
         </Border>
 </Window>

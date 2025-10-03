@@ -95,9 +95,13 @@ namespace PBManager.UI.MVVM.ViewModel
         }
 
         [RelayCommand]
-        private void AddNewExam()
+        private async Task AddNewExamAsync()
         {
             var view = _serviceProvider.GetRequiredService<AddExamView>();
+            if(view.DataContext is AddExamViewModel viewModel)
+            {
+                await viewModel.InitializeAsync();
+            }
             view.Show();
         }
     }

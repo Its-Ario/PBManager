@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PBManager.UI.MVVM.View"
-             xmlns:converter="clr-namespace:PBManager.UI.Converters"
+             xmlns:converter="clr-namespace:PBManager.UI.Converters" xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="360">
     <UserControl.Resources>
@@ -14,12 +14,12 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -59,7 +59,7 @@
                    Foreground="LightGray"
                    Grid.Row="2" Grid.Column="1"/>
 
-            <TextBlock Text="شرکت کنندگان: " 
+            <TextBlock Text="شرکت کنندگان:" 
                        FontWeight="Bold"
                        FontSize="11"
                        Foreground="White"
@@ -67,6 +67,14 @@
             <TextBlock Text="{Binding Participants}" 
                        Foreground="LightGray"
                        Grid.Row="3" Grid.Column="1"/>
+            <TextBlock Text="درس:" 
+                       FontWeight="Bold"
+                       FontSize="11"
+                       Foreground="White"
+                       Grid.Row="4" Grid.Column="0"/>
+            <TextBlock Text="{Binding Subject.Name}" 
+                        Foreground="LightGray"
+                        Grid.Row="4" Grid.Column="1"/>
         </Grid>
         <StackPanel Grid.Row="1"
                 Margin="0 20 0 0"
@@ -74,15 +82,19 @@
                 VerticalAlignment="Top"
                 HorizontalAlignment="Center">
             <Button Content="مدیریت آزمون"
-                x:Name="submitNewRecord"
+                x:Name="updateExamBtn"
                 Margin="5"
                 Width="220" Height="50"
                 Style="{StaticResource ModernButtonStyle}" 
-                Command="{Binding SubmitNewRecordCommand}"/>
+                Command="{Binding UpdateExamCommand}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2">
-            
+            <lvc:CartesianChart Height="200"
+                                FlowDirection="LeftToRight"
+                                Series="{Binding ScoreDistributionSeries}"
+                            XAxes="{Binding XAxes}"
+                            YAxes="{Binding YAxes}"/>
         </StackPanel>
     </Grid>
 </UserControl>

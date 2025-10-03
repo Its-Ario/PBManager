@@ -39,5 +39,10 @@ namespace PBManager.Application.Services
 
             return count;
         }
+
+        public async Task UpdateExamAsync(Exam exam)
+        {
+            await _examRepository.UpdateExamAsync(exam);
+        }
     }
 }

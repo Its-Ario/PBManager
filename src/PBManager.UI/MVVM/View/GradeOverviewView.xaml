@@ -74,9 +74,9 @@
         <StackPanel Grid.Row="2">
             <TextBlock Text="پیشرفت نمرات" Foreground="White" Margin="0,0,0,5"/>
             <lvc:CartesianChart Height="190" FlowDirection="LeftToRight"
-                    DrawMargin="{Binding DrawMargin}"
-                    XAxes="{Binding StudyOverTimeXAxes}"
-                    Series="{Binding StudyOverTimeSeries}"
+                    XAxes="{Binding GradesOverTimeXAxes}"
+                    YAxes="{Binding GradesOverTimeYAxes}"
+                    Series="{Binding GradesOverTimeSeries}"
                     ZoomMode="X"/>
         </StackPanel>
     </Grid>

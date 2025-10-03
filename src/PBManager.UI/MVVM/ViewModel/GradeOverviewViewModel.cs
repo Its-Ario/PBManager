@@ -10,6 +10,7 @@ using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
 using PBManager.UI.MVVM.View;
 using SkiaSharp;
+using System.Windows;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
@@ -22,6 +23,8 @@ namespace PBManager.UI.MVVM.ViewModel
 
         [ObservableProperty]
         private ICartesianAxis[]? _gradesOverTimeXAxes;
+        [ObservableProperty]
+        private ICartesianAxis[]? _gradesOverTimeYAxes;
         [ObservableProperty]
         private ISeries[]? _gradesOverTimeSeries;
         [ObservableProperty]
@@ -48,7 +51,7 @@ namespace PBManager.UI.MVVM.ViewModel
                 ClassRank = await _gradeRecordService.GetClassExamRankAsync(studentId);
                 GlobalRank = await _gradeRecordService.GetOverallExamRankAsync(studentId);
 
-                //await LoadStudyOverTimeChartAsync(studentId);
+                await LoadGradesOverTimeChartAsync(studentId);
             }
             catch (OperationCanceledException)
             {
@@ -60,55 +63,61 @@ namespace PBManager.UI.MVVM.ViewModel
             }
         }
 
-        //public async Task LoadStudyOverTimeChartAsync(int studentId)
-        //{
-        //    var weeklyData = await _gradeRecordService.GetWeeklyStudyDataAsync(studentId, 4);
+        public async Task LoadGradesOverTimeChartAsync(int studentId)
+        {
+            var examScores = await _gradeRecordService.GetAllExamScoresForStudentAsync(studentId);
 
-        //    var values = new List<double>();
-        //    var labels = new List<string>();
+            if (examScores == null || examScores.Count == 0) return;
 
-        //    int i = 1;
-        //    foreach (var (_, _, minutes) in weeklyData)
-        //    {
-        //        values.Add(minutes);
-        //        labels.Add($"هفته {i++}");
-        //    }
+            examScores = examScores.OrderBy(e => e.ExamDate).ToList();
 
-        //    StudyOverTimeSeries =
-        //    [
-        //        new LineSeries<double>
-        //        {
-        //            Values = values,
-        //            Stroke = new SolidColorPaint(new SKColor(92, 107, 192), 3),
-        //            Fill = null,
-        //            GeometrySize = 10
-        //        }
-        //    ];
+            var values = new List<double>();
+            var labels = new List<string>();
 
-        //    StudyOverTimeXAxes =
-        //       [
-        //       new Axis
-        //        {
-        //            Labels = labels,
-        //            LabelsRotation = 45,
-        //            Padding = new LiveChartsCore.Drawing.Padding(0),
-        //        }
-        //   ];
-        //}
+            foreach (var score in examScores)
+            {
+                values.Add(score.AverageScore);
 
-        //[RelayCommand]
-        //private async Task ViewHistory()
-        //{
-        //    if (Student == null) return;
+                labels.Add($"{score.ExamName}");
+            }
 
-        //    var historyView = _serviceProvider.GetRequiredService<StudyHistoryView>();
-        //    if (historyView.DataContext is StudyHistoryViewModel viewModel)
-        //    {
-        //        await viewModel.InitializeAsync(Student);
-        //    }
+            GradesOverTimeSeries = [
+                new LineSeries<double>
+                {
+                    Values = values,
+                    Stroke = new SolidColorPaint(new SKColor(92, 107, 192), 3),
+                    Fill = null,
+                    GeometrySize = 10
+                }
+            ];
 
-        //    historyView.Show();
-        //}
+            GradesOverTimeXAxes =
+            [
+                new Axis
+                {
+                    Labels = labels,
+                    LabelsRotation = 45,
+                    Padding = new LiveChartsCore.Drawing.Padding(0)
+                }
+            ];
+
+            GradesOverTimeYAxes = 
+            [
+                new Axis
+                {
+                    MinLimit = 0,
+                    MaxLimit = 100,
+                    MinStep = 5
+                }
+            ];
+        }
+
+
+        [RelayCommand]
+        private async Task ViewHistory()
+        {
+            MessageBox.Show("به زودی");
+        }
 
         [RelayCommand]
         private async Task SubmitNewRecord()

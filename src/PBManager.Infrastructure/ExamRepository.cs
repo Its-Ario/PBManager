@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.InkML;
+using Microsoft.EntityFrameworkCore;
 using PBManager.Core.Entities;
 using PBManager.Core.Interfaces;
 using PBManager.Infrastructure.Data;
@@ -54,6 +55,30 @@ namespace PBManager.Infrastructure
         public async Task<int> SaveChangesAsync()
         {
             return await _db.SaveChangesAsync();
+        }
+
+        public async Task UpdateExamAsync(Exam exam)
+        {
+            var existingExam = await _db.Exams
+                .Include(e => e.Subjects)
+                .FirstOrDefaultAsync(e => e.Id == exam.Id);
+
+            if (existingExam == null)
+                throw new InvalidOperationException("آزمون یافت نشد");
+
+            existingExam.Name = exam.Name;
+            existingExam.Date = exam.Date;
+            existingExam.MaxScore = exam.MaxScore;
+
+            existingExam.Subjects.Clear();
+            foreach (var subject in exam.Subjects)
+            {
+                var attachedSubject = await _db.Subjects.FindAsync(subject.Id);
+                if (attachedSubject != null)
+                    existingExam.Subjects.Add(attachedSubject);
+            }
+
+            await _db.SaveChangesAsync();
         }
     }
 }

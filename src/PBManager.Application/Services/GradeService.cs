@@ -81,8 +81,6 @@ namespace PBManager.Application.Services
                     grades = grades.Where(g => g.ExamId == examId).ToList();
                 }
 
-                Debug.WriteLine(grades.Count);
-
                 return grades;
             })!;
         }
@@ -220,6 +218,11 @@ namespace PBManager.Application.Services
                 cache.Set(cacheKey, rankedScores, GetDefaultCacheOptions());
             }
             return rankedScores;
+        }
+
+        public async Task<List<GradeRecord>> GetExamRecords(int examId)
+        {
+            return await repository.GetGradesForExamAsync(examId);
         }
 
         public async Task SaveGradesForExamAsync(int studentId, int examId, IEnumerable<GradeRecord> gradeRecords)

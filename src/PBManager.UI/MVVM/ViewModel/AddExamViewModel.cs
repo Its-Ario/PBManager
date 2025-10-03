@@ -5,7 +5,6 @@ using PBManager.Application.Interfaces;
 using PBManager.Core.Entities;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls.Ribbon;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
@@ -28,12 +27,36 @@ namespace PBManager.UI.MVVM.ViewModel
         [ObservableProperty]
         private Subject? _selectedSubject;
 
+        [ObservableProperty]
+        private bool _isEditMode;
+
+        private Exam? _existingExam;
+
         public AddExamViewModel(ISubjectService subjectService, IExamService examService)
         {
             _subjectService = subjectService;
             _examService = examService;
+        }
 
-            LoadAvailableSubjectsAsync();
+        public async Task InitializeAsync()
+        {
+            IsEditMode = false;
+            await LoadAvailableSubjectsAsync();
+        }
+
+        public async Task InitializeAsync(Exam exam)
+        {
+            IsEditMode = true;
+            _existingExam = exam;
+
+            await LoadAvailableSubjectsAsync();
+
+            Name = exam.Name;
+            MaxScore = exam.MaxScore.ToString();
+            SelectedDate = new PersianDate(exam.Date);
+
+            if (exam.Subjects != null && exam.Subjects.Count > 0)
+                SelectedSubject = AvailableSubjects.FirstOrDefault(s => s.Id == exam.Subjects.First().Id);
         }
 
         private async Task LoadAvailableSubjectsAsync()
@@ -55,20 +78,54 @@ namespace PBManager.UI.MVVM.ViewModel
                 return;
             }
 
-            if (!int.TryParse(MaxScore, out int MaxScoreInt)) {
+            if (!int.TryParse(MaxScore, out int maxScoreInt))
+            {
                 MessageBox.Show(".حداکثر نمره عددی وارد کنید", "خطا", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            await _examService.AddExamAsync(new Exam
+            try
             {
-                Name = Name,
-                Date = SelectedDate.ToDateTime(),
-                Subjects = new List<Subject> { SelectedSubject },
-                MaxScore = MaxScoreInt
-            });
+                if (IsEditMode && _existingExam != null)
+                {
+                    _existingExam.Name = Name;
+                    _existingExam.Date = SelectedDate.ToDateTime();
+                    _existingExam.MaxScore = maxScoreInt;
+                    _existingExam.Subjects = new List<Subject> { SelectedSubject };
 
-            MessageBox.Show($"آزمون {Name} در تاریخ {SelectedDate} ثبت شد.");
+                    await _examService.UpdateExamAsync(_existingExam);
+
+                    MessageBox.Show($"آزمون {Name} با موفقیت ویرایش شد.", "موفقیت", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    var newExam = new Exam
+                    {
+                        Name = Name,
+                        Date = SelectedDate.ToDateTime(),
+                        Subjects = new List<Subject> { SelectedSubject },
+                        MaxScore = maxScoreInt
+                    };
+
+                    await _examService.AddExamAsync(newExam);
+
+                    MessageBox.Show($"آزمون {Name} در تاریخ {SelectedDate} ثبت شد.", "موفقیت", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // reset form after add
+                    Name = null;
+                    MaxScore = "20";
+                    SelectedDate = PersianDate.Today;
+                    SelectedSubject = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = IsEditMode
+                    ? $"خطا در بروزرسانی آزمون: {ex.Message}"
+                    : $"خطا در ثبت آزمون: {ex.Message}";
+
+                MessageBox.Show(errorMessage, "خطا", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

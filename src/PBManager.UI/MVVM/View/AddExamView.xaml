@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PBManager.UI.MVVM.View"
         xmlns:persian="clr-namespace:Mohsen.PersianDateControls;assembly=Mohsen.PersianDateControls"
         mc:Ignorable="d"
-        Title="سامانه مدیریت آموزش | ساخت آزمون" Height="500" Width="450"
+        Title="سامانه مدیریت آموزش | ساخت آزمون" Height="280" Width="450"
         AllowsTransparency="True"
         Background="Transparent"
         WindowStyle="None">
@@ -21,11 +21,20 @@
                   Grid.Row="0"
                   MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
                   Background="Transparent">
-                <TextBlock Text="ساخت آزمون" 
-                           VerticalAlignment="Center"
+                <TextBlock VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Foreground="White"
                            FontSize="20">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="ساخت آزمون"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                    <Setter Property="Text" Value="ویرایش آزمون"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
                 </TextBlock>
 
                 <StackPanel Orientation="Horizontal" 
@@ -49,7 +58,6 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -104,20 +112,30 @@
                          Margin="10"
                          Style="{StaticResource ModernTextBox}"/>
 
-                <TextBlock Grid.Row="4" Grid.ColumnSpan="2"
+                <!--<TextBlock Grid.Row="4" Grid.ColumnSpan="2"
                            Text="انتخاب چند درس به زودی..."
                            FlowDirection="RightToLeft"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Foreground="{StaticResource PrimaryBrush}"/>
+                           Foreground="{StaticResource PrimaryBrush}"/>-->
             </Grid>
-            <Button Grid.Column="1" Grid.Row="2" Content="ثبت"
-                    Style="{StaticResource ModernButtonStyle}"
+            <Button Grid.Column="1" Grid.Row="2"
                     Background="{StaticResource SubmitGreenBrush}"
                     Command="{Binding SubmitCommand}"
                     Width="100"
                     Height="30"
-                    Margin="10"/>
+                    Margin="10">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+                        <Setter Property="Content" Value="ثبت"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                <Setter Property="Content" Value="بروزرسانی"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </Grid>
     </Border>
 </Window>
