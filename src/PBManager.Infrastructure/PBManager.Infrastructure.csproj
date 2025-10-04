@@ -26,4 +26,8 @@
     <ProjectReference Include="..\PBManager.Core\PBManager.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

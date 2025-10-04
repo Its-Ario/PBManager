@@ -11,8 +11,8 @@ using PBManager.Infrastructure.Data;
 namespace PBManager.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250925170111_AddExamTable")]
-    partial class AddExamTable
+    [Migration("20251004191719_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,6 +93,9 @@ namespace PBManager.Infrastructure.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("MaxScore")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
