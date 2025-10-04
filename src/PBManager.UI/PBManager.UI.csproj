@@ -8,12 +8,15 @@
     <UseWPF>true</UseWPF>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+	<SelfContained>true</SelfContained>
+	<PublishSingleFile>true</PublishSingleFile>
+	<DebugType>embedded</DebugType>
 	<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	<StartupObject>PBManager.App</StartupObject>
 	<ApplicationIcon>book.ico</ApplicationIcon>
 	<FileVersion>0.6-beta</FileVersion>
 	<InformationalVersion>0.6-beta</InformationalVersion>
-	  <AssemblyName>PBManager</AssemblyName>
+	 <AssemblyName>PBManager</AssemblyName>
 	<AssemblyTitle>سامانه مدیریت آموزش</AssemblyTitle>
   </PropertyGroup>
 
