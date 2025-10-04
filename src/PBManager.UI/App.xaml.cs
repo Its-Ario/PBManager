@@ -45,7 +45,6 @@ namespace PBManager
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
-                await dbContext.Database.EnsureCreatedAsync();
                 await dbContext.Database.MigrateAsync();
             }
 
