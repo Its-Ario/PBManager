@@ -4,6 +4,5 @@
     {
         Task ExportDatabaseAsync(string destinationPath);
         Task<bool> ImportDatabaseAsync(string sourcePath);
-        bool IsPendingImportOnRestart();
     }
 }

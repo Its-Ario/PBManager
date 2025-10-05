@@ -121,7 +121,7 @@ namespace PBManager.UI.MVVM.ViewModel
             try
             {
                 var success = await _porter.ImportDatabaseAsync(filePath);
-                if (success && _porter.IsPendingImportOnRestart())
+                if (success)
                 {
                     var result = MessageBox.Show(
                         "Import successful! The application needs to restart to apply changes.\n\nRestart now?",

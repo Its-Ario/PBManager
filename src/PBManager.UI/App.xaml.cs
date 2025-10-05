@@ -33,7 +33,6 @@ namespace PBManager
         protected override async void OnStartup(StartupEventArgs e)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(DatabasePath) ?? string.Empty);
-            DatabasePorter.HandlePendingImportOnStartup(DatabasePath);
 
             base.OnStartup(e);
 
