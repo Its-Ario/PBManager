@@ -40,16 +40,26 @@ namespace PBManager
             var services = new ServiceCollection();
             ConfigureServices(services);
             ServiceProvider = services.BuildServiceProvider();
+            bool firstStartup;
 
             using (var scope = ServiceProvider.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
+                firstStartup = !await dbContext.Database.CanConnectAsync();
                 await dbContext.Database.MigrateAsync();
             }
 
-            var loginWindow = ServiceProvider.GetRequiredService<LoginView>();
-            loginWindow.Show();
+            if (firstStartup)
+            {
+                var startupWindow = ServiceProvider.GetRequiredService<StartupView>();
+                startupWindow.Show();
+            }
+            else
+            {
+                var loginWindow = ServiceProvider.GetRequiredService<LoginView>();
+                loginWindow.Show();
+            }
 
             LiveCharts.Configure(config =>
                 config.AddDarkTheme()
@@ -104,6 +114,7 @@ namespace PBManager
             services.AddTransient<ExamManagementViewModel>();
             services.AddTransient<AddExamViewModel>();
             services.AddTransient<ExamOverviewViewModel>();
+            services.AddTransient<StartupViewModel>();
 
             services.AddTransient<MainWindow>();
             services.AddTransient<AddStudyRecordView>();
@@ -112,6 +123,7 @@ namespace PBManager
             services.AddTransient<AddGradeRecordView>();
             services.AddTransient<LoginView>();
             services.AddTransient<AddExamView>();
+            services.AddTransient<StartupView>();
 
             services.AddTransient<XlsxStudentParser>();
             services.AddTransient<CsvStudentParser>();

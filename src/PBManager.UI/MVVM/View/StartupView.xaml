@@ -1,0 +1,79 @@
+﻿<Window x:Class="PBManager.UI.MVVM.View.StartupView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:helpers="clr-namespace:PBManager.UI.Helpers"
+        mc:Ignorable="d"
+        Title="Welcome to PBManager"
+        Height="500" Width="600"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Grid>
+        <Border Background="{StaticResource BgPrimaryBrush}" CornerRadius="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid x:Name="TitleBar" 
+                      MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
+                      Background="Transparent">
+
+                    <TextBlock Text="سامانه مدیریت آموزش حلی ۳"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Foreground="White"
+                               FontSize="20"
+                               Grid.Column="1"/>
+                    <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Margin="0,5,5,0"
+                            Grid.Column="1">
+                            <Button x:Name="MinimizeButton" 
+                                    Click="MinimizeButton_Click" 
+                                    Content="—" 
+                                    Style="{StaticResource WindowButtonStyle}"/>
+                            <Button x:Name="CloseButton" 
+                                    Click="CloseButton_Click" 
+                                    Content="✕" 
+                                    Style="{StaticResource WindowButtonStyle}"/>
+                        </StackPanel>
+                </Grid>
+
+                <StackPanel Grid.Row="1" Margin="30" HorizontalAlignment="Center">
+                    <TextBlock Text="!خوش آمدید" 
+                               FontSize="26" FontWeight="Bold" 
+                               Foreground="{StaticResource PrimaryBrush}" 
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="11" VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">
+
+                    <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,10"
+         Style="{StaticResource ModernTextBox}"
+         Tag="نام کاربری"
+         Height="30"/>
+                    <PasswordBox x:Name="PasswordBox" Margin="0,5" helpers:PasswordBoxPlaceholder.PlaceholderText="رمز عبور"
+             Padding="10,0,0,0"
+             PasswordChanged="PasswordBox_PasswordChanged"
+             Style="{StaticResource ModernPasswordBox}"
+             Height="30"/>
+
+                    <Button Content="شروع"
+                            Command="{Binding StartAppCommand}" 
+                            Background="{StaticResource SubmitGreenBrush}" 
+                            Foreground="White" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Margin="0,10"
+                            Height="30"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
