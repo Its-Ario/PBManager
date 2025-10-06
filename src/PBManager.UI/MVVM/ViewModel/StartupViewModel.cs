@@ -19,14 +19,14 @@ namespace PBManager.UI.MVVM.ViewModel
         {
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
-                MessageBox.Show("Please fill out the form");
+                MessageBox.Show("لطفا فرم را تکمیل کنید.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             bool success = await _authService.RegisterAsync(Username, Password);
 
             if(!success)
             {
-                MessageBox.Show("Error");
+                MessageBox.Show("خطا", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 

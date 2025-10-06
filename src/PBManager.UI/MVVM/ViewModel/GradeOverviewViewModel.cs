@@ -116,7 +116,15 @@ namespace PBManager.UI.MVVM.ViewModel
         [RelayCommand]
         private async Task ViewHistory()
         {
-            MessageBox.Show("به زودی");
+            if (Student == null) return;
+
+            var historyView = _serviceProvider.GetRequiredService<GradeHistoryView>();
+            if (historyView.DataContext is GradeHistoryViewModel viewModel)
+            {
+                await viewModel.InitializeAsync(Student);
+            }
+
+            historyView.Show();
         }
 
         [RelayCommand]

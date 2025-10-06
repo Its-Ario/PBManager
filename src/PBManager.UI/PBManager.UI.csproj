@@ -18,6 +18,7 @@
 	<InformationalVersion>0.6.3-beta</InformationalVersion>
 	 <AssemblyName>PBManager</AssemblyName>
 	<AssemblyTitle>سامانه مدیریت آموزش</AssemblyTitle>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

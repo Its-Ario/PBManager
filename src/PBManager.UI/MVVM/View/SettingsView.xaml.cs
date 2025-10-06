@@ -62,7 +62,7 @@ namespace PBManager.UI.MVVM.View
             if (dialog.ShowDialog() == true)
             {
                 string filePath = dialog.FileName;
-                if (filePath == null) MessageBox.Show("Invalid Path");
+                if (filePath == null) MessageBox.Show("فایل نامعتبر");
                 else await ViewModel.ImportDatabaseAsync(filePath);
             }
         }

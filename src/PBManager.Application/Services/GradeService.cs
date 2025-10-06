@@ -187,7 +187,7 @@ namespace PBManager.Application.Services
                         ExamId = group.Key.Id,
                         ExamName = group.Key.Name,
                         ExamDate = group.Key.Date,
-                        AverageScore = group.Average(g => g.Score)
+                        AverageScore = group.Average(g => g.NormalizedScore)
                     })
                     .OrderByDescending(e => e.ExamDate)];
 

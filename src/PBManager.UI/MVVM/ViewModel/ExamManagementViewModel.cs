@@ -84,7 +84,7 @@ namespace PBManager.UI.MVVM.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading data: {ex.Message}");
+                MessageBox.Show($"خطا در بارگذاری داده ها: {ex.Message}");
             }
         }
 

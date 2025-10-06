@@ -22,7 +22,31 @@ namespace PBManager.UI.MVVM.ViewModel
 
         [ObservableProperty]
         private bool _isEditMode;
+        public async Task InitializeAsync(Student student, int examId)
+        {
+            _student = student;
+            await LoadAvailableExamsAsync();
 
+            SelectedExam = AvailableExams.FirstOrDefault(e => e.Id == examId);
+        }
+        public async Task InitializeAsync(Student student, List<GradeRecord> existingGrades)
+        {
+            _student = student;
+            IsEditMode = true;
+
+            await LoadAvailableExamsAsync();
+
+            if (existingGrades.Count > 0)
+            {
+                var examId = existingGrades[0].ExamId;
+                SelectedExam = AvailableExams.FirstOrDefault(e => e.Id == examId);
+
+                if (SelectedExam != null)
+                {
+                    await LoadExistingGradesAsync(SelectedExam, existingGrades);
+                }
+            }
+        }
         public async Task InitializeAsync(Student student)
         {
             _student = student;
@@ -46,7 +70,11 @@ namespace PBManager.UI.MVVM.ViewModel
                 GradeEntries.Clear();
                 return;
             }
-            _ = LoadGradesForSelectedExamAsync(value);
+
+            if (!IsEditMode)
+            {
+                _ = LoadGradesForSelectedExamAsync(value);
+            }
         }
 
         private async Task LoadGradesForSelectedExamAsync(Exam exam)
@@ -58,15 +86,19 @@ namespace PBManager.UI.MVVM.ViewModel
             {
                 var existingGrades = await _gradeService.GetGradesForStudentAsync(_student.Id, exam.Id);
 
-                IsEditMode = existingGrades.Count != 0;
-
-                if (exam.Subjects != null)
+                if (existingGrades.Count != 0)
                 {
-                    foreach (var subject in exam.Subjects)
+                    IsEditMode = true;
+                    await LoadExistingGradesAsync(exam, existingGrades);
+                }
+                else
+                {
+                    if (exam.Subjects != null)
                     {
-                        var existingGrade = existingGrades.FirstOrDefault(g => g.SubjectId == subject.Id);
-                        string score = existingGrade?.Score.ToString() ?? string.Empty;
-                        GradeEntries.Add(new GradeEntry(subject, score));
+                        foreach (var subject in exam.Subjects)
+                        {
+                            GradeEntries.Add(new GradeEntry(subject, string.Empty));
+                        }
                     }
                 }
             }
@@ -77,26 +109,40 @@ namespace PBManager.UI.MVVM.ViewModel
             }
         }
 
+        private async Task LoadExistingGradesAsync(Exam exam, List<GradeRecord> existingGrades)
+        {
+            GradeEntries.Clear();
+
+            if (exam.Subjects != null)
+            {
+                foreach (var subject in exam.Subjects)
+                {
+                    var existingGrade = existingGrades.FirstOrDefault(g => g.SubjectId == subject.Id);
+
+                    GradeEntries.Add(new GradeEntry(subject, existingGrade.Score.ToString()));
+                }
+            }
+
+            await Task.CompletedTask;
+        }
+
         [RelayCommand]
         private async Task SaveGradesAsync()
         {
             if (SelectedExam == null || _student == null) return;
 
             var gradeRecordsToSave = new List<GradeRecord>();
-            double maxScore = SelectedExam.MaxScore;
-            
+
             foreach (var entry in GradeEntries)
             {
                 if (double.TryParse(entry.Score, out double score))
                 {
-                    double normalizedScore = Math.Round((score / maxScore) * 100, 2);
-
                     gradeRecordsToSave.Add(new GradeRecord
                     {
                         StudentId = _student.Id,
                         SubjectId = entry.Subject.Id,
                         ExamId = SelectedExam.Id,
-                        Score = normalizedScore,
+                        Score = score,
                         Date = SelectedExam.Date
                     });
                 }

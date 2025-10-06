@@ -127,7 +127,7 @@ namespace PBManager.UI.MVVM.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"خطا در بارگذاری اطلاعات: {ex.Message}", "خطا",
+                MessageBox.Show($"خطا در بارگذاری داده ها: {ex.Message}", "خطا",
                                MessageBoxButton.OK, MessageBoxImage.Error);
                 Records = [];
                 UpdateStatistics();
@@ -178,7 +178,7 @@ namespace PBManager.UI.MVVM.ViewModel
             if (Records == null || Records.Count == 0)
             {
                 FilteredRecords = [];
-                EmptyStateMessage = "هیچ داده‌ای برای نمایش وجود ندارد";
+                EmptyStateMessage = "هیچ داده ای برای نمایش وجود ندارد";
                 IsEmptyState = true;
                 return;
             }
@@ -197,7 +197,7 @@ namespace PBManager.UI.MVVM.ViewModel
             }
             else
             {
-                EmptyStateMessage = "هیچ داده‌ای برای نمایش وجود ندارد";
+                EmptyStateMessage = "هیچ داده ای برای نمایش وجود ندارد";
             }
 
             FilteredRecords = new ObservableCollection<WeeklyStudyData>(filtered);
@@ -239,7 +239,7 @@ namespace PBManager.UI.MVVM.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"خطا در بارگذاری اطلاعات: {ex.Message}", "خطا",
+                MessageBox.Show($"خطا در بارگذاری داده ها: {ex.Message}", "خطا",
                                MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

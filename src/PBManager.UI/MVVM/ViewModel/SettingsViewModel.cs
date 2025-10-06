@@ -73,11 +73,11 @@ namespace PBManager.UI.MVVM.ViewModel
                 await using var fileStream = File.OpenRead(filePath);
                 var result = await _studentService.ImportStudentsAsync(fileStream, parser);
                 await LoadData();
-                MessageBox.Show($"{result.ImportedCount} students imported.\n{result.SkippedCount} students skipped.");
+                MessageBox.Show($"{result.ImportedCount} دانش آموز وارد شد.\n{result.SkippedCount} دانش آموز نامعتبر.");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}");
+                MessageBox.Show($"خطا: {ex.Message}");
             }
         }
 
@@ -91,11 +91,11 @@ namespace PBManager.UI.MVVM.ViewModel
             {
                 await using var stream = File.Create(filePath);
                 await _studentService.ExportAllStudentsAsync(stream, exporter);
-                MessageBox.Show("Export complete!");
+                MessageBox.Show("خروجی با موفقیت انجام شد!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Export failed: {ex.Message}");
+                MessageBox.Show($"خطا: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -106,11 +106,11 @@ namespace PBManager.UI.MVVM.ViewModel
             try
             {
                 await _porter.ExportDatabaseAsync(filePath);
-                MessageBox.Show("Export successful!");
+                MessageBox.Show("خروجی با موفقیت انجام شد!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Export failed: {ex.Message}");
+                MessageBox.Show($"خطا: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -124,9 +124,9 @@ namespace PBManager.UI.MVVM.ViewModel
                 if (success)
                 {
                     var result = MessageBox.Show(
-                        "Import successful! The application needs to restart to apply changes.\n\nRestart now?",
+                        "عملیات موفقیت آمیز بود! برای اعمال تغییرات برنامه باید ریستارت شود.\n\nالان ریستارت شود؟",
                         "Restart Required",
-                        MessageBoxButton.YesNo);
+                        MessageBoxButton.YesNo, MessageBoxImage.Information);
 
                     if (result == MessageBoxResult.Yes)
                     {
@@ -137,7 +137,7 @@ namespace PBManager.UI.MVVM.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Import failed: {ex.Message}");
+                MessageBox.Show($"خطا: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -145,7 +145,7 @@ namespace PBManager.UI.MVVM.ViewModel
         private async Task WipeDatabaseAsync()
         {
             var result = MessageBox.Show(
-                "ARE YOU SURE?\n\nThis will create a backup and then permanently delete all data. The application will close.",
+                "آیا مطمئن هستید؟\n\nاین عملیات تمام داده های برنامه را حذف میکند. برنامه بسته خواهد شد.",
                 "Confirm Data Wipe",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -170,7 +170,7 @@ namespace PBManager.UI.MVVM.ViewModel
                 _dbManagementService.WipeDatabase();
 
                 MessageBox.Show(
-                    $"A backup was saved to:\n{backupPath}\n\nThe application will now close. Please restart it to begin with a fresh database.",
+                    $"یک بکاپ در:\n{backupPath} ذخیره شد\n\nبرنامه هم اکنون بسته میشود.",
                     "Wipe Complete",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -179,7 +179,7 @@ namespace PBManager.UI.MVVM.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"خطا: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 

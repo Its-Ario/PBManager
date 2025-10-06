@@ -56,7 +56,7 @@ public partial class ManagementViewModel<T>(IManagementService<T> service) : Obs
     private async Task DeleteItemAsync()
     {
         if (SelectedItem == null) return;
-        if (MessageBox.Show($"Are you sure you want to delete '{SelectedItem.Name}'?", "Confirm Delete",
+        if (MessageBox.Show($"آیا از حذف '{SelectedItem.Name}' مطمئن هستید؟", "Confirm Delete",
             MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
         {
             await _service.DeleteAsync(SelectedItem.Id);

@@ -13,10 +13,10 @@ using PBManager.UI.MVVM.View;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    public partial class StudyOverviewViewModel : ObservableObject
+    public partial class StudyOverviewViewModel(IStudyRecordService studyRecordService, IServiceProvider serviceProvider) : ObservableObject
     {
-        private readonly IStudyRecordService _studyRecordService;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IStudyRecordService _studyRecordService = studyRecordService;
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
         
         public Margin DrawMargin { get; set; } = new(50, 0, 50, 50);
 
@@ -32,12 +32,6 @@ namespace PBManager.UI.MVVM.ViewModel
         private int _classRank;
         [ObservableProperty]
         private int _globalRank;
-
-        public StudyOverviewViewModel(IStudyRecordService studyRecordService, IServiceProvider serviceProvider)
-        {
-            _studyRecordService = studyRecordService;
-            _serviceProvider = serviceProvider;
-        }
 
         public async Task InitializeAsync(Student student)
         {

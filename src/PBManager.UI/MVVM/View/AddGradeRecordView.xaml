@@ -95,7 +95,7 @@
 
             <Button Grid.Row="3"
                     Background="{StaticResource SubmitGreenBrush}"
-                    Command="{Binding SubmitCommand}"
+                    Command="{Binding SaveGradesCommand}"
                     Width="100"
                     Height="30"
                     Margin="10">
