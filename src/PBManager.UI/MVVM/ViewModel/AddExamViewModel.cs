@@ -8,10 +8,10 @@ using System.Windows;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    public partial class AddExamViewModel : ObservableObject
+    public partial class AddExamViewModel(ISubjectService subjectService, IExamService examService) : ObservableObject
     {
-        private readonly ISubjectService _subjectService;
-        private readonly IExamService _examService;
+        private readonly ISubjectService _subjectService = subjectService;
+        private readonly IExamService _examService = examService;
 
         public ObservableCollection<Subject> AvailableSubjects { get; } = [];
 
@@ -31,12 +31,6 @@ namespace PBManager.UI.MVVM.ViewModel
         private bool _isEditMode;
 
         private Exam? _existingExam;
-
-        public AddExamViewModel(ISubjectService subjectService, IExamService examService)
-        {
-            _subjectService = subjectService;
-            _examService = examService;
-        }
 
         public async Task InitializeAsync()
         {
@@ -91,7 +85,7 @@ namespace PBManager.UI.MVVM.ViewModel
                     _existingExam.Name = Name;
                     _existingExam.Date = SelectedDate.ToDateTime();
                     _existingExam.MaxScore = maxScoreInt;
-                    _existingExam.Subjects = new List<Subject> { SelectedSubject };
+                    _existingExam.Subjects = [SelectedSubject];
 
                     await _examService.UpdateExamAsync(_existingExam);
 
@@ -103,7 +97,7 @@ namespace PBManager.UI.MVVM.ViewModel
                     {
                         Name = Name,
                         Date = SelectedDate.ToDateTime(),
-                        Subjects = new List<Subject> { SelectedSubject },
+                        Subjects = [SelectedSubject],
                         MaxScore = maxScoreInt
                     };
 
@@ -111,7 +105,6 @@ namespace PBManager.UI.MVVM.ViewModel
 
                     MessageBox.Show($"آزمون {Name} در تاریخ {SelectedDate} ثبت شد.", "موفقیت", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // reset form after add
                     Name = null;
                     MaxScore = "20";
                     SelectedDate = PersianDate.Today;

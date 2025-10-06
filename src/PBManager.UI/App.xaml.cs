@@ -45,7 +45,7 @@ namespace PBManager
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
-                firstStartup = !await dbContext.Database.CanConnectAsync();
+                firstStartup = !await dbContext.Database.CanConnectAsync() || !await dbContext.Users.AnyAsync();
                 await dbContext.Database.MigrateAsync();
             }
 

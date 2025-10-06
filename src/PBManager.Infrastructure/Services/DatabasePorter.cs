@@ -9,18 +9,13 @@ using System.Text.Json;
 
 namespace PBManager.Infrastructure.Services;
 
-public class DatabasePorter : IDatabasePorter
+public class DatabasePorter(DatabaseContext dbContext) : IDatabasePorter
 {
     private const string APP_SECRET_KEY = "PBManager_fhkV8).iL.f=#\"~wHVB3FQ6+";
     private const string APP_SALT = "PBManager_Salt_v1";
     private const int KEY_DERIVATION_ITERATIONS = 100000;
 
-    private readonly DatabaseContext _db;
-
-    public DatabasePorter(DatabaseContext dbContext)
-    {
-        _db = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-    }
+    private readonly DatabaseContext _db = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
     public async Task ExportDatabaseAsync(string destinationPath)
     {
@@ -142,7 +137,7 @@ public class DatabasePorter : IDatabasePorter
         using var output = new MemoryStream();
         using (var gzip = new GZipStream(output, CompressionMode.Compress, true))
         {
-            await gzip.WriteAsync(data, 0, data.Length);
+            await gzip.WriteAsync(data);
         }
         return output.ToArray();
     }

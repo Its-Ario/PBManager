@@ -69,7 +69,7 @@ namespace PBManager.UI.MVVM.ViewModel
 
             if (examScores == null || examScores.Count == 0) return;
 
-            examScores = examScores.OrderBy(e => e.ExamDate).ToList();
+            examScores = [.. examScores.OrderBy(e => e.ExamDate)];
 
             var values = new List<double>();
             var labels = new List<string>();

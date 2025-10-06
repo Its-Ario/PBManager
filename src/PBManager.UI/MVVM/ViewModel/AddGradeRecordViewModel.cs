@@ -39,14 +39,14 @@ namespace PBManager.UI.MVVM.ViewModel
             }
         }
 
-        partial void OnSelectedExamChanged(Exam? exam)
+        partial void OnSelectedExamChanged(Exam? value)
         {
-            if (exam == null)
+            if (value == null)
             {
                 GradeEntries.Clear();
                 return;
             }
-            _ = LoadGradesForSelectedExamAsync(exam);
+            _ = LoadGradesForSelectedExamAsync(value);
         }
 
         private async Task LoadGradesForSelectedExamAsync(Exam exam)
@@ -72,7 +72,7 @@ namespace PBManager.UI.MVVM.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"خطا در بارگذاری داده‌ها: {ex.Message}",
+                MessageBox.Show($"خطا در بارگذاری داده ها: {ex.Message}",
                                "خطا", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

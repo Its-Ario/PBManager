@@ -1,4 +1,5 @@
 ﻿using PBManager.UI.MVVM.ViewModel;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,6 +15,11 @@ namespace PBManager.UI.MVVM.View
         {
             DataContext = vm;
             InitializeComponent();
+
+            versionLabel.Text = Assembly
+                        .GetExecutingAssembly()
+                        .GetCustomAttribute<AssemblyFileVersionAttribute>()?
+                        .Version ?? "";
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

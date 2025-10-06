@@ -4,8 +4,9 @@ using PBManager.Core.Entities;
 
 namespace PBManager.UI.MVVM.ViewModel;
 
-[ObservableObject]
-public partial class StudentDetailViewModel
+public partial class StudentDetailViewModel(
+    StudyOverviewViewModel studyOverviewViewModel,
+    GradeOverviewViewModel gradeOverviewViewModel) : ObservableObject
 {
     [ObservableProperty]
     private Student _student;
@@ -13,16 +14,8 @@ public partial class StudentDetailViewModel
     [ObservableProperty]
     private object? _currentSubViewModel;
 
-    public StudyOverviewViewModel StudyOverviewVM { get; }
-    public GradeOverviewViewModel GradeOverviewVM { get; }
-
-    public StudentDetailViewModel(
-        StudyOverviewViewModel studyOverviewViewModel,
-        GradeOverviewViewModel gradeOverviewViewModel)
-    {
-        StudyOverviewVM = studyOverviewViewModel;
-        GradeOverviewVM = gradeOverviewViewModel;
-    }
+    public StudyOverviewViewModel StudyOverviewVM { get; } = studyOverviewViewModel;
+    public GradeOverviewViewModel GradeOverviewVM { get; } = gradeOverviewViewModel;
 
     public async Task InitializeAsync(Student student)
     {

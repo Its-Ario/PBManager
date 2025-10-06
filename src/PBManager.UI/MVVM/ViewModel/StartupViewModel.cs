@@ -6,19 +6,14 @@ using System.Windows;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    public partial class StartupViewModel : ObservableObject
+    public partial class StartupViewModel(IServiceProvider serviceProvider, IAuthenticationService authService) : ObservableObject
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IAuthenticationService _authService;
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
+        private readonly IAuthenticationService _authService = authService;
 
         [ObservableProperty] private string? _username;
         [ObservableProperty] private string? _password;
 
-        public StartupViewModel(IServiceProvider serviceProvider, IAuthenticationService authService)
-        {
-            _serviceProvider = serviceProvider;
-            _authService = authService;
-        }
         [RelayCommand]
         private async Task StartAppAsync()
         {
