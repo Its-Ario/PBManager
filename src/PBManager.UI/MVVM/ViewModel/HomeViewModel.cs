@@ -7,6 +7,7 @@ using SkiaSharp;
 using LiveChartsCore.Measure;
 using PBManager.Core.Entities;
 using PBManager.Application.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
@@ -14,13 +15,20 @@ namespace PBManager.UI.MVVM.ViewModel
     {
         private readonly IStudyRecordService _studyRecordService;
         private readonly ISubjectService _subjectService;
-        public ISeries[] StudyOverTimeSeries { get; set; } = [];
-        public ICartesianAxis[] StudyOverTimeXAxes { get; set; } = [];
-        public ICartesianAxis[] StudyOverTimeYAxes { get; set; } = [];
 
-        public ISeries[] StudyPerSubjectSeries { get; set; } = [];
-        public ICartesianAxis[] StudyPerSubjectXAxes { get; set; } = [];
-        public ICartesianAxis[] StudyPerSubjectYAxes { get; set; } = [];
+        [ObservableProperty]
+        private ISeries[] _studyOverTimeSeries;
+        [ObservableProperty]
+        private ICartesianAxis[] _studyOverTimeXAxes;
+        [ObservableProperty]
+        private ICartesianAxis[] _studyOverTimeYAxes;
+
+        [ObservableProperty]
+        private ISeries[] _studyPerSubjectSeries;
+        [ObservableProperty]
+        private ICartesianAxis[] _studyPerSubjectXAxes;
+        [ObservableProperty]
+        private ICartesianAxis[] _studyPerSubjectYAxes;
         public Margin DrawMargin { get; set; } = new(50,0,50,50);
 
         [ObservableProperty]
@@ -53,8 +61,8 @@ namespace PBManager.UI.MVVM.ViewModel
         {
             var weeklyData = await _studyRecordService.GetWeeklyStudyDataAsync(weeks: 8);
 
-            var values = new List<double>();
-            var labels = new List<string>();
+            var values = new ObservableCollection<double>();
+            var labels = new ObservableCollection<string>();
 
             int i = 1;
             foreach (var (_, _, minutes) in weeklyData)

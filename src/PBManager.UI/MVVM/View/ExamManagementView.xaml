@@ -11,11 +11,13 @@
         <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converter:DateConverter x:Key="DateConverter"/>
     </UserControl.Resources>
+
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="0.8*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+
         <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="15" Margin="0,0,10,0" Grid.Column="0">
             <StackPanel>
                 <Grid Margin="0,0,0,10">
@@ -36,13 +38,12 @@
                     <Button Content="+"
                             Width="30"
                             Height="30"
-                            Margin="0,0,0,0"
                             Style="{StaticResource ModernButtonStyle}"
                             Background="{StaticResource SubmitGreenBrush}"
                             Command="{Binding AddNewExamCommand}"
                             Grid.Column="1"/>
                 </Grid>
-                
+
                 <DataGrid x:Name="dataGrid"
                           ItemsSource="{Binding FilteredExams}"
                           SelectedItem="{Binding SelectedExam}"
@@ -54,16 +55,19 @@
                           FlowDirection="RightToLeft"
                           IsReadOnly="True" 
                           AutoGenerateColumns="False"
-                          CanUserSortColumns="True">
+                          CanUserSortColumns="True"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          Sorting="DataGrid_Sorting">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="نام" 
-                            Binding="{Binding Name}" 
-                            Width="2*"/>
-
+                                            Binding="{Binding Name}" 
+                                            SortMemberPath="Name"
+                                            Width="2*"/>
                         <DataGridTextColumn Header="تاریخ" 
-                            Binding="{Binding Date, Converter={StaticResource DateConverter}}" 
-                            Width="*"/>
-
+                                            Binding="{Binding Date, Converter={StaticResource DateConverter}}" 
+                                            SortMemberPath="Date"
+                                            Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
@@ -83,7 +87,7 @@
                     Height="30" Width="100"
                     Margin="0,0,0,20"
                     Command="{Binding AddNewExamCommand}"/>
-        <Grid.Style>
+            <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Visibility" Value="Collapsed"/>
                     <Style.Triggers>

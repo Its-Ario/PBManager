@@ -3,24 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PBManager.UI.MVVM.View"
-             xmlns:view="clr-namespace:PBManager.UI.MVVM.View"
-             xmlns:model="clr-namespace:PBManager.Core.Entities;assembly=PBManager.Core"
              xmlns:vm="clr-namespace:PBManager.UI.MVVM.ViewModel"
              mc:Ignorable="d"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="0.8*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="15" Margin="0,0,10,0" Grid.Column="0">
+
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="15" Margin="0,0,10,0">
             <StackPanel>
                 <TextBox x:Name="SearchBox"
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                          Tag="جستجو"
-                         Margin="40 10"
+                         Margin="0,0,0,10"
                          Style="{StaticResource ModernTextBox}"
                          VerticalContentAlignment="Center"
                          FlowDirection="RightToLeft"/>
@@ -31,26 +28,38 @@
                           CellStyle="{StaticResource ModernDataGridCell}"
                           ColumnHeaderStyle="{StaticResource ModernDataGridColumnHeader}"
                           RowStyle="{StaticResource ModernDataGridRow}"
-                          MaxHeight="350"
+                          MaxHeight="400"
                           FlowDirection="RightToLeft"
-                          IsReadOnly="True" 
                           AutoGenerateColumns="False"
-                          CanUserSortColumns="True">
+                          CanUserSortColumns="True"
+                          Sorting="DataGrid_Sorting"
+                          IsReadOnly="True"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow">
+
                     <DataGrid.Columns>
-
-                        <DataGridTextColumn Header="نام" 
-                            Binding="{Binding FullName}" 
-                            Width="2*"/>
-
-                        <DataGridTextColumn Header="کلاس" 
-                            Binding="{Binding Class.Name}" 
-                            Width="*"/>
-
+                        <DataGridTextColumn Header="نام" Binding="{Binding FirstName}" SortMemberPath="FirstName" Width="*"/>
+                        <DataGridTextColumn Header="نام خانوادگی" Binding="{Binding LastName}" SortMemberPath="LastName" Width="*"/>
+                        <DataGridTextColumn Header="کلاس" Binding="{Binding Class.Name}" SortMemberPath="Class.Name" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
         </Border>
-        
+
+        <Border Background="{StaticResource BgSecondaryBrush}" CornerRadius="8" Padding="15" 
+                Margin="10,0,0,0" Grid.Column="1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedItem, ElementName=dataGrid}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <ContentControl Content="{Binding DetailVM}" />
+        </Border>
+
         <TextBlock Text="یک دانش آموز را انتخاب کنید."
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using PBManager.UI.MVVM.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,5 +26,22 @@ namespace PBManager.UI.MVVM.View
         {
             InitializeComponent();
         }
+
+        private void DataGrid_Sorting(object sender, DataGridSortingEventArgs e)
+        {
+            e.Handled = true;
+
+            var direction = e.Column.SortDirection != ListSortDirection.Ascending
+                ? ListSortDirection.Ascending
+                : ListSortDirection.Descending;
+
+            if (DataContext is StudentManagementViewModel vm)
+            {
+                vm.SortBy(e.Column.SortMemberPath, direction);
+            }
+
+            e.Column.SortDirection = direction;
+        }
+
     }
 }

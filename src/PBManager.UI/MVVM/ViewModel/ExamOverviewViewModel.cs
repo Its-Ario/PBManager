@@ -9,7 +9,6 @@ using PBManager.UI.MVVM.View;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
-using PBManager.Application.DTOs;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
