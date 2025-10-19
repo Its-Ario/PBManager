@@ -10,8 +10,5 @@
 
         public int ClassId { get; set; }
         public Class Class { get; set; }
-
-        public ICollection<StudyRecord> StudyRecords { get; set; }
-        public ICollection<GradeRecord> GradeRecords { get; set; }
     }
 }

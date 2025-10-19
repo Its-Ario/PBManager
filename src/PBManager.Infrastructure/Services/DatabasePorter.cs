@@ -25,7 +25,6 @@ public class DatabasePorter(DatabaseContext dbContext) : IDatabasePorter
             Exams = await _db.Exams.AsNoTracking().ToListAsync(),
             GradeRecords = await _db.GradeRecords.AsNoTracking().ToListAsync(),
             StudyRecords = await _db.StudyRecords.AsNoTracking().ToListAsync(),
-            AuditLogs = await _db.AuditLogs.AsNoTracking().ToListAsync(),
             Classes = await _db.Classes.AsNoTracking().ToListAsync(),
             Subjects = await _db.Subjects.AsNoTracking().ToListAsync(),
         };
@@ -41,6 +40,8 @@ public class DatabasePorter(DatabaseContext dbContext) : IDatabasePorter
     {
         try
         {
+            _db.ChangeTracker.Clear();
+
             var fileBytes = await File.ReadAllBytesAsync(sourcePath);
             var compressedBytes = Decrypt(fileBytes);
             var jsonBytes = await DecompressAsync(compressedBytes);
@@ -50,44 +51,38 @@ public class DatabasePorter(DatabaseContext dbContext) : IDatabasePorter
 
             using var transaction = await _db.Database.BeginTransactionAsync();
 
+            await _db.Database.ExecuteSqlRawAsync("DELETE FROM GradeRecords");
+            await _db.Database.ExecuteSqlRawAsync("DELETE FROM StudyRecords");
+            await _db.Database.ExecuteSqlRawAsync("DELETE FROM Exams");
+            await _db.Database.ExecuteSqlRawAsync("DELETE FROM Students");
+            await _db.Database.ExecuteSqlRawAsync("DELETE FROM Subjects");
+            await _db.Database.ExecuteSqlRawAsync("DELETE FROM Classes");
+
             _db.ChangeTracker.AutoDetectChangesEnabled = false;
-            try
-            {
-                _db.Students.RemoveRange(_db.Students);
-                await _db.Students.AddRangeAsync(importData.Students);
 
-                _db.Exams.RemoveRange(_db.Exams);
-                await _db.Exams.AddRangeAsync(importData.Exams);
+            await _db.Classes.AddRangeAsync(importData.Classes);
+            await _db.Subjects.AddRangeAsync(importData.Subjects);
+            await _db.SaveChangesAsync();
 
-                _db.GradeRecords.RemoveRange(_db.GradeRecords);
-                await _db.GradeRecords.AddRangeAsync(importData.GradeRecords);
+            await _db.Students.AddRangeAsync(importData.Students);
+            await _db.Exams.AddRangeAsync(importData.Exams);
+            await _db.SaveChangesAsync();
 
-                _db.Classes.RemoveRange(_db.Classes);
-                await _db.Classes.AddRangeAsync(importData.Classes);
+            await _db.GradeRecords.AddRangeAsync(importData.GradeRecords);
+            await _db.StudyRecords.AddRangeAsync(importData.StudyRecords);
+            await _db.SaveChangesAsync();
 
-                _db.StudyRecords.RemoveRange(_db.StudyRecords);
-                await _db.StudyRecords.AddRangeAsync(importData.StudyRecords);
-
-                _db.Subjects.RemoveRange(_db.Subjects);
-                await _db.Subjects.AddRangeAsync(importData.Subjects);
-
-                _db.AuditLogs.RemoveRange(_db.AuditLogs);
-                await _db.AuditLogs.AddRangeAsync(importData.AuditLogs);
-
-                await _db.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            finally
-            {
-                _db.ChangeTracker.AutoDetectChangesEnabled = true;
-            }
-
+            await transaction.CommitAsync();
             return true;
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Import failed: {ex.Message}");
+            Debug.WriteLine($"Import failed: {ex}");
             return false;
+        }
+        finally
+        {
+            _db.ChangeTracker.AutoDetectChangesEnabled = true;
         }
     }
 
