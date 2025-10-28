@@ -42,6 +42,12 @@ namespace PBManager.UI.MVVM.ViewModel
             if (exam == null) return;
             Exam = exam;
             Participants = await _examService.GetParticipantCountAsync(exam.Id);
+
+            if (exam.Subjects.Count == 0)
+            {
+                MessageBox.Show("خطا در بارگذاری آزمون", "خطا", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             Subject = exam.Subjects.First();
 
             var grades = await _gradeService.GetExamRecords(exam.Id);
