@@ -115,6 +115,7 @@ namespace PBManager
             services.AddTransient<ExamOverviewViewModel>();
             services.AddTransient<StartupViewModel>();
             services.AddTransient<GradeHistoryViewModel>();
+            services.AddTransient<ManageExamGradesViewModel>();
 
             services.AddTransient<MainWindow>();
             services.AddTransient<AddStudyRecordView>();
@@ -125,6 +126,7 @@ namespace PBManager
             services.AddTransient<AddExamView>();
             services.AddTransient<StartupView>();
             services.AddTransient<GradeHistoryView>();
+            services.AddTransient<ManageExamGradesView>();
 
             services.AddTransient<XlsxStudentParser>();
             services.AddTransient<CsvStudentParser>();

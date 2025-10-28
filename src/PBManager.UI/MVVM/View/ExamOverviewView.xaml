@@ -84,9 +84,15 @@
             <Button Content="مدیریت آزمون"
                 x:Name="updateExamBtn"
                 Margin="5"
-                Width="220" Height="50"
+                Width="110" Height="50"
                 Style="{StaticResource ModernButtonStyle}" 
                 Command="{Binding UpdateExamCommand}"/>
+            <Button Content="ثبت داده"
+                    x:Name="submitGradesBtn"
+                    Margin="5"
+                    Width="110" Height="50"
+                    Style="{StaticResource ModernButtonStyle}" 
+                    Command="{Binding SubmitGradesCommand}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2">

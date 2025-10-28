@@ -9,14 +9,15 @@ using PBManager.UI.MVVM.View;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
+using System.Windows;
 
 namespace PBManager.UI.MVVM.ViewModel
 {
-    public partial class ExamOverviewViewModel : ObservableObject
+    public partial class ExamOverviewViewModel(IExamService examService, IServiceProvider serviceProvider, IGradeService gradeService) : ObservableObject
     {
-        private readonly IExamService _examService;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IGradeService _gradeService;
+        private readonly IExamService _examService = examService;
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
+        private readonly IGradeService _gradeService = gradeService;
 
         [ObservableProperty]
         private Exam? _exam;
@@ -35,13 +36,6 @@ namespace PBManager.UI.MVVM.ViewModel
 
         [ObservableProperty]
         private ICartesianAxis[] _yAxes;
-
-        public ExamOverviewViewModel(IExamService examService, IServiceProvider serviceProvider, IGradeService gradeService)
-        {
-            _examService = examService;
-            _serviceProvider = serviceProvider;
-            _gradeService = gradeService;
-        }
 
         public async Task InitializeAsync(Exam exam)
         {
@@ -131,6 +125,30 @@ namespace PBManager.UI.MVVM.ViewModel
                 await viewModel.InitializeAsync(Exam);
             }
             view.Show();
+        }
+
+        [RelayCommand]
+        private async Task SubmitGradesAsync()
+        {
+            if(Exam == null) return;
+
+            try
+            {
+                var viewModel = _serviceProvider.GetRequiredService<ManageExamGradesViewModel>();
+
+                var view = new ManageExamGradesView(viewModel);
+
+                await viewModel.InitializeAsync(Exam);
+
+                view.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"خطا در باز کردن پنجره: {ex.Message}",
+                               "خطا",
+                               MessageBoxButton.OK,
+                               MessageBoxImage.Error);
+            }
         }
     }
 }
